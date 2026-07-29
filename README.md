@@ -148,7 +148,14 @@ interpretation is withheld and q8 remains disabled for learner feedback.
 The [native app](apps/ios-learner/README.md) opens without an account and supports
 24 consonant groups, **892 distinct words and 2,398 sound-position entries**,
 word search, beginning/middle/end browsing, recording, replay, retry, and varied
-short sessions and device-local participation history. Practice recordings stay temporary and local. Intended phone placement
+short sessions and device-local participation history. Practice recordings stay temporary and local.
+
+Ordinary practice also offers **Skip word** before a recording is kept. Skipping
+starts no microphone or word check, and skipped words do not count as practiced.
+Mixed rounds save only explicitly completed recorded words; all-skipped rounds
+add no participation history. Guided practice retains its separate skip flow.
+
+Intended phone placement
 is verified against a pinned, licensed CMUdict; vocabulary/exercises are not a
 validated treatment plan. A new Debug-only simulator speech-check lab connects a
 real temporary recording to a [loopback research bridge](research/audio-head/consumer_assessment/README.md)
