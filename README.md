@@ -7,6 +7,8 @@ The name Cadence is being replaced once the owner chooses a name; no interim
 name has been adopted. The [current consumer plan](.plans/2026-10-02_consumer_speech_app_direction.html)
 supersedes the clinician-first product direction in the July plan.
 
+Ordinary iPhone launch currently opens the [CAC presentation prototype](docs/consumer-assessment/cac-presentation-routine-20261025.md): a three-word sound check, per-word feedback, automatically fitted practice and a fresh recheck. Recording and replay are real; pronunciation outcomes are authored for this proof of concept. This does not establish the validated sound assessment described below.
+
 The [Sunday, October 18 prototype target](docs/consumer-assessment/sunday-prototype-20261018.md)
 requires real recording → validated multi-sound pronunciation feedback → practice
 → recheck, with model integration ahead of UI polish. The app journey and word
