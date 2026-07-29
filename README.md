@@ -183,7 +183,7 @@ hardware was doubled; the recording matched and owned file/runtime cleanup passe
 The ordinary Release build was restored and all 26 installed files matched. This
 is whole-word integration evidence, not pronunciation accuracy or ordinary UI-launch evidence.
 
-A completed non-match in ordinary practice can show a short, explicitly fallible
+A completed non-match in ordinary or guided practice can show a short, explicitly fallible
 **Word guess** from the same bundled recognition pass. It belongs only to the
 current take and clears on replacement or departure. Guesses stay out of practice
 history and guided summaries. The [word-guess checks](work/ordinary-word-guess-20261021/FINAL-DELIVERY.json)
