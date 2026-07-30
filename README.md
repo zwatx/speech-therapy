@@ -185,8 +185,10 @@ is whole-word integration evidence, not pronunciation accuracy or ordinary UI-la
 
 A completed non-match in ordinary or guided practice can show a short, explicitly fallible
 **Word guess** from the same bundled recognition pass. It belongs only to the
-current take and clears on replacement or departure. Guesses stay out of practice
-history and guided summaries. The [word-guess checks](work/ordinary-word-guess-20261021/FINAL-DELIVERY.json)
+current take and guided visit, and clears on replacement or departure. Guided
+first-review observations remain frozen while practice and recheck use fresh takes.
+Guesses stay out of practice history, frozen observations and guided summaries.
+The earlier [ordinary word-guess checks](work/ordinary-word-guess-20261021/FINAL-DELIVERY.json)
 passed 25 focused injected/generated simulator tests, including replay, stale-result
 clearing, cancellation, final completion and normal/largest-text screens. These
 checks establish software behavior; real recognition accuracy and sound judgments
