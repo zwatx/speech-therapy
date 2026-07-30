@@ -10,7 +10,11 @@ local practice, participation history, an explicit on-device word check and a De
 
 In guided first review and recheck, **Record and check** records a fresh take and
 checks its word on-device after Stop or the four-second recording limit, provided
-the existing capture and cleanup checks pass. **Record only** lets the learner
+the existing capture and cleanup checks pass. Before the first submitted check,
+**Record and check another try** explicitly replaces a kept take and checks the
+new recording when those same checks pass. It preserves the existing two-take
+limit and waits for any required older-file removal before recording.
+**Record only** lets the learner
 listen and replace a take before choosing its first check. Practice and direct
 recording retain manual checking. With research processing enabled, recording and
 the explicit research Check remain separate actions. Combined capture intent is
