@@ -22,6 +22,26 @@ discarded on interruption, cancellation, failure or visit change; returning or
 recovering cleanup never restarts it. Existing word observations, first-result
 freezing and explicit navigation are unchanged.
 
+After recheck, each word in **Your word observations** offers **Practice {word}**.
+This opens a fresh one-word session for that exact sound and position, including
+R in bread rather than B in bread. The review ends after confirmed media/file
+cleanup; the screen explains that its observations will not carry over. Failed
+cleanup retains the summary and recovery controls, and recovery alone opens
+nothing. A fresh explicit tap is required. Healthy **Review these five again**
+keeps its existing behavior; an owner already stopped by this new departure path
+is replaced with a fresh owner for the same five words. Opening practice starts
+no media or check and adds no participation history. See the
+[review-to-practice verification](../../docs/consumer-assessment/native-guided-practice-handoff-verification-20261024.md)
+for the actual normal/largest-text journeys, retained failures and limits.
+
+Today’s weekday and About use separate rows at accessibility text sizes. About
+has a fixed Done header with a minimum 44-point label target and separately
+allocated content space. Both current-source ordinary Release journeys pass at
+normal/largest text, including the complete initial About title, dismissal and
+media-free practice entry. See [Home/About verification](../../docs/consumer-assessment/native-home-header-verification-20261024.md)
+for the retained failures, actual screenshots and named simulator demo candidate.
+This does not qualify historical contrast failures, live media or sound assessment.
+
 October 19 verification passed 23 focused generated tests, including complete guided
 journeys at compact and native-largest text. A separate isolated testable Release
 check matched the licensed public “bread” recording through the actual bundled
