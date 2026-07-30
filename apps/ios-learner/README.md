@@ -123,8 +123,25 @@ wait while a check uses the file. **Cancel check** requests cancellation; cleanu
 is confirmed only after the recognition worker and its deadline task have finished. Close,
 background and interruption revoke results and wait for that same cleanup before
 removing recordings. An unconfirmed cleanup keeps the file and blocks new media
-actions rather than reporting successful disposal. Recognition text is transient
-inside the checker and is absent from the result receipt and participation history.
+actions rather than reporting successful disposal. The full recognition transcript
+is not retained. A clean completed non-match can carry one validated, short
+**Word guess for this try** from that same recognition pass. The guess may be wrong
+and does not assess individual sounds. It appears only for the exact latest kept
+take and current guided visit, and clears on replacement, departure or interruption.
+Missing or rejected alternatives leave the existing word observation intact.
+
+Guided first-review and recheck submissions remain frozen; showing a guess does
+not enable another recording or check in that submitted visit. Practice can show a
+fresh current-try guess alongside its unchanged first-review context. Guessed text
+stays out of settlement events, frozen observations, paired summaries, saved word
+selections and participation history.
+
+Guided practice requires an acceptable latest recording before finishing that
+practice word. If its length or volume prevents completion, the current recording
+guidance appears above **Record another try**, even when the optional word check
+matches. A fresh acceptable manual take clears the requirement; checking the word
+again is optional. **Skip this word** remains available. Ordinary practice retains
+its advisory recording tips and existing continuation rules.
 
 The app opens directly to local practice, without an account, enrollment, or
 assignment. Choose one of 24 English consonant groups (892 distinct words), record a
