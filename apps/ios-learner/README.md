@@ -1,5 +1,7 @@
 # Cadence iOS learner
 
+Ordinary launch opens the [Congressional App Challenge prototype](../../docs/consumer-assessment/cac-presentation-routine-20261025.md): record three sound-check words, see per-word sound feedback, follow the automatically selected practice, then record a fresh recheck. The current BOAT → RABBIT → SUN scenario has authored outcomes; it does not measure pronunciation or infer a diagnosis. Recording, replay and cleanup are real and local. The word screen includes a live ARKit/TrueDepth face preview during recording, replay and feedback. Start sound check opens the camera; audio starts only after Record. Hide switches to audio-only practice. Facial movement does not score pronunciation. The older practice routes remain available only through explicit Debug legacy entry flags.
+
 Current product direction (2026-10-02): a consumer app for children ages6–12,
 optional account, immediate assessment leading to personalized practice. Clinician
 enrollment is not the consumer workflow. Cadence is a rejected name pending a real
