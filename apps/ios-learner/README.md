@@ -82,6 +82,28 @@ variants, including consonant clusters; ER is not treated as consonantal R.
 CMUdict copyright and terms are available in About → Dictionary license.
 Provenance, source commit/hash and reproduction are in [content documentation](../../docs/content/practice-library-provenance.md).
 
+**About this sound** offers an optional explanation and original lip illustration
+for canonical B-at-the-start words, including ball, boat and bee. R-at-the-start
+words and R after initial B, such as R in bread, offer a tongue-placement option
+and acknowledge different ways to make R. Canonical initial P/M/T/D words now
+offer short text-only instructions, so all five default review words have guides.
+The R guide uses US-English targets; other R contexts and sounds have no guide yet.
+Choosing B in bread keeps the B
+explanation; choosing R offers the BR explanation. Eligibility follows every
+canonical source pronunciation, including clusters, rather than spelling alone.
+
+The guide stays below the recording controls and opens without starting media
+or checking a recording. A new word or guided visit starts collapsed. This is
+general information about the chosen sound, independent of word-check results;
+it does not identify a sound error or prescribe a tongue shape. References are
+inside the explanation. Sources opens from a full-row button and resets when
+About closes; source-link labels have a minimum 44-point touch height. The adapted
+B/P/M/T/D text is offered under CC BY-SA 4.0; that notice covers the guide text,
+not the app. See the [B source record](../../work/selected-sound-guide-20261023/SOURCES.md) and
+[R source and content boundary](../../work/r-practice-guide-20261023/SOURCES.md).
+The [default-guide verification report](../../docs/consumer-assessment/native-default-sound-guide-verification-20261024.md)
+records the new sources, preserved failures and actual normal/largest-text Release checks.
+
 ## Direct practice demo
 
 After stopping a recording, **Check words in this try** (or **Check words in latest
