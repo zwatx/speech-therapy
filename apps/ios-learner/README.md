@@ -760,6 +760,59 @@ component journeys and a separate ordinary Release smoke. Twelve inspected
 screenshots cover complete advice copy at compact and largest text sizes.
 Generated capture and silent playback dependencies do not prove live media.
 
+Completed word-check outcomes now stay beside the recording they checked. **Earlier
+try** and **Latest try** each keep their own whole-word match, no-match or unclear
+result. A new unchecked take says it has no result, and a third take removes the
+oldest recording and its observation together. These statuses are temporary; no
+transcript or new history field is saved. Processing failures and current-only
+word guesses remain separate, and guided first-review observations stay frozen.
+See the [retained word-check verification](../../docs/consumer-assessment/native-retained-word-check-verification-20261024.md):
+45 focused unit checks and four generated simulator journeys passed, including
+normal/largest-text comparison and guided practice through fresh recheck. These
+checks establish identity and behavior, not pronunciation accuracy.
+An unmatched or unclear latest check in selected practice also explains that a
+word match is not required, when both moving on and recording another try are
+available. The cue belongs only to the latest result and preserves existing
+recording-quality and cleanup requirements. See the [decision-cue verification](../../docs/consumer-assessment/native-practice-decision-verification-20261025.md).
+
+After an eligible word-only check times out and confirms cleanup, **Try word check
+again** reuses the latest recording with a new check operation. With two takes,
+the label explicitly names the latest try. Retry requires a tap; it never starts
+new capture or duplicates practice credit. First-review and recheck submissions
+remain frozen. The Debug guided research composition is excluded, including when
+opted out. See the [timeout-retry verification](../../docs/consumer-assessment/native-timeout-retry-verification-20261024.md):
+43 focused unit methods and six generated Debug UI journeys passed, with a
+separate successful ordinary Release build. These checks do not establish real
+timeout frequency, Release runtime behavior or sound accuracy.
+
+Starting a recording or retake now brings **Stop recording** fully into view
+when ready/review content collapses above it. The [recording-transition verification](../../docs/consumer-assessment/native-recording-transition-verification-20261025.md)
+covers eight generated first/retake observations across ordinary and selected
+practice at normal/largest text, plus two ordinary Release navigation journeys
+on the current source. Release navigation does not exercise recording or timeout
+retry; real media, sound accuracy and VoiceOver remain separate qualifications.
+
+Selected-practice review now offers a collapsed **Practice reminder** above the
+retake action. It reuses the current canonical instruction, closes for a new take
+or practice visit, and starts no media or check. About keeps its other content
+and Sources; its duplicate main detail returns when the reminder is collapsed.
+See the [practice-reminder verification](../../docs/consumer-assessment/native-practice-reminder-verification-20261025.md):
+seven instruction checks, two generated normal/largest-text journeys and two
+ordinary Release navigation journeys passed. Reminder interaction after recording
+is covered by generated capture, not ordinary Release media or sound assessment.
+The reminder now precedes changing word-check and replay feedback, so a result
+can arrive without pushing an open instruction out of reading position.
+The [feedback-continuity verification](../../docs/consumer-assessment/native-reminder-feedback-continuity-verification-20261025.md)
+records the original displacement and the corrected normal/largest-text generated
+checks. It does not qualify ordinary Release media or individual sound accuracy.
+
+When the view observes a new recording finish, its accessibility announcement now
+includes that review's existing all-zero or volume-limit advice. Returning to a
+kept recording announces readiness without repeating that advice. An active,
+cancelling or blocked word check retains its own announcement. Nine pure XCTest
+methods and the ordinary Release build pass; actual VoiceOver delivery and timing
+remain unverified. See the [October 24 continuation](../../docs/consumer-assessment/native-recording-feedback-verification-20261016.md#october-24-accessibility-announcement-continuation).
+
 One media owner remains alive across setup, recording, summaries and recheck.
 Departure and Close require exact recording, playback, recognition and mirror
 cleanup acknowledgments. Failed cleanup remains visible; an explicit retry can
