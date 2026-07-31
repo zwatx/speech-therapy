@@ -839,6 +839,29 @@ text that cannot be compared as one word remain uncertain. No failure starts a r
 automatically or releases an unconfirmed recording borrow.
 Existing Debug simulator service-based Word checks remain separate.
 
+Encoder-output validation uses scoped Float reads for the exact contiguous layout,
+with the original indexed checks for other strides. Generated measurements and six
+canonical iOS tests support this change; its effect on full word-check timing remains
+unmeasured.
+See the [encoder-validation verification](../../docs/consumer-assessment/native-encoder-validation-verification-20261025.md).
+
+Decoder-logit copying now also uses scoped Float storage for the exact contiguous
+layout, retaining original indexed semantics for other layouts and NaN values.
+Six new iOS units and a generated-tensor benchmark pass; the measured copy median
+is64.38ms→0.288ms, not a full word-check or accuracy measurement. The ordinary
+Release build passes; the prepared installed demo is unchanged. See the
+[decoder-logit verification](../../docs/model/native-decoder-logits-verification-20261025.md).
+
+
+The [installed simulator demo is the search-fix candidate 8](../../docs/consumer-assessment/native-search-demo-verification-20261025.md).
+It corrects spoken search summaries, passes an ordinary arm64 Release build and exact
+installed-bundle comparison, and has been opened through Home into the first guided
+word without starting media. [Candidate 7](../../docs/consumer-assessment/native-current-release-candidate-verification-20261025.md)
+is preserved as the fallback with its separate normal/largest-text navigation evidence;
+those checks were not rerun on candidate 8. Candidates 5 and 6 remain historical.
+Actual recording/replay usability, VoiceOver delivery, sound correctness and clinical
+qualification remain open. The linked handoff describes the next human rehearsal.
+
 The dedicated simulator's explicitly authorized English asset installation passed.
 Subsequent checks found installed and reserved assets but no compatible module
 formats; both natural-format and no-preference negotiations returned nil without
