@@ -831,6 +831,12 @@ stop; it does not promise that synchronous model work has already returned.
 Cancellation and departure wait for the actual worker and timer before releasing
 the recording borrow. Unknown cleanup keeps its owner and file retained. No audio
 or recognized text is stored in the review ledger or participation history.
+Processing failures, including invalid or nonfinite model tensors, are unavailable
+checks rather than uncertain speech. Ordinary practice permits an explicit retry of
+the same kept take after a clean unavailable result; the first guided review or
+recheck submission stays frozen. Silence, undecodable bounded output and completed
+text that cannot be compared as one word remain uncertain. No failure starts a retry
+automatically or releases an unconfirmed recording borrow.
 Existing Debug simulator service-based Word checks remain separate.
 
 The dedicated simulator's explicitly authorized English asset installation passed.
