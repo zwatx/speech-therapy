@@ -701,9 +701,16 @@ The word picker keeps Cancel in a sticky header, with its hit shape inside the
 button label. Search stays above the results and uses a single-line native field;
 Return dismisses the keyboard. A changed ordered result set starts at the top,
 while an unchanged result set retains its scroll position. Clearing search restores
-the library under the current sound and position filters. Filter menus keep their
-native choices and display full selected
-labels at large text sizes. The [ordinary Release UI verification](../../docs/consumer-assessment/native-release-navigation-verification-20261015.md)
+the library under the current sound and position filters. Sound keeps its native
+menu. Position expands in place to **All positions**, **Beginning**, **Middle** and
+**End**, marks the current choice, and collapses after an explicit selection.
+Opening the choices dismisses search focus without clearing the query. Clear
+search has an explicit 44-point rectangular target.
+The [October 24 Position-filter verification](../../docs/consumer-assessment/native-guided-position-filter-verification-20261024.md)
+records compact/largest-text Release passes and a preserved full guided-round
+regression, with original failures and exact build provenance. The old Position
+menu's hierarchy warning did not recur in these runs; this does not qualify other
+menus or actual media behavior. The [earlier ordinary Release UI verification](../../docs/consumer-assessment/native-release-navigation-verification-20261015.md)
 passed a compact skip-only journey with position selection/reset and a requested
 Accessibility XXXL setup/Cancel/first-visit/Close journey. Both app and UI-test
 module were optimized with testability disabled. The new suite is Release-only;
