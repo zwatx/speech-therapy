@@ -648,6 +648,42 @@ Start recheck revisits all five original words with fresh visit/take identities.
 summaries distinguish skipped from not reached and preserve the first results;
 paired observations make no improvement claim.
 
+Selected practice shows **Try this** before Record, using the existing guide for
+the exact word, sound and position. Unsupported canonical targets receive only
+whole-word record/replay guidance. Each fresh selected-practice visit opens at its
+word; the instruction may require scrolling at larger text sizes. Initial review,
+recheck and ordinary practice keep their existing presentation.
+Expanding About omits the duplicate short instruction while retaining the full
+explanation and Sources. This is general guidance, not a detected sound error.
+See the [instruction verification](../../docs/consumer-assessment/native-practice-instruction-verification-20261024.md)
+for the retained first attempt, positioning correction, checks and limits.
+
+The final summary also shows **Practice** for each original word. It distinguishes
+unselected words from selected visits that were skipped, not reached, completed
+with saved participation, or completed with an unconfirmed save. The join uses
+canonical entry IDs and preserves the frozen first-review and recheck observations;
+practice participation is not a measure of sound improvement.
+
+In a Debug simulator with guided research processing enabled, **Research details**
+on practice selection and the final summary opens retained first-review and recheck
+distributions for that exact entry and take. Missing results are explicit. These
+are internal, unvalidated corpus-rating probabilities, not learner feedback or
+diagnosis. Opening the sheet performs no new processing or history write. This
+view and its controls are excluded from Release and physical-device builds.
+The guided research wrapper now receives the exact stopped recording from the
+media session, including its capture measurements and registered producer owner.
+Research callers must prepare the exact canonical entry/visit and use the atomic
+captured-context capability; a URL-only word check cannot authorize research
+processing. Unconfirmed or sibling word receipts retain the wrapper's independent
+file protection. See the [owned recording handoff verification](../../docs/consumer-assessment/native-owned-capture-handoff-verification-20261024.md):
+56 focused unit checks and two generated normal/largest-text UI journeys passed.
+No hidden model was connected and no pronunciation finding was enabled.
+
+The [October 24 verification report](../../docs/consumer-assessment/native-guided-feedback-review-20261024.md)
+records 76 unit passes, two generated compact/largest-text UI passes, the ordinary
+Release build and skip-only UI pass, preserved failures, and the unresolved Release
+view-hierarchy warning. These checks do not establish real speech accuracy.
+
 The continuation labels passed three coordinator checks and compact/native-largest
 UI journeys on the dedicated SE/iOS 26.5 simulator. These cover actual destinations,
 one/three practice visits and history-save failure/retry. The current ordinary
