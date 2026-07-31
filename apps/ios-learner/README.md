@@ -151,6 +151,21 @@ pronunciation result. The vocabulary is unreviewed demo content. Use the
 [earlier 72-prompt SLP worksheet](../../docs/model/practice-content-review.md) to review the original starters,
 pictures, dialect assumptions, readiness, and possible reference audio.
 
+Before keeping a recording, ordinary practice offers **Skip word** to move on
+without requesting microphone access or starting media or a word check. Skip is
+unavailable during recording, a pending permission/check, other audio, or unresolved
+cleanup; it never discards a retained take. Skip waits for any owned camera to stop
+before the next word opens. A denied or failed recording with no kept take can also be
+skipped. For a kept recording, use the existing Next/Finish or delete-and-retry
+actions instead.
+
+Round progress counts word positions separately from participation. The completion
+screen distinguishes practiced and skipped words; history counts only recorded
+words explicitly continued. An all-skipped round adds no history entry or save
+retry. A mixed round retains the same completion identity and actual practiced
+count for save retries. Restart and Practice more begin fresh counts. Guided
+review/practice/recheck retains its separate existing Skip behavior.
+
 The interface follows the system's light or dark appearance with a monochrome
 palette, flat sound rows, serif headings, and simple text controls. It uses no
 cards, all-caps labels, eyebrows, or status lights.
