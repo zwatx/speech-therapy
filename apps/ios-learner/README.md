@@ -601,6 +601,14 @@ enabled. Unknown server cleanup pauses model requests across sessions. See the
 for startup instructions, preserved word-admission failures and the distinction
 between real inference, generated checks and microphone validation.
 
+The Debug client now retains each validated target distribution with the exact
+request, audio and prompt hashes, declared age and model manifest. Guided processing
+keeps this result only in session memory beside its original operation and take;
+wrong bindings, cancelled results and unavailable processing retain no score payload.
+The word-only review ledger, saved practice and learner notes do not interpret or
+persist those research distributions as pronunciation correctness. Timing-only
+processor stubs do not count as a validated guided research result.
+
 Home → **Review, practice, recheck** opens a local five-word flow in every build.
 Choose five different words from the existing library; the starting set is ball,
 pig, moon, tiger and dog. Start freezes their canonical sound, position and order.
