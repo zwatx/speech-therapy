@@ -13,8 +13,17 @@ enum BundledLocalWordRecognizerFactory {
   }
 
   private static func bundledResources() -> WhisperBundledResources? {
-    let app = Bundle.main.bundleURL
-    guard let base = Bundle.main.resourceURL else { return nil }
+    // Bundle URLs on a physical phone can use an OS-provided container alias.
+    // Resolve that trusted boundary before applying the strict resource checks.
+    let app = URL(
+      fileURLWithPath: Bundle.main.bundleURL.resolvingSymlinksInPath().path,
+      isDirectory: true
+    ).standardizedFileURL
+    guard let resourceURL = Bundle.main.resourceURL else { return nil }
+    let base = URL(
+      fileURLWithPath: resourceURL.resolvingSymlinksInPath().path,
+      isDirectory: true
+    ).standardizedFileURL
     let root = base.appendingPathComponent("WhisperResources", isDirectory: true)
     guard isCanonicalAppResourceLocation(
       appURL: app, resourceURL: root,
