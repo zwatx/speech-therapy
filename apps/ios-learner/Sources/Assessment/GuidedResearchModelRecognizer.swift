@@ -18,7 +18,7 @@
     }
   }
 
-  /// Session memory only: no audio, recognized text, probabilities, or learner findings.
+  /// Session memory only: take-bound research distributions, no audio or learner findings.
   struct GuidedResearchModelObservation: Equatable, Sendable {
     let request: LocalWordRecognitionRequest
     let entryID: String?
