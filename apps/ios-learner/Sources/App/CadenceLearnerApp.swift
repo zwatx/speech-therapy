@@ -48,8 +48,9 @@ struct CadenceLearnerApp: App {
 
   #if DEBUG
     @ViewBuilder private var developmentRoot: some View {
-      if ProcessInfo.processInfo.arguments.contains("-CadenceClinicalMode")
-        || ProcessInfo.processInfo.arguments.contains(where: { $0.hasPrefix("-accessibility-") })
+      let arguments = ProcessInfo.processInfo.arguments
+      if arguments.contains("-CadenceClinicalMode")
+        || arguments.contains(where: { $0.hasPrefix("-accessibility-") })
       {
         ClinicalPracticeRootView()
       } else {
