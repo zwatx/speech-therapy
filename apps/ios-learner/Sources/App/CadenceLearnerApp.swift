@@ -40,7 +40,8 @@ struct CadenceLearnerApp: App {
           AudioCleanupRecoveryHost { developmentRoot }
         #endif
       #else
-        AudioCleanupRecoveryHost { DirectPracticeRootView() }
+        // Ordinary launch opens the sound-check journey directly.
+        AudioCleanupRecoveryHost { CACDemoView(placement: .root) }
       #endif
     }
   }
