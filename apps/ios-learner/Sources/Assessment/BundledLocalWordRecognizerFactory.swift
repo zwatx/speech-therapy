@@ -25,11 +25,12 @@ enum BundledLocalWordRecognizerFactory {
       isDirectory: true
     ).standardizedFileURL
     let root = base.appendingPathComponent("WhisperResources", isDirectory: true)
-    guard isCanonicalAppResourceLocation(
-      appURL: app, resourceURL: root,
-      resolvedAppURL: app.resolvingSymlinksInPath(),
-      resolvedResourceURL: root.resolvingSymlinksInPath(),
-      bundleIdentifier: Bundle.main.bundleIdentifier),
+    guard
+      isCanonicalAppResourceLocation(
+        appURL: app, resourceURL: root,
+        resolvedAppURL: app.resolvingSymlinksInPath(),
+        resolvedResourceURL: root.resolvingSymlinksInPath(),
+        bundleIdentifier: Bundle.main.bundleIdentifier),
       isUnlinkedDirectory(app), isUnlinkedDirectory(root)
     else { return nil }
     return WhisperBundledResources(rootURL: root, manifestSHA256: manifestSHA256)
