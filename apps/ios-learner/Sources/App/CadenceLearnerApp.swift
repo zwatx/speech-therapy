@@ -53,10 +53,18 @@ struct CadenceLearnerApp: App {
         || arguments.contains(where: { $0.hasPrefix("-accessibility-") })
       {
         ClinicalPracticeRootView()
-      } else {
+      } else if arguments.contains(where: Self.legacyHomeArguments.contains) {
+        // Explicit legacy home, including its research launch routes.
         DirectPracticeRootView()
+      } else {
+        CACDemoView(placement: .root)
       }
     }
+
+    private static let legacyHomeArguments: Set<String> = [
+      "-CadenceLegacyHome", "-CadenceGuidedWordMode", "-CadenceFeedbackMode",
+      "-CadenceSoundMode", "-CadenceAssessmentMode",
+    ]
   #endif
 }
 
