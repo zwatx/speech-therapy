@@ -194,6 +194,16 @@
     }
 
     func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
+      await check(request: request, context: nil)
+    }
+
+    func check(context: LocalWordCapturedContext) async -> LocalWordRecognitionReceipt {
+      await check(request: context.request, context: context)
+    }
+
+    private func check(request: LocalWordRecognitionRequest, context: LocalWordCapturedContext?)
+      async -> LocalWordRecognitionReceipt
+    {
       guard !Task.isCancelled else {
         return .init(request: request, status: .cancelled, cleanupConfirmed: true)
       }
