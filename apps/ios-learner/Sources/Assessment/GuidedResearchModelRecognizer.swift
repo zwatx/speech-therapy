@@ -168,13 +168,14 @@
     }
 
     @discardableResult
-    func prepare(entry: PracticeLibraryEntry) -> Bool {
+    func prepare(entry: PracticeLibraryEntry, visit: GuidedMediaVisit? = nil) -> Bool {
       guard activeID == nil else { return false }
       guard PracticeLibrary.entries().contains(entry) else {
         preparedEntry = nil
         return false
       }
       preparedEntry = entry
+      preparedVisit = visit
       return true
     }
 
