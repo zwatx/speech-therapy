@@ -23,6 +23,16 @@
     let request: LocalWordRecognitionRequest
     let entryID: String?
     let outcome: GuidedResearchModelOutcome
+    let researchResult: ResearchAssessmentResult?
+
+    init(request: LocalWordRecognitionRequest, entryID: String?, outcome: GuidedResearchModelOutcome,
+      researchResult: ResearchAssessmentResult? = nil)
+    {
+      self.request = request
+      self.entryID = entryID
+      self.outcome = outcome
+      self.researchResult = researchResult
+    }
 
     var note: String {
       switch outcome {
