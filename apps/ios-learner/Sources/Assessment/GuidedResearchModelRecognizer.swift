@@ -100,7 +100,10 @@
 
   /// A simulator-only composition. Ordinary word status never becomes sound correctness.
   @MainActor
-  final class GuidedResearchModelRecognizer: ObservableObject, LocalWordRecognizing, LocalWordRuntimeReleasing {
+  final class GuidedResearchModelRecognizer: ObservableObject, LocalWordCapturedContextRecognizing, LocalWordRuntimeReleasing {
+    // A timed-out word retry must not newly admit this composition's research processing.
+    var allowsTimedOutRetry: Bool { false }
+
     enum ProcessingState: Equatable {
       case idle
       case checkingWord(operationID: UUID)
