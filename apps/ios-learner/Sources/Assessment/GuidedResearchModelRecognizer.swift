@@ -124,6 +124,7 @@
     private var enabled = false
     private var ageYears: Int?
     private var preparedEntry: PracticeLibraryEntry?
+    private var preparedVisit: GuidedMediaVisit?
     private var activeID: UUID?
     private var revoked = false
     // A failed local close is not a cleanup acknowledgement. Keep its resource and borrow alive.
