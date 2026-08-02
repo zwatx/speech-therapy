@@ -214,6 +214,21 @@
         return .init(request: request, status: .unavailable, cleanupConfirmed: true)
       }
       let entry = preparedEntry
+      let visit = preparedVisit
+      // Validate retained producer ownership before acquiring this consumer's borrow.
+      // No suspension/publication occurs between validation and borrow acquisition.
+      let ownedContext = context.flatMap { context -> LocalWordCapturedContext? in
+        guard context.request == request, context.takeID == request.tryID,
+          context.recording.url == request.fileURL,
+          context.entryID == entry?.id, let visit, context.guidedVisit == visit,
+          Self.entryID(for: visit) == context.entryID,
+          context.recording.summary.duration.isFinite, context.recording.summary.duration > 0,
+          context.recording.summary.averagePower.isFinite,
+          let owner = context.recording.cleanupOwnerID,
+          ownership.canRemove(context.recording.url, owner: owner)
+        else { return nil }
+        return context
+      }
       let age = ageYears
       let optedIn = enabled
       let borrowID = UUID()  // Independent of the wrapped recognizer's own operation borrow.
