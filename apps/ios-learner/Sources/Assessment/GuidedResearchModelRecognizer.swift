@@ -334,10 +334,7 @@
             return finalWordReceipt(word)
           }
         }
-        // The assessment client consumes only url. Power was not measured here; this
-        // adapter summary is never passed to capture-quality assessment or learner UI.
-        let recording = CapturedRecording(
-          url: request.fileURL, summary: .init(duration: duration, averagePower: .nan))
+        let recording = ownedContext.recording
         processingState = .processingModel(operationID: request.operationID)
         if revoked || Task.isCancelled {
           observe(request, entry: entry, outcome: .cancelled)
