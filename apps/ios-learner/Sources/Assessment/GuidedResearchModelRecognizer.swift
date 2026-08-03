@@ -344,6 +344,18 @@
           observe(request, entry: entry, outcome: .notRun(.paused))
           return finalWordReceipt(word)
         }
+        let expectedContext: ResearchAssessmentResult.Context
+        let expectedPrompt: ResearchAssessmentClient.Prompt
+        do {
+          guard let bytes = try FileManager.default.attributesOfItem(atPath: request.fileURL.path)[.size]
+            as? Int, bytes > 0, bytes <= 140_000 else { throw ResearchAssessmentError.invalidRecording }
+          expectedPrompt = try ResearchAssessmentClient.prompt(for: entry)
+          expectedContext = try ResearchAssessmentClient.context(attemptId: request.operationID,
+            audio: Data(contentsOf: request.fileURL), entry: entry, ageYears: age)
+        } catch {
+          observe(request, entry: entry, outcome: .unavailable(.invalidRecording))
+          return finalWordReceipt(word)
+        }
         let modelTask = Task<ResearchAssessmentOutcome?, Error> { @MainActor [self] in
           guard !revoked, !modelCallsPaused else { return nil }
           return try await processor.process(
