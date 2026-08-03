@@ -362,6 +362,7 @@
             attemptId: request.operationID, recording: recording, entry: entry, ageYears: age)
         }
         let outcome: GuidedResearchModelOutcome
+        var researchResult: ResearchAssessmentResult?
         do {
           switch try await modelTask.value {
           case nil:
