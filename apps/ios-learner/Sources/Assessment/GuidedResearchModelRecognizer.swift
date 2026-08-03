@@ -303,7 +303,9 @@
           return .init(
             request: request, status: revoked ? .cancelled : word.status, cleanupConfirmed: false)
         }
-        guard let duration = admission.duration else {
+        guard let duration = admission.duration,
+          ownedContext.recording.summary.duration == duration
+        else {
           observe(request, entry: entry, outcome: .unavailable(.invalidRecording))
           return finalWordReceipt(word)
         }
