@@ -259,12 +259,14 @@
         let word = await wordTask.value
         if Task.isCancelled { cancel(operationID: request.operationID) }
         guard word.request == request else {
+          localResourcesReleased = false
           observe(
             request, entry: entry, outcome: revoked ? .cancelled : .unavailable(.wrongReceipt))
           return .init(
             request: request, status: revoked ? .cancelled : .unavailable, cleanupConfirmed: false)
         }
         guard word.cleanupConfirmed else {
+          localResourcesReleased = false
           observe(
             request, entry: entry,
             outcome: revoked ? .cancelled : .unavailable(.wordCleanupUnconfirmed))
@@ -283,6 +285,10 @@
         }
         // skipReason proves a canonical frozen entry and a genuinely declared supported age.
         guard let entry, let age else { return finalWordReceipt(word) }
+        guard let ownedContext else {
+          observe(request, entry: entry, outcome: .unavailable(.invalidRecording))
+          return finalWordReceipt(word)
+        }
         let admission: LocalWordWAVGate.Admission
         do {
           admission = try LocalWordWAVGate.read(fileURL: request.fileURL)
