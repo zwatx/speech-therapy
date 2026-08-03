@@ -367,9 +367,10 @@
           switch try await modelTask.value {
           case nil:
             outcome = .notRun(.paused)
-          case .some(.processedUnverified(let milliseconds))
-          where milliseconds.isFinite && milliseconds >= 0:
-            outcome = .processedUnverified(milliseconds: milliseconds)
+          case .some(.processedResearch(let result))
+          where result.isBound(to: expectedContext, prompt: expectedPrompt):
+            researchResult = result
+            outcome = .processedUnverified(milliseconds: result.timingMilliseconds.total)
           case .some(.unavailable(let code)):
             if let reason = Self.cleanupSafeReason(for: code) {
               outcome = .unavailable(reason)
