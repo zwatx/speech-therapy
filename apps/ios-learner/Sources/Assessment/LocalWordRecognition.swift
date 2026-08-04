@@ -65,6 +65,24 @@ protocol LocalWordRecognizing: AnyObject {
   func cancel(operationID: UUID)
 }
 
+extension LocalWordRecognizing {
+  var allowsTimedOutRetry: Bool { true }
+}
+
+/// Atomic stopped-take handoff. Capture metadata remains producer evidence, not inference.
+struct LocalWordCapturedContext: Equatable, Sendable {
+  let request: LocalWordRecognitionRequest
+  let takeID: UUID
+  let recording: CapturedRecording
+  let guidedVisit: GuidedMediaVisit?
+  let entryID: String
+}
+
+@MainActor
+protocol LocalWordCapturedContextRecognizing: LocalWordRecognizing {
+  func check(context: LocalWordCapturedContext) async -> LocalWordRecognitionReceipt
+}
+
 /// Optional capability for providers with flow-scoped model resources. Ordinary
 /// injected recognizers need no stub. False never authorizes dropping live work.
 @MainActor
