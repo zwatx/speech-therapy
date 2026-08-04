@@ -378,7 +378,7 @@
               availability.pauseForUnknownCleanup()
               outcome = .unavailable(.serverCleanupUnknown)
             }
-          case .some(.admissionProcessed), .some(.processedUnverified):
+          case .some(.admissionProcessed), .some(.processedUnverified), .some(.processedResearch):
             availability.pauseForUnknownCleanup()
             outcome = .unavailable(.serverCleanupUnknown)
           }
