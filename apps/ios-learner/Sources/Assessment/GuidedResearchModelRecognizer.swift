@@ -387,7 +387,8 @@
           outcome = .unavailable(.serverCleanupUnknown)
         }
         if Task.isCancelled { cancel(operationID: request.operationID) }
-        observe(request, entry: entry, outcome: revoked ? .cancelled : outcome)
+        observe(request, entry: entry, outcome: revoked ? .cancelled : outcome,
+          researchResult: revoked ? nil : researchResult)
         return revoked ? .init(request: request, status: .cancelled, cleanupConfirmed: true) : word
       } onCancel: {
         Task { @MainActor [weak self] in self?.cancel(operationID: request.operationID) }
