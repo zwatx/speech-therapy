@@ -447,11 +447,11 @@
 
     private func observe(
       _ request: LocalWordRecognitionRequest, entry: PracticeLibraryEntry?,
-      outcome: GuidedResearchModelOutcome
+      outcome: GuidedResearchModelOutcome, researchResult: ResearchAssessmentResult? = nil
     ) {
       latestObservationOperationID = request.operationID
       observations[request.operationID] = .init(
-        request: request, entryID: entry?.id, outcome: outcome)
+        request: request, entryID: entry?.id, outcome: outcome, researchResult: researchResult)
       // Published subscribers can synchronously request cancellation while seeing this
       // terminal observation. Revoke that result before the exact receipt is returned.
       if revoked, outcome != .cancelled {
