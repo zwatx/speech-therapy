@@ -58,6 +58,9 @@ struct LocalWordRecognitionReceipt: Equatable, Sendable {
 
 @MainActor
 protocol LocalWordRecognizing: AnyObject {
+  /// Word-only providers allow retry by default. Processing compositions must opt out
+  /// when retry could trigger additional analysis.
+  var allowsTimedOutRetry: Bool { get }
   func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt
   func cancel(operationID: UUID)
 }
