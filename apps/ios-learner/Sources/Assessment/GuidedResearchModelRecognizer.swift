@@ -395,6 +395,13 @@
       }
     }
 
+    private static func entryID(for visit: GuidedMediaVisit) -> String {
+      switch visit {
+      case .review(let visit): return visit.entryID
+      case .practice(let visit): return visit.entryID
+      }
+    }
+
     private func skipReason(
       word: LocalWordRecognitionStatus, optedIn: Bool, age: Int?, entry: PracticeLibraryEntry?,
       request: LocalWordRecognitionRequest
