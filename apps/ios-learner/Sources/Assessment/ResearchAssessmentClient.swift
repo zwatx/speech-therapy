@@ -10,6 +10,39 @@
     case unavailable(reason: String)
   }
 
+  /// Debug research distribution, never a learner sound finding. No audio is retained.
+  struct ResearchAssessmentResult: Equatable, Sendable {
+    struct Context: Equatable, Sendable {
+      let operationID: UUID
+      let entryID: String
+      let ageYears: Int
+      let requestSHA256: String
+      let audioSHA256: String
+      let promptSHA256: String
+    }
+    let context: Context
+    let model: ResearchAssessmentClient.Model
+    let targets: [ResearchAssessmentClient.Prediction]
+    let timingMilliseconds: ResearchAssessmentClient.Timing
+
+    func isBound(to expected: Context, prompt: ResearchAssessmentClient.Prompt) -> Bool {
+      guard context == expected, model.id == "ages-6-12-research-mixture",
+        model.manifestSha256 == ResearchAssessmentClient.manifest,
+        timingMilliseconds.total.isFinite, timingMilliseconds.total >= 0,
+        timingMilliseconds.inference.isFinite, timingMilliseconds.inference >= 0,
+        timingMilliseconds.inference <= timingMilliseconds.total,
+        targets.count == prompt.targets.count else { return false }
+      return zip(targets, prompt.targets).allSatisfy { actual, target in
+          guard actual.id == target.id && actual.wordIndex == target.wordIndex
+            && actual.phoneIndex == target.phoneIndex && actual.targetPhone == target.targetPhone
+            && actual.subjectiveCorpusRatingProbabilities.count == 3
+            else { return false }
+          return actual.subjectiveCorpusRatingProbabilities.allSatisfy { $0.isFinite && (0...1).contains($0) }
+            && abs(actual.subjectiveCorpusRatingProbabilities.reduce(0, +) - 1) < 0.00001
+      }
+    }
+  }
+
   @MainActor
   protocol ResearchAssessmentProcessing {
     func process(
