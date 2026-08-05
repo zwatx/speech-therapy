@@ -87,8 +87,9 @@ enum NativeFeatureHeadMath {
             let doubles = values.map(Double.init); let maximum = doubles.max()!
             var sum = 0.0
             for value in doubles { sum += exp(value - maximum) }
-            let normalizer = maximum + log(sum)
-            let result = doubles.map { $0 - normalizer }
+            let logSum = log(sum)
+            // Keep the shift: adding logSum to a large common offset can round it away.
+            let result = doubles.map { ($0 - maximum) - logSum }
             guard result.allSatisfy(\.isFinite) else { throw Failure.logits }
             return result
         }
