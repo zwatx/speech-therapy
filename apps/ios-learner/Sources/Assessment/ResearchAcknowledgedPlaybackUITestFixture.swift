@@ -110,8 +110,12 @@
           if eventRevision > seededRevision { subject.send(state) }
         }
         return subject.removeDuplicates()
-          .handleEvents(receiveCancel: { observation.cancel() }).eraseToAnyPublisher()
+          .handleEvents(receiveCancel: Self.cancellation(of: observation)).eraseToAnyPublisher()
       }.eraseToAnyPublisher()
+    }
+    // Combine can cancel on another executor; form this synchronous closure without actor isolation.
+    private nonisolated static func cancellation(of observation: AnyCancellable) -> () -> Void {
+      { observation.cancel() }
     }
     var retainedFileCount: Int { owners.count }
     func owner(of url: URL) -> UUID? { owners[url] }
