@@ -2,7 +2,9 @@
   import CryptoKit
   import Foundation
 
-  enum ResearchAssessmentOutcome: Equatable {
+  enum ResearchAssessmentOutcome: Equatable, Sendable {
+    case processedResearch(ResearchAssessmentResult)
+    // Legacy admission/test stubs carry no validated research payload.
     case processedUnverified(milliseconds: Double)
     case admissionProcessed(milliseconds: Double)
     case unavailable(reason: String)
