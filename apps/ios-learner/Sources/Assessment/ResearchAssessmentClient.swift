@@ -119,10 +119,7 @@
       let id = attemptId.uuidString.lowercased()
       let encoder = JSONEncoder()
       encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-      let body = try encoder.encode(
-        Request(
-          schemaVersion: 1, attemptId: id, ageYears: ageYears, prompt: prompt,
-          audioBase64: audio.base64EncodedString()))
+      let body = try Self.requestBody(attemptId: attemptId, audio: audio, prompt: prompt, ageYears: ageYears)
       var request = URLRequest(url: Self.endpoint, timeoutInterval: 100)
       request.httpMethod = "POST"
       request.httpBody = body
