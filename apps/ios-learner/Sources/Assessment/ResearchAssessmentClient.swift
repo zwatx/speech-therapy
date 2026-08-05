@@ -171,15 +171,13 @@
         result.model?.manifestSha256 == Self.manifest,
         result.targets.count == prompt.targets.count
       else { throw ResearchAssessmentError.invalidResponse }
-      for (actual, expected) in zip(result.targets, prompt.targets) {
-        guard actual.id == expected.id, actual.wordIndex == expected.wordIndex,
-          actual.phoneIndex == expected.phoneIndex, actual.targetPhone == expected.targetPhone,
-          actual.subjectiveCorpusRatingProbabilities.count == 3,
-          actual.subjectiveCorpusRatingProbabilities.allSatisfy({
-            $0.isFinite && (0...1).contains($0)
-          }),
-          abs(actual.subjectiveCorpusRatingProbabilities.reduce(0, +) - 1) < 0.00001
-        else { throw ResearchAssessmentError.invalidResponse }
+      let research = ResearchAssessmentResult(
+        context: .init(operationID: attemptId, entryID: entry.id, ageYears: ageYears,
+          requestSHA256: Self.sha256(body), audioSHA256: Self.sha256(audio),
+          promptSHA256: Self.sha256(try encoder.encode(prompt))),
+        model: result.model!, targets: result.targets, timingMilliseconds: result.timingMilliseconds)
+      guard research.isBound(to: research.context, prompt: prompt) else {
+        throw ResearchAssessmentError.invalidResponse
       }
       return .processedUnverified(milliseconds: result.timingMilliseconds.total)
     }
