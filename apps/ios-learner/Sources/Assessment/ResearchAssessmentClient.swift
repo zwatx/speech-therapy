@@ -179,7 +179,31 @@
       guard research.isBound(to: research.context, prompt: prompt) else {
         throw ResearchAssessmentError.invalidResponse
       }
-      return .processedUnverified(milliseconds: result.timingMilliseconds.total)
+      return .processedResearch(research)
+    }
+
+    /// Snapshot before awaiting the processor; never validate against a later mutable file.
+    static func context(attemptId: UUID, audio: Data, entry: PracticeLibraryEntry, ageYears: Int)
+      throws -> ResearchAssessmentResult.Context
+    {
+      guard (6...12).contains(ageYears), !audio.isEmpty, audio.count <= 140_000 else {
+        throw ResearchAssessmentError.invalidRecording
+      }
+      let prompt = try prompt(for: entry)
+      let encoder = JSONEncoder()
+      encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+      let body = try requestBody(attemptId: attemptId, audio: audio, prompt: prompt, ageYears: ageYears)
+      return .init(operationID: attemptId, entryID: entry.id, ageYears: ageYears,
+        requestSHA256: sha256(body), audioSHA256: sha256(audio),
+        promptSHA256: sha256(try encoder.encode(prompt)))
+    }
+
+    private static func requestBody(attemptId: UUID, audio: Data, prompt: Prompt, ageYears: Int) throws -> Data {
+      let encoder = JSONEncoder()
+      encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+      return try encoder.encode(Request(schemaVersion: 1,
+        attemptId: attemptId.uuidString.lowercased(), ageYears: ageYears,
+        prompt: prompt, audioBase64: audio.base64EncodedString()))
     }
 
     static func prompt(for entry: PracticeLibraryEntry, variantIndex: Int = 0) throws -> Prompt {
