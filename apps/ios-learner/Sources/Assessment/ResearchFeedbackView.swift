@@ -99,30 +99,54 @@
       "Recording, checks and other audio stay paused until it does. Your recordings and any results are unchanged."
 
     var body: some View {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 24) {
-          Text("Speech practice")
-            .font(.system(.largeTitle, design: .serif))
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityIdentifier("feedback-title")
-          PracticeRule()
-          Text(prompt?.word ?? "")
-            .font(.system(size: wordSize, design: .serif))
-            .minimumScaleFactor(0.4).lineLimit(1)
-            .accessibilityIdentifier("feedback-word")
-          wordChooser
-          Text(
-            "Whole-word recognition and a separate sound comparison. Neither is a pronunciation score or diagnosis, and accuracy hasn't been established for adults or children."
-          )
-          .font(.footnote)
-          .foregroundStyle(DirectPracticeStyle.muted)
-          .fixedSize(horizontal: false, vertical: true)
-          .accessibilityIdentifier("feedback-limits")
-          status
-          if session.sharedProcessingPaused && session.phase != .cleanupBlocked
-            && session.phase != .ended
-          {
-            sharedPause
+      VStack(spacing: 0) {
+        feedbackHeader
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            Text("Speech practice")
+              .font(.system(.largeTitle, design: .serif))
+              .accessibilityAddTraits(.isHeader)
+              .accessibilityIdentifier("feedback-title")
+            PracticeRule()
+            Text(prompt?.word ?? "")
+              .font(.system(size: wordSize, design: .serif))
+              .minimumScaleFactor(0.4).lineLimit(1)
+              .accessibilityIdentifier("feedback-word")
+            wordChooser
+            Text(
+              "Whole-word recognition and a separate sound comparison. Neither is a pronunciation score or diagnosis, and accuracy hasn't been established for adults or children."
+            )
+            .font(.footnote)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier("feedback-limits")
+            status
+            if session.sharedProcessingPaused && session.phase != .cleanupBlocked
+              && session.phase != .ended
+            {
+              sharedPause
+            }
+            actions
+            if !practiceClosing, case .feedback(let feedback) = session.phase {
+              resultDetails(feedback)
+            }
+            if !practiceClosing, let summary = session.summary {
+              observations(summary)
+            }
+            if session.example != nil || listeningCue != nil {
+              listening(session.example)
+            }
+            PracticeRule()
+            soundSection
+            PracticeRule()
+            setup
+            Text(
+              "This simulator build sends checks to one local service on this computer. Word checks and sound comparisons are separate requests, each sent only when you tap its Check button, and only for your latest try. Up to two of your tries stay temporarily on this device so you can listen back; another try replaces the earlier one first. They're removed when you retake, cancel a check, move on, change settings or leave. If a file on this device can't be removed, this screen says so and it may remain on this device. A check sends the clip to the service, which makes its own temporary copy; if that copy can't be confirmed removed, it may remain on this computer and both checks pause."
+            )
+            .font(.footnote)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier("feedback-note")
           }
           actions
           if !practiceClosing, case .feedback(let feedback) = session.phase {
