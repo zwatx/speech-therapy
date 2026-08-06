@@ -283,18 +283,18 @@
       let audioSha256: String
       let promptSha256: String
     }
-    private struct Timing: Decodable {
+    struct Timing: Decodable, Equatable, Sendable {
       let total: Double
       let inference: Double
     }
-    private struct Prediction: Decodable {
+    struct Prediction: Decodable, Equatable, Sendable {
       let id: String
       let wordIndex: Int
       let phoneIndex: Int
       let targetPhone: String
       let subjectiveCorpusRatingProbabilities: [Double]
     }
-    private struct Model: Decodable {
+    struct Model: Decodable, Equatable, Sendable {
       let id: String
       let manifestSha256: String
     }
