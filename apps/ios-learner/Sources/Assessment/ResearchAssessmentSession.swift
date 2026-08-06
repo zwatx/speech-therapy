@@ -419,7 +419,7 @@
           case .admissionProcessed:
             reason = .admissionProcessed
             terminalOutcome = .admissionProcessed
-          case .processedUnverified:
+          case .processedUnverified, .processedResearch:
             reason = .promptMatchUnverified
             terminalOutcome = .processedUnverified
           case .unavailable(let serviceReason):
