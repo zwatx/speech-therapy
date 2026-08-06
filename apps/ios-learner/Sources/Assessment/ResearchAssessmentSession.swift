@@ -452,7 +452,7 @@
                 detail:
                   "The recording passed the local speech and word admission checks, and the research pipeline ran. It produced no pronunciation finding. This does not indicate whether the word was said correctly or incorrectly. The recording was deleted."
               )
-            case .processedUnverified:
+            case .processedUnverified, .processedResearch:
               self.phase = .unavailable(
                 title: "No result to show",
                 detail:
