@@ -47,7 +47,7 @@ enum WhisperCoreMLWorker {
         func complete(_ status: LocalWordRecognitionStatus) -> WhisperWorkerCompletion {
             .init(status: stop.interruptedStatus ?? status, cleanupConfirmed: true, retainedHandle: nil)
         }
-        do {
+        return processingCompletion(stop: stop, evict: { slot?.evict() }) {
             try stop.check()
             guard let resources else { slot?.evict(); return complete(.unavailable) }
             let assets: WhisperResourceAdmission.Assets
