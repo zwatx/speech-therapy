@@ -152,9 +152,8 @@
           .frame(maxWidth: 560, alignment: .leading)
           .frame(maxWidth: .infinity)
         }
-        .padding(24)
-        .frame(maxWidth: 560, alignment: .leading)
-        .frame(maxWidth: .infinity)
+        // Give scrolling content a real boundary below the fixed Close header.
+        .clipped()
       }
       .background(DirectPracticeStyle.canvas.ignoresSafeArea())
       .foregroundStyle(DirectPracticeStyle.ink)
