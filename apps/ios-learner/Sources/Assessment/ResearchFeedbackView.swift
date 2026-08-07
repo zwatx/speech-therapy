@@ -230,6 +230,37 @@
       }
     }
 
+    private var feedbackHeader: some View {
+      VStack(spacing: 0) {
+        HStack {
+          Button("Close") { close() }
+            .font(.body)
+            .buttonStyle(.plain)
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
+            .accessibilityIdentifier("feedback-close")
+          Spacer()
+        }
+        .padding(.horizontal, 24)
+        if let closeNote {
+          Text(closeNote)
+            .font(.subheadline).fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 24).padding(.bottom, 8)
+            .accessibilityIdentifier("feedback-close-note")
+        }
+        if isGeneratedUITest {
+          Text("Generated · no mic or model")
+            .font(.footnote).fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 24).padding(.bottom, 8)
+            .accessibilityIdentifier("feedback-ui-test-banner")
+        }
+        PracticeRule()
+      }
+      .background(DirectPracticeStyle.canvas)
+    }
+
     private var prompt: ResearchFeedbackPrompt? { session.selectedPrompt }
 
     private var quotedWord: String { "“\(prompt?.word ?? "")”" }
