@@ -114,7 +114,9 @@ enum WhisperResourceAdmission {
             guard nodes <= 256 else { throw WhisperProviderError.unavailable }
             let info = try url.resourceValues(forKeys: [.isRegularFileKey, .isDirectoryKey, .isSymbolicLinkKey])
             guard info.isSymbolicLink != true else { throw WhisperProviderError.unavailable }
-            let relative = String(url.path.dropFirst(resources.rootURL.path.count + 1))
+            guard let relative = relativeResourcePath(url, under: resources.rootURL) else {
+                throw WhisperProviderError.unavailable
+            }
             if info.isRegularFile == true { observed.insert(relative) }
             else if info.isDirectory != true { throw WhisperProviderError.unavailable }
             guard observed.count <= 129 else { throw WhisperProviderError.unavailable }
