@@ -167,6 +167,17 @@ enum WhisperResourceAdmission {
     private static func validSHA(_ value: String) -> Bool {
         value.utf8.count == 64 && value.utf8.allSatisfy { (48...57).contains($0) || (97...102).contains($0) }
     }
+
+    /// File enumeration may return base-relative URLs or a different OS container alias.
+    /// Compare absolute canonical components before deriving a manifest-relative name.
+    static func relativeResourcePath(_ url: URL, under root: URL) -> String? {
+        guard url.isFileURL, root.isFileURL else { return nil }
+        let parent = root.absoluteURL.resolvingSymlinksInPath().standardizedFileURL.pathComponents
+        let child = url.absoluteURL.resolvingSymlinksInPath().standardizedFileURL.pathComponents
+        guard child.count > parent.count,
+              child.prefix(parent.count).elementsEqual(parent) else { return nil }
+        return child.dropFirst(parent.count).joined(separator: "/")
+    }
     private static func directory(_ url: URL) throws {
         let info = try url.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
         guard info.isDirectory == true, info.isSymbolicLink != true else { throw WhisperProviderError.unavailable }
