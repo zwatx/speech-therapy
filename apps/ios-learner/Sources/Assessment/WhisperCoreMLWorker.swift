@@ -219,13 +219,7 @@ enum WhisperCoreMLWorker {
                 let decoded = try decoder.prediction(from: decodeInput)
                 try stop.check()
                 guard let scores = decoded.featureValue(for: "next_token_logits")?.multiArrayValue else { throw WhisperProviderError.invalidTensor }
-                try Self.validate(scores, shape: [1, 51864], type: .float32)
-                var logits = [Float]()
-                logits.reserveCapacity(51864)
-                for index in 0..<51864 {
-                    if index % 1024 == 0 { try stop.check() }
-                    logits.append(scores[[0, NSNumber(value: index)]].floatValue)
-                }
+                let logits = try WhisperDecoderLogits.copy(scores, checkCancellation: stop.check)
                 generated.append(try WhisperCoreMLWorker.select(logits: logits, tokenizer: tokenizer,
                                                                generatedCount: step, stop: stop))
                 switch try tokenizer.decodeGenerated(generated, isCancelled: { stop.isStopped }) {
