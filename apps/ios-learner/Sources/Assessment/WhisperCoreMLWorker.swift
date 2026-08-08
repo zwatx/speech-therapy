@@ -101,6 +101,16 @@ enum WhisperCoreMLWorker {
             evict()
             return .init(status: stop.interruptedStatus ?? .unavailable,
                          cleanupConfirmed: false, retainedHandle: cleanup.handle)
+        } catch let token as WhisperTokenError {
+            evict()
+            // Undecodable output is an abstention; broken decoder invariants are not
+            // evidence about the recording. The actual stop reason overrides both.
+            let status: LocalWordRecognitionStatus = switch token {
+            case .malformedUTF8, .byteLimit: .uncertain
+            default: .unavailable
+            }
+            return .init(status: stop.interruptedStatus ?? status,
+                         cleanupConfirmed: true, retainedHandle: nil)
         } catch {
             slot?.evict() // Includes cancellation: no possibly failed runtime reused.
             return complete(.uncertain)
