@@ -88,6 +88,15 @@ enum WhisperCoreMLWorker {
             // Expected word first participates here, after EOS-completed independent
             // ASR. No invented timestamps or timed LocalWordFinalSegment objects.
             return completedRecognition(text: text, expectedWord: request.expectedWord, stop: stop)
+        }
+    }
+
+    /// Executes inline on the existing worker owner; never transfers runtime objects
+    /// or retries processing. A failed close keeps its exact handle for the provider.
+    static func processingCompletion(stop: WhisperOperationStop, evict: () -> Void,
+                                     processing: () throws -> WhisperWorkerCompletion) -> WhisperWorkerCompletion {
+        do {
+            return try processing()
         } catch let cleanup as WhisperHandleCleanupFailure {
             slot?.evict()
             return .init(status: stop.interruptedStatus ?? .unavailable,
