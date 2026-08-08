@@ -98,7 +98,7 @@ enum WhisperCoreMLWorker {
         do {
             return try processing()
         } catch let cleanup as WhisperHandleCleanupFailure {
-            slot?.evict()
+            evict()
             return .init(status: stop.interruptedStatus ?? .unavailable,
                          cleanupConfirmed: false, retainedHandle: cleanup.handle)
         } catch {
