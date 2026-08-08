@@ -112,8 +112,9 @@ enum WhisperCoreMLWorker {
             return .init(status: stop.interruptedStatus ?? status,
                          cleanupConfirmed: true, retainedHandle: nil)
         } catch {
-            slot?.evict() // Includes cancellation: no possibly failed runtime reused.
-            return complete(.uncertain)
+            evict() // Includes cancellation: no possibly failed runtime reused.
+            return .init(status: stop.interruptedStatus ?? .unavailable,
+                         cleanupConfirmed: true, retainedHandle: nil)
         } // No arbitrary error/log content or retries.
     }
 
