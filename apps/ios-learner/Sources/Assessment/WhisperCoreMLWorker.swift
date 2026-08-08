@@ -202,15 +202,7 @@ enum WhisperCoreMLWorker {
             #endif
             try stop.check() // prediction is synchronous; a stop never interrupts it.
             guard let states = encoded.featureValue(for: "encoder_hidden_states")?.multiArrayValue else { throw WhisperProviderError.invalidTensor }
-            try Self.validate(states, shape: [1, 1500, 512], type: .float32)
-            for frame in 0..<1500 {
-                try stop.check()
-                for channel in 0..<512 {
-                    guard states[[0, NSNumber(value: frame), NSNumber(value: channel)]].floatValue.isFinite else {
-                        throw WhisperProviderError.nonfiniteTensor
-                    }
-                }
-            }
+            try WhisperEncoderStateValidation.validate(states, checkCancellation: stop.check)
             var prefix = try tokenizer.initialPrefix(isCancelled: { stop.isStopped })
             var generated = [Int32]()
             for step in 0..<WhisperByteDecoder.maximumGeneratedDecisions {
