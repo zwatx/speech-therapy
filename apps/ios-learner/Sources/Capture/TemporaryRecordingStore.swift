@@ -10,7 +10,12 @@ struct TemporaryRecordingStore {
     directory: URL = FileManager.default.temporaryDirectory,
     fileManager: FileManager = .default
   ) {
-    self.directory = directory
+    // iOS container paths may arrive through system symlinks or a base URL. Resolve
+    // the existing directory once, before allocating a nonexistent recording. Otherwise
+    // standardizing the same file after creation can change its ownership key.
+    self.directory = URL(
+      fileURLWithPath: directory.resolvingSymlinksInPath().standardizedFileURL.path,
+      isDirectory: true)
     self.fileManager = fileManager
   }
 
