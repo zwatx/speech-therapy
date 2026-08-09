@@ -237,10 +237,6 @@ enum WhisperCoreMLWorker {
             guard (!sole || values.count == 1), let constraint = values[name]?.multiArrayConstraint,
                   constraint.dataType == type, constraint.shape.map(\.intValue) == shape else { throw WhisperProviderError.invalidTensor }
         }
-        private static func validate(_ array: MLMultiArray, shape: [Int], type: MLMultiArrayDataType) throws {
-            guard array.dataType == type, array.shape.map(\.intValue) == shape,
-                  array.count == shape.reduce(1, *) else { throw WhisperProviderError.invalidTensor }
-        }
         private static func floatInput(_ values: [Float], shape: [Int], stop: WhisperOperationStop) throws -> MLMultiArray {
             guard values.count == shape.reduce(1, *) else { throw WhisperProviderError.invalidTensor }
             let array = try MLMultiArray(shape: shape.map(NSNumber.init(value:)), dataType: .float32)
