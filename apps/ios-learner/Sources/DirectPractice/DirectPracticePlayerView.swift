@@ -5,7 +5,10 @@ import SwiftUI
 struct DirectPracticePlayerView: View {
   @StateObject private var session: DirectPracticeSession
   private let guided: DirectPracticeGuidedPresentation?
+  private let promptAnchor = "cadence.practice.prompt-anchor"
+  private let recordingAnchor = "cadence.practice.recording-anchor"
   @State private var wordCheckDetailsExpanded = false
+  @State private var practiceReminderExpanded = false
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
