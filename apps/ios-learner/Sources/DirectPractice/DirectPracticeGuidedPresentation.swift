@@ -8,6 +8,7 @@ struct DirectPracticeGuidedPresentation {
   let statusNote: String?
   let firstObservationNote: String?
   let firstCheckStatusNote: String?
+  let practiceRecordingRequirement: DirectPracticeRecordingAdvice?
 
   let showsRecordAndCheck: Bool
   let canRecordAndCheck: Bool
