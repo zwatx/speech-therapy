@@ -253,18 +253,18 @@ struct DirectPracticePlayerView: View {
     }
   }
 
-  private var prompt: some View {
+  private func prompt(compact: Bool) -> some View {
     VStack(spacing: 14) {
       if !dynamicTypeSize.isAccessibilitySize {
         if let picture = Self.pictures[session.currentPrompt.word] {
           Text(picture)
-            .font(.system(size: 80))
+            .font(.system(size: compact ? 56 : 80))
             .padding(.bottom, 4)
             .accessibilityHidden(true)
         } else if session.currentPrompt.systemImage != "text.bubble.fill" {
           Image(systemName: session.currentPrompt.systemImage)
-            .font(.system(size: 64, weight: .light))
-            .frame(height: 86)
+            .font(.system(size: compact ? 44 : 64, weight: .light))
+            .frame(height: compact ? 60 : 86)
             .accessibilityHidden(true)
         }
       }
