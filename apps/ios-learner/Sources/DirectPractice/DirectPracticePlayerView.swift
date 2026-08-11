@@ -34,29 +34,55 @@ struct DirectPracticePlayerView: View {
 
   var body: some View {
     GeometryReader { geometry in
-      ScrollView {
-        VStack(alignment: .leading, spacing: 0) {
-          header
-          if case .review = session.phase {
-          } else if wordCheckBlocksPlayback {
-            wordRecognition.padding(.top, 24)
-          }
-          if session.phase == .completed {
-            completion
-          } else {
-            prompt
-              .padding(.vertical, geometry.size.height < 700 ? 24 : 40)
-            Spacer(minLength: 24)
-            controls
-            PracticeMirrorPanel(
-              mirror: session.mirror, eligibility: session.mirrorEligibility,
-              compact: geometry.size.height < 700,
-              practicePaused: session.closeRequested,
-              show: session.showMirror, hide: session.hideMirror,
-              cancel: session.cancelMirrorPermission,
-              retry: { Task { await session.retryMirrorStop() } }
-            )
-            .padding(.top, 28)
+      ScrollViewReader { proxy in
+        ScrollView {
+          VStack(alignment: .leading, spacing: 0) {
+            header
+            if case .review = session.phase {
+            } else if wordCheckBlocksPlayback {
+              wordRecognition.padding(.top, 24)
+            }
+            if session.phase == .completed {
+              completion
+            } else {
+              prompt(compact: geometry.size.height < 700)
+                .padding(.vertical, geometry.size.height < 700 ? 24 : 40)
+                .id(promptAnchor)
+              Spacer(minLength: 24)
+              controls
+              if showsOrdinarySkip {
+                Button("Skip word") { Task { await session.skipWord() } }
+                  .buttonStyle(PracticeTextButtonStyle())
+                  .accessibilityIdentifier("cadence.skip-word")
+                  .accessibilityHint("Leaves this word without recording it.")
+                  .disabled(!session.canSkipWord)
+                  .padding(.top, 12)
+              }
+              if let guide = DirectPracticeSoundGuide.content(
+                sound: session.sound, prompt: session.currentPrompt)
+              {
+                DirectPracticeSoundGuideView(
+                  guide: guide,
+                  showsDetail: instruction == nil
+                    && !(practiceReminderExpanded && reminderInstruction != nil))
+                  // Reset only this optional explanation when the word or visit changes.
+                  // The session, scroll view and media owners keep their identities.
+                  .id([
+                    session.sound.id, session.sound.position.rawValue, session.currentPrompt.id,
+                    session.guidedMediaVisit?.visitID.uuidString ?? "ordinary",
+                  ])
+                  .padding(.top, 28)
+              }
+              PracticeMirrorPanel(
+                mirror: session.mirror, eligibility: session.mirrorEligibility,
+                compact: geometry.size.height < 700,
+                practicePaused: session.closeRequested,
+                show: session.showMirror, hide: session.hideMirror,
+                cancel: session.cancelMirrorPermission,
+                retry: { Task { await session.retryMirrorStop() } }
+              )
+              .padding(.top, 28)
+            }
           }
         }
         .frame(minHeight: max(0, geometry.size.height - 48), alignment: .top)
