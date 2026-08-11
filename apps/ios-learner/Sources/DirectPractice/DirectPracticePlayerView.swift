@@ -172,12 +172,14 @@ struct DirectPracticePlayerView: View {
         AccessibilityNotification.Announcement(event.message).post()
       }
     }
-    .onChange(of: session.phase) { _, phase in
+    .onChange(of: session.phase) { oldPhase, phase in
       if guided == nil, phase == .ended { dismiss() }
       let announcement: String? =
         switch phase {
         case .recording: "Recording."
-        case .review: "Recording ready to play back."
+        case .review(let summary, let assessment):
+          wordCheckBlocksPlayback ? nil : DirectPracticeRecordingAdvice.reviewAnnouncement(
+            summary: summary, assessment: assessment, isNewRecording: oldPhase == .recording)
         case .permissionDenied: "Microphone access is off."
         case .failed(let message): message
         default: nil
