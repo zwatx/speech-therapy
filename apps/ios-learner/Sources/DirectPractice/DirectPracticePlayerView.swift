@@ -104,12 +104,7 @@ struct DirectPracticePlayerView: View {
           // at larger text sizes. Reveal Stop only when a new capture actually starts.
           if phase == .recording { proxy.scrollTo(recordingAnchor, anchor: .center) }
         }
-        .frame(minHeight: max(0, geometry.size.height - 48), alignment: .top)
-        .padding(24)
-        .frame(maxWidth: 560)
-        .frame(maxWidth: .infinity)
       }
-      .scrollBounceBehavior(.basedOnSize)
     }
     .background(DirectPracticeStyle.canvas.ignoresSafeArea())
     .foregroundStyle(DirectPracticeStyle.ink)
