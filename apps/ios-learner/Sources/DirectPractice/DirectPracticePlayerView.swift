@@ -239,7 +239,7 @@ struct DirectPracticePlayerView: View {
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityLabel(
           session.phase == .completed
-            ? "All \(session.totalWords) \(session.totalWords == 1 ? "word" : "words") practiced"
+            ? ordinaryCompletionHeader
             : "Word \(session.currentIndex + 1) of \(session.totalWords)")
       }
       if let note = session.closeNote {
