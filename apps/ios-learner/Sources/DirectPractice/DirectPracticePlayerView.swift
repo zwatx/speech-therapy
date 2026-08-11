@@ -84,6 +84,25 @@ struct DirectPracticePlayerView: View {
               .padding(.top, 28)
             }
           }
+          .frame(minHeight: max(0, geometry.size.height - 48), alignment: .top)
+          .padding(24)
+          .frame(maxWidth: 560)
+          .frame(maxWidth: .infinity)
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .clipped()
+        .onChange(of: practiceVisit, initial: true) { _, visit in
+          practiceReminderExpanded = false
+          if visit != nil { proxy.scrollTo(promptAnchor, anchor: .top) }
+        }
+        .onChange(of: session.latestTry?.id) { _, _ in
+          practiceReminderExpanded = false
+        }
+        .onChange(of: session.phase) { _, phase in
+          if case .review = phase {} else { practiceReminderExpanded = false }
+          // Ready/review content can collapse above the active control, especially
+          // at larger text sizes. Reveal Stop only when a new capture actually starts.
+          if phase == .recording { proxy.scrollTo(recordingAnchor, anchor: .center) }
         }
         .frame(minHeight: max(0, geometry.size.height - 48), alignment: .top)
         .padding(24)
