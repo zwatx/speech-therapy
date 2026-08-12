@@ -465,6 +465,19 @@ struct DirectPracticePlayerView: View {
       .accessibilityIdentifier("cadence.recording-startup-unavailable")
     case .ready:
       VStack(spacing: 20) {
+        if let instruction {
+          VStack(alignment: .leading, spacing: 8) {
+            Text("Try this")
+              .font(.headline)
+              .accessibilityAddTraits(.isHeader)
+              .accessibilityIdentifier("cadence.practice-instruction.title")
+            Text(instruction)
+              .font(.body)
+              .fixedSize(horizontal: false, vertical: true)
+              .accessibilityIdentifier("cadence.practice-instruction.detail")
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
+        }
         spokenWordStatus(recordingHint: true)
         if session.canRetrySpokenWordStop { spokenWordRetry }
         if let guided, guided.showsRecordAndCheck {
