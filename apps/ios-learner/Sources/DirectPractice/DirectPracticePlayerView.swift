@@ -343,8 +343,8 @@ struct DirectPracticePlayerView: View {
 
   private var recordingHint: String {
     guided?.showsRecordAndCheck == true
-      ? "Say the word. When recording stops, this device checks for it."
-      : "Tap Record and say the word."
+      ? "Speak when recording starts. It stops after 4 seconds, then this device checks for the word."
+      : "Speak when recording starts. It stops after 4 seconds."
   }
 
   private var spokenWordRetry: some View {
