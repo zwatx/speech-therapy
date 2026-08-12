@@ -383,6 +383,69 @@ struct DirectPracticePlayerView: View {
     .fixedSize(horizontal: false, vertical: true)
   }
 
+  private var showsOrdinarySkip: Bool {
+    guard guided == nil, session.tries.isEmpty else { return false }
+    switch session.phase {
+    case .ready, .permissionDenied, .failed: return true
+    default: return false
+    }
+  }
+
+  private var practiceVisit: LocalGuidedPracticeVisit? {
+    guard guided != nil, case .practice(let visit)? = session.guidedMediaVisit,
+      visit.entryID == session.currentPrompt.id
+    else { return nil }
+    return visit
+  }
+
+  private var instruction: String? {
+    guard guided != nil, session.phase == .ready,
+      !(session.recordingStartupUnavailable && session.tries.isEmpty)
+    else { return nil }
+    return selectedPracticeInstruction
+  }
+
+  private var reminderInstruction: String? {
+    guard case .review = session.phase, session.latestTry != nil else { return nil }
+    return selectedPracticeInstruction
+  }
+
+  private var selectedPracticeInstruction: String? {
+    guard guided != nil else { return nil }
+    return DirectPracticeInstruction.text(
+      sound: session.sound, prompt: session.currentPrompt, visit: session.guidedMediaVisit)
+  }
+
+  private func practiceReminder(_ instruction: String) -> some View {
+    VStack(alignment: .leading, spacing: 0) {
+      Button {
+        practiceReminderExpanded.toggle()
+      } label: {
+        HStack(spacing: 12) {
+          Text("Practice reminder")
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+          Spacer(minLength: 0)
+          Image(systemName: practiceReminderExpanded ? "chevron.down" : "chevron.right")
+            .font(.subheadline.weight(.semibold))
+            .accessibilityHidden(true)
+        }
+        .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+        .contentShape(Rectangle())
+      }
+      .buttonStyle(.plain)
+      .accessibilityValue(practiceReminderExpanded ? "Expanded" : "Collapsed")
+      .accessibilityIdentifier("cadence.practice-reminder.toggle")
+      if practiceReminderExpanded {
+        Text(instruction)
+          .font(.body)
+          .fixedSize(horizontal: false, vertical: true)
+          .padding(.top, 12)
+          .accessibilityIdentifier("cadence.practice-reminder.detail")
+      }
+    }
+  }
+
   @ViewBuilder
   private var controls: some View {
     if case .review = session.phase {
