@@ -529,6 +529,11 @@ struct DirectPracticePlayerView: View {
     case .review(let summary, let assessment):
       VStack(alignment: .leading, spacing: 18) {
         PracticeRule()
+        // Keep the learner's open instruction ahead of feedback that can grow
+        // when a check finishes, so new results don't displace their reading.
+        if let reminderInstruction {
+          practiceReminder(reminderInstruction)
+        }
         if wordCheckBlocksPlayback || guided?.showsWordCheck != false {
           wordRecognition
           PracticeRule()
