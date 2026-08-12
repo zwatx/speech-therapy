@@ -538,6 +538,26 @@ struct DirectPracticePlayerView: View {
           wordRecognition
           PracticeRule()
         }
+        // Names the intended target only, while the learner's own replay is usable.
+        // Keep it visible during playback; actionsDisabled also covers active listening.
+        if session.latestTry != nil, scenePhase == .active, !wordCheckBlocksPlayback,
+          !session.isTransitioning, !session.closeRequested, !session.cleanupBlocked,
+          !session.hasPlaybackCleanupIssue, !session.isRetryingPlaybackCleanup,
+          !session.hasPendingFileCleanup, !session.captureCleanupState.hasHardwareIssue,
+          !session.captureCleanupState.hasFileIssue, session.spokenWordState == .idle,
+          !isStopping(session.playbackState)
+        {
+          let focus = DirectPracticeListeningFocus.text(
+            sound: session.sound, word: session.currentPrompt.word,
+            twoTries: session.earlierTry != nil)
+          // Word joiners keep "/b/" on one line; VoiceOver reads the unmodified text.
+          let symbol = session.sound.symbol
+          Text(focus.replacingOccurrences(of: "/\(symbol)/", with: "/\u{2060}\(symbol)\u{2060}/"))
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityLabel(focus)
+            .accessibilityIdentifier("cadence.listening-focus")
+        }
         if !session.hasPlaybackCleanupIssue && !session.isRetryingPlaybackCleanup {
           if let earlier = session.earlierTry, let latest = session.latestTry {
             replayRow(earlier, name: "earlier", identifier: "cadence.replay-earlier")
