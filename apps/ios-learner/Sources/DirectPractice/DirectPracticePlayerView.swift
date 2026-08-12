@@ -512,7 +512,7 @@ struct DirectPracticePlayerView: View {
         .fixedSize(horizontal: false, vertical: true)
     case .recording:
       VStack(spacing: 20) {
-        Text("Recording. Say the word, then tap Stop.")
+        Text("Recording. Say the word, then tap Stop. It stops automatically after 4 seconds.")
           .foregroundStyle(DirectPracticeStyle.muted)
           .multilineTextAlignment(.center)
           .fixedSize(horizontal: false, vertical: true)
@@ -520,6 +520,7 @@ struct DirectPracticePlayerView: View {
           session.stopRecording()
         }
         .accessibilityIdentifier("cadence.stop")
+        .id(recordingAnchor)
         TimelineView(.periodic(from: .now, by: 0.1)) { _ in
           RecordingInputLevelView(
             power: scenePhase == .active ? session.recordingInputPower : nil)
