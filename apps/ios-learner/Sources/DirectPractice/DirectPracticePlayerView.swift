@@ -799,6 +799,8 @@ struct DirectPracticePlayerView: View {
       case .idle, .finished:
         if guided?.showsWordCheck != false {
           if case .finished(let status) = session.wordCheckState,
+            LocalWordRecognitionPresentation.retainedObservation(
+              status, word: session.currentPrompt.word) == nil,
             let observation = LocalWordRecognitionPresentation.observation(
               status, word: session.currentPrompt.word,
               checkedTryID: session.checkedTryID, latestTryID: session.latestTry?.id)
