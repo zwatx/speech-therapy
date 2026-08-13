@@ -589,7 +589,20 @@ struct DirectPracticePlayerView: View {
         }
 
         // It never stops playback for the learner; it waits until playback is idle.
-        recordControl(caption: "Record another try") { Task { await session.recordAnotherTry() } }
+        if let guided, guided.showsRecordAndCheck {
+          recordControl(caption: "Record and check another try") {
+            Task { await guided.recordAndCheck() }
+          }
+          .accessibilityIdentifier("cadence.record-and-check-another")
+          .accessibilityHint("Records a fresh try, then checks for the word on this device.")
+          .disabled(!guided.canRecordAndCheck)
+          .padding(.top, 6)
+          Button {
+            Task { await session.recordAnotherTry() }
+          } label: {
+            Label("Record another try", systemImage: "mic")
+          }
+          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
           .accessibilityIdentifier("cadence.record-another")
           .disabled(!session.canRecordAnotherTry)
           .padding(.top, 6)
