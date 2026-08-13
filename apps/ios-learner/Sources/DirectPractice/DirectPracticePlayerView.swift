@@ -575,6 +575,19 @@ struct DirectPracticePlayerView: View {
         }
         PracticeRule()
 
+        if let requirement = guided?.practiceRecordingRequirement {
+          VStack(alignment: .leading, spacing: 8) {
+            Text(requirement.title).font(.body.weight(.medium))
+              .accessibilityIdentifier("cadence.guided.recording-requirement-title")
+            Text(requirement.detail).font(.subheadline)
+              .foregroundStyle(DirectPracticeStyle.muted)
+              .accessibilityIdentifier("cadence.guided.recording-requirement-detail")
+          }
+          .fixedSize(horizontal: false, vertical: true)
+          .accessibilityElement(children: .combine)
+          .accessibilityIdentifier("cadence.guided.recording-requirement")
+        }
+
         // It never stops playback for the learner; it waits until playback is idle.
         recordControl(caption: "Record another try") { Task { await session.recordAnotherTry() } }
           .accessibilityIdentifier("cadence.record-another")
