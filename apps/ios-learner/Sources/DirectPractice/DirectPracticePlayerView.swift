@@ -654,22 +654,6 @@ struct DirectPracticePlayerView: View {
             .disabled(session.actionsDisabled)
           }
         }
-        // Names the intended target only, while the learner's own replay is usable.
-        // Static text: no announcement of its own, so playback changes stay quiet.
-        if session.latestTry != nil, !session.cleanupBlocked, !session.hasPlaybackCleanupIssue,
-          !session.isRetryingPlaybackCleanup, !isStopping(session.playbackState)
-        {
-          let focus = DirectPracticeListeningFocus.text(
-            sound: session.sound, word: session.currentPrompt.word,
-            twoTries: session.earlierTry != nil)
-          // Word joiners keep "/b/" on one line; VoiceOver reads the unmodified text.
-          let symbol = session.sound.symbol
-          Text(focus.replacingOccurrences(of: "/\(symbol)/", with: "/\u{2060}\(symbol)\u{2060}/"))
-            .font(.body)
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityLabel(focus)
-            .accessibilityIdentifier("cadence.listening-focus")
-        }
         // Advice describes the latest successful take only; no comparison is made.
         if case .retry(let coaching) = assessment,
           !(session.latestTry.map({
