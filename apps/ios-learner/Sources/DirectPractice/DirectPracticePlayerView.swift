@@ -605,7 +605,12 @@ struct DirectPracticePlayerView: View {
           .buttonStyle(DirectPracticeButtonStyle(secondary: true))
           .accessibilityIdentifier("cadence.record-another")
           .disabled(!session.canRecordAnotherTry)
-          .padding(.top, 6)
+        } else {
+          recordControl(caption: "Record another try") { Task { await session.recordAnotherTry() } }
+            .accessibilityIdentifier("cadence.record-another")
+            .disabled(!session.canRecordAnotherTry)
+            .padding(.top, 6)
+        }
         if session.earlierTry != nil {
           Text("Replaces the earlier try.")
             .font(.footnote)
