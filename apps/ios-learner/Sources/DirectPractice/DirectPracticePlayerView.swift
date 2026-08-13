@@ -655,13 +655,13 @@ struct DirectPracticePlayerView: View {
           }
         }
         // Advice describes the latest successful take only; no comparison is made.
-        if case .retry(let coaching) = assessment,
+        if guided?.practiceRecordingRequirement == nil, case .retry(let coaching) = assessment,
           !(session.latestTry.map({
             DirectPracticeRecordingAdvice.suppressesQuietTip(
               summary: $0.summary, assessment: $0.assessment)
           }) ?? false)
         {
-          Text("Recording tip: \(coaching.detail)")
+          Text("Recording tip for next time: \(coaching.detail)")
             .font(.subheadline)
             .foregroundStyle(DirectPracticeStyle.muted)
             .fixedSize(horizontal: false, vertical: true)
