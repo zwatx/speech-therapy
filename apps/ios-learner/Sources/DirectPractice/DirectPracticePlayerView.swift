@@ -859,6 +859,14 @@ struct DirectPracticePlayerView: View {
     .accessibilityElement(children: .contain)
   }
 
+  private var wordCheckActionLabel: String {
+    LocalWordRecognitionPresentation.checkActionLabel(
+      customLabel: guided?.checkLabel, state: session.wordCheckState,
+      checkedTryID: session.checkedTryID, latestTryID: session.latestTry?.id,
+      hasEarlierTry: session.earlierTry != nil,
+      canCheck: session.canCheckWordsInLatestTry && guided?.canCheckWords != false)
+  }
+
   private var isLastWord: Bool { session.currentIndex + 1 == session.totalWords }
 
   private func isStopping(_ state: PracticePlaybackRuntimeState) -> Bool {
