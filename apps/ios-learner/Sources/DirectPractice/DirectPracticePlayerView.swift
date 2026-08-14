@@ -942,8 +942,6 @@ struct DirectPracticePlayerView: View {
         summary: take.summary, assessment: take.assessment)
       {
         VStack(alignment: .leading, spacing: 6) {
-          Text(name == "earlier" ? "Earlier try" : name == "latest" ? "Latest try" : "This try")
-            .font(.subheadline)
           Text(advice.title).font(.subheadline)
           Text(advice.detail).font(.subheadline).foregroundStyle(DirectPracticeStyle.muted)
         }
