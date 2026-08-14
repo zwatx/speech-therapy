@@ -809,14 +809,6 @@ struct DirectPracticePlayerView: View {
               .font(.body)
               .fixedSize(horizontal: false, vertical: true)
               .accessibilityIdentifier("cadence.word-check-result")
-            if guided == nil,
-              let guess = LocalWordRecognitionPresentation.wordGuess(session.currentWordGuess)
-            {
-              Text(guess)
-                .font(.body)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityIdentifier("cadence.word-check-guess")
-            }
           }
           Button(
             guided?.checkLabel
