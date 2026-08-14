@@ -1078,6 +1078,24 @@ struct DirectPracticePlayerView: View {
     }
   }
 
+  private var ordinaryCompletionHeader: String {
+    if session.skippedWords == 0 {
+      return "All \(session.totalWords) \(session.totalWords == 1 ? "word" : "words") practiced"
+    }
+    return "Round finished. \(session.completedWords) practiced, \(session.skippedWords) skipped."
+  }
+
+  private var ordinaryCompletionMessage: String {
+    if session.completedWords == 0 {
+      return "You skipped all \(session.skippedWords) \(session.skippedWords == 1 ? "word" : "words"). Nothing was added to recent practice."
+    }
+    let practiced = "You practiced \(session.completedWords) \(session.completedWords == 1 ? "word" : "words")."
+    if session.skippedWords > 0 {
+      return practiced + " Skipped \(session.skippedWords) \(session.skippedWords == 1 ? "word" : "words"). Come back whenever you’re ready."
+    }
+    return practiced + " Come back whenever you’re ready."
+  }
+
   private var ordinaryCompletion: some View {
     VStack(alignment: .leading, spacing: 28) {
       if case .stopping = session.mirror.state {
