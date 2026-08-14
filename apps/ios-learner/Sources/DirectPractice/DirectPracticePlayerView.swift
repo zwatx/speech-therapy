@@ -893,6 +893,9 @@ struct DirectPracticePlayerView: View {
       label = session.playbackControlLabel
     }
     return VStack(alignment: .leading, spacing: 10) {
+      Text(name == "earlier" ? "Earlier try" : name == "latest" ? "Latest try" : "This try")
+        .font(.subheadline.weight(.medium))
+        .accessibilityAddTraits(.isHeader)
       replayButton(
         label: label, duration: take.summary.duration, active: active || name == nil,
         identifier: identifier
