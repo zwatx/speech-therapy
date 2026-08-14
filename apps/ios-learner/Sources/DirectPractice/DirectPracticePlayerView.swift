@@ -905,6 +905,39 @@ struct DirectPracticePlayerView: View {
       .disabled(
         (name != nil && isStopping(session.playbackState))
           || (session.isTransitioning && session.playbackState == .idle))
+      if !wordCheckBlocksPlayback, !session.isTransitioning, !session.cleanupBlocked {
+        if let status = session.wordObservation(for: take.id),
+          let observation = LocalWordRecognitionPresentation.retainedObservation(
+            status, word: session.currentPrompt.word)
+        {
+          Text(observation)
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(
+              name == "earlier" ? "cadence.word-check-earlier-result" : "cadence.word-check-result")
+          if case .finished(let currentStatus) = session.wordCheckState,
+            currentStatus == status,
+            let decision = LocalWordRecognitionPresentation.practiceDecision(
+              status, observedTryID: take.id, checkedTryID: session.checkedTryID,
+              latestTryID: session.latestTry?.id, isSelectedPractice: practiceVisit != nil,
+              canContinue: guided?.canContinue == true && !guidedNavigationBlocked,
+              canRecordAnotherTry: session.canRecordAnotherTry)
+          {
+            Text(decision)
+              .font(.subheadline)
+              .foregroundStyle(DirectPracticeStyle.muted)
+              .fixedSize(horizontal: false, vertical: true)
+              .accessibilityIdentifier("cadence.practice.word-check-decision")
+          }
+        } else {
+          Text(LocalWordRecognitionPresentation.noRetainedObservation)
+            .font(.subheadline)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier(
+              name == "earlier" ? "cadence.word-check-earlier-empty" : "cadence.word-check-empty")
+        }
+      }
       if let advice = DirectPracticeRecordingAdvice.observation(
         summary: take.summary, assessment: take.assessment)
       {
