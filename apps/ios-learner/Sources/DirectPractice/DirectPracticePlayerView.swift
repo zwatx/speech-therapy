@@ -810,11 +810,15 @@ struct DirectPracticePlayerView: View {
               .fixedSize(horizontal: false, vertical: true)
               .accessibilityIdentifier("cadence.word-check-result")
           }
-          Button(
-            guided?.checkLabel
-              ?? (session.earlierTry == nil
-                ? "Check words in this try" : "Check words in latest try")
-          ) {
+          if let guess = LocalWordRecognitionPresentation.wordGuess(
+            session.currentWordGuess, hasEarlierTry: session.earlierTry != nil)
+          {
+            Text(guess)
+              .font(.body)
+              .fixedSize(horizontal: false, vertical: true)
+              .accessibilityIdentifier("cadence.word-check-guess")
+          }
+          Button(wordCheckActionLabel) {
             Task {
               if let guided { await guided.check() } else { await session.startWordCheck() }
             }
