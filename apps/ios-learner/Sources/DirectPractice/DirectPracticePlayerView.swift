@@ -1103,13 +1103,15 @@ struct DirectPracticePlayerView: View {
       } else if case .stopFailed = session.mirror.state {
         completionMirrorRecovery
       }
-      Image(systemName: "checkmark")
-        .font(.title2.weight(.semibold))
-        .foregroundStyle(DirectPracticeStyle.onAccent)
-        .frame(width: 56, height: 56)
-        .background(DirectPracticeStyle.accent, in: Circle())
-        .accessibilityHidden(true)
-      Text("Practice complete.")
+      if session.completedWords > 0 {
+        Image(systemName: "checkmark")
+          .font(.title2.weight(.semibold))
+          .foregroundStyle(DirectPracticeStyle.onAccent)
+          .frame(width: 56, height: 56)
+          .background(DirectPracticeStyle.accent, in: Circle())
+          .accessibilityHidden(true)
+      }
+      Text(session.skippedWords == 0 ? "Practice complete." : "Round finished.")
         .font(.system(.largeTitle, design: .serif))
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityAddTraits(.isHeader)
