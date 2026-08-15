@@ -29,7 +29,7 @@ struct DirectPracticeRecordingAdvice: Equatable, Sendable {
     if signal.isAllZero {
       return Self(
         title: "No sound was saved in this try",
-        detail: "Make another try with the microphone uncovered.")
+        detail: "For future recordings, keep the microphone uncovered.")
     }
     if signal.railSampleCount > 0 {
       return Self(
