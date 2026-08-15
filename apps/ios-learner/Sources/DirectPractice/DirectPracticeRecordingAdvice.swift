@@ -3,6 +3,25 @@ struct DirectPracticeRecordingAdvice: Equatable, Sendable {
   let title: String
   let detail: String
 
+  /// Explains the existing capture gate for finishing guided practice, independently
+  /// of an optional word match. The caller supplies the exact latest take's assessment.
+  static func practiceRequirement(
+    summary: CaptureSummary, assessment: CaptureAssessment
+  ) -> Self? {
+    let title = "Record another try to finish this word"
+    guard summary.duration.isFinite, summary.averagePower.isFinite else {
+      return Self(
+        title: title,
+        detail: "This recording’s length or volume measurement is unavailable. You can also skip this word.")
+    }
+    guard case .retry(let coaching) = assessment else { return nil }
+    return Self(
+      title: title,
+      detail: suppressesQuietTip(summary: summary, assessment: assessment)
+        ? "Keep the microphone uncovered, then record another try. You can also skip this word."
+        : "\(coaching.detail) You can also skip this word.")
+  }
+
   static func observation(
     summary: CaptureSummary, assessment: CaptureAssessment
   ) -> Self? {
