@@ -35,8 +35,8 @@ struct DirectPracticeRecordingAdvice: Equatable, Sendable {
       return Self(
         title: "Recording reached its volume limit",
         detail: assessment == .acceptable
-          ? "Try recording with the phone a little farther away, using your usual voice."
-          : "Make another recording using your usual voice.")
+          ? "For future recordings, try holding the phone a little farther away and use your usual voice."
+          : "For future recordings, use your usual voice.")
     }
     return nil
   }
