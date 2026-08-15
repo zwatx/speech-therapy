@@ -1140,12 +1140,10 @@ struct DirectPracticePlayerView: View {
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("cadence.history-saved")
         }
-      } else if let saved = session.historySavedNote {
-        Text(saved)
-          .font(.subheadline)
-          .foregroundStyle(DirectPracticeStyle.muted)
-          .fixedSize(horizontal: false, vertical: true)
-          .accessibilityIdentifier("cadence.history-saved")
+      }
+      if session.skippedWords > 0 {
+        Text("Words in this round")
+          .font(.headline)
       }
       Text(session.sound.prompts.map(\.word).joined(separator: " · "))
         .font(.system(.title2, design: .serif))
