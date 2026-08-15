@@ -1115,24 +1115,30 @@ struct DirectPracticePlayerView: View {
         .font(.system(.largeTitle, design: .serif))
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityAddTraits(.isHeader)
-      Text(
-        "You practiced \(session.totalWords) \(session.totalWords == 1 ? "word" : "words"). Come back whenever you’re ready."
-      )
-      .font(.body)
-      .foregroundStyle(DirectPracticeStyle.muted)
-      .fixedSize(horizontal: false, vertical: true)
-      .accessibilityIdentifier("cadence.complete")
-      if let historyError = session.historyError {
-        Text(historyError)
-          .font(.subheadline)
-          .foregroundStyle(DirectPracticeStyle.muted)
-          .fixedSize(horizontal: false, vertical: true)
-          .accessibilityIdentifier("cadence.history-error")
-        // Metadata-only: retries the same frozen completion, never audio or counts.
-        if session.canRetryParticipationSave {
-          Button("Try saving again") { session.retryParticipationSave() }
-            .buttonStyle(DirectPracticeButtonStyle(secondary: true))
-            .accessibilityIdentifier("cadence.history-retry")
+      Text(ordinaryCompletionMessage)
+        .font(.body)
+        .foregroundStyle(DirectPracticeStyle.muted)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityIdentifier("cadence.complete")
+      if session.completedWords > 0 {
+        if let historyError = session.historyError {
+          Text(historyError)
+            .font(.subheadline)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier("cadence.history-error")
+          // Metadata-only: retries the same frozen completion, never audio or counts.
+          if session.canRetryParticipationSave {
+            Button("Try saving again") { session.retryParticipationSave() }
+              .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+              .accessibilityIdentifier("cadence.history-retry")
+          }
+        } else if let saved = session.historySavedNote {
+          Text(saved)
+            .font(.subheadline)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityIdentifier("cadence.history-saved")
         }
       } else if let saved = session.historySavedNote {
         Text(saved)
