@@ -41,6 +41,17 @@ struct DirectPracticeRecordingAdvice: Equatable, Sendable {
     return nil
   }
 
+  /// Uses the review phase's own summary; returning to a kept take adds no new advice.
+  static func reviewAnnouncement(
+    summary: CaptureSummary, assessment: CaptureAssessment, isNewRecording: Bool
+  ) -> String {
+    let ready = "Recording ready to play back."
+    guard isNewRecording, let advice = observation(summary: summary, assessment: assessment) else {
+      return ready
+    }
+    return "\(ready) \(advice.title). \(advice.detail)"
+  }
+
   /// Call with the actual latest take only. Earlier observations never replace its coaching.
   static func suppressesQuietTip(
     summary: CaptureSummary, assessment: CaptureAssessment
