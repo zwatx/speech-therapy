@@ -168,20 +168,28 @@ struct DirectPracticeRootView: View {
   }
 
   private var todayTab: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 0) {
-        HStack(alignment: .center) {
-          Text(Date.now, format: .dateTime.weekday(.wide))
-            .font(.subheadline)
-            .foregroundStyle(DirectPracticeStyle.muted)
-          Spacer()
-          Button {
-            showingAbout = true
-          } label: {
-            Text("For grown-ups")
-              .font(.subheadline)
-              .frame(minWidth: 44, minHeight: 44)
-              .contentShape(Rectangle())
+    VStack(spacing: 0) {
+      todayHeader
+      todayViewport
+      // A visible lower boundary keeps the reading viewport above the system tab bar.
+      PracticeRule()
+        .padding(.horizontal, 24)
+        .frame(maxWidth: 680)
+        .frame(maxWidth: .infinity)
+    }
+    .modifier(PracticeTabSurface())
+    // Also runs when a pushed history route pops back to Today.
+    .onAppear { refreshCleanupRecovery() }
+  }
+
+  private var todayHeader: some View {
+    VStack(spacing: 0) {
+      if dynamicTypeSize.isAccessibilitySize {
+        VStack(alignment: .leading, spacing: 4) {
+          weekdayText
+          HStack(spacing: 0) {
+            Spacer(minLength: 0)
+            aboutButton
           }
           .buttonStyle(.plain)
           .accessibilityLabel("About practice and privacy")
