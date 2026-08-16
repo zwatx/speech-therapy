@@ -123,7 +123,18 @@ struct DirectPracticeRootView: View {
     ) { route in
       if allowsLiveRoutes {
         LocalGuidedReviewPresenter(
-          history: history, store: savedWordsStore, entryIDs: route.entryIDs)
+          history: history, store: savedWordsStore, entryIDs: route.entryIDs,
+          startReview: route.startReview,
+          onSummaryDeparture: { handoff in
+            guard localGuidedRoute?.id == route.id, presentedGuidedRouteID == route.id,
+              pendingGuidedDeparture == nil,
+              canPresentSummaryDestination, handoff.isCanonical
+            else { return }
+            pendingGuidedDeparture = .init(routeID: route.id, handoff: handoff)
+          })
+          .onAppear {
+            if localGuidedRoute?.id == route.id { presentedGuidedRouteID = route.id }
+          }
       } else {
         Color.clear
       }
