@@ -142,6 +142,14 @@ struct DirectPracticeRootView: View {
     .sheet(isPresented: $showingAbout, onDismiss: { refreshCleanupRecovery() }) {
       aboutPractice
     }
+    // The demo dismisses itself only after its current media owner has ended.
+    .fullScreenCover(isPresented: $showingCACDemo, onDismiss: { refreshCleanupRecovery() }) {
+      if allowsLiveRoutes {
+        CACDemoView()
+      } else {
+        Color.clear
+      }
+    }
     #if DEBUG && targetEnvironment(simulator)
       .fullScreenCover(item: $researchRoute, onDismiss: { refreshCleanupRecovery() }) { route in
         if allowsResearchRoute(route) {
