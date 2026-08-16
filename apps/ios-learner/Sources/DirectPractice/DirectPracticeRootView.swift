@@ -119,7 +119,7 @@ struct DirectPracticeRootView: View {
       }
     }
     .fullScreenCover(
-      item: $localGuidedRoute, onDismiss: { refreshCleanupRecovery() }
+      item: $localGuidedRoute, onDismiss: finishGuidedDismissal
     ) { route in
       if allowsLiveRoutes {
         LocalGuidedReviewPresenter(
