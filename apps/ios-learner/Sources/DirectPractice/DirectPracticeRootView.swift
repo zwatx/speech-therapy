@@ -4,6 +4,14 @@ struct DirectPracticeRootView: View {
   @State private var selectedSound: PracticeSound?
   @State private var showingAbout = false
   @State private var localGuidedRoute: LocalGuidedRoute?
+  @State private var pendingGuidedDeparture: PendingGuidedDeparture?
+  @State private var presentedGuidedRouteID: UUID?
+  @State private var showingCACDemo = false
+
+  private struct PendingGuidedDeparture {
+    let routeID: UUID
+    let handoff: LocalGuidedSummaryHandoff
+  }
   #if DEBUG && targetEnvironment(simulator)
     private let savedWordsStore: SavedGuidedWordsStore?
   #else
@@ -13,6 +21,7 @@ struct DirectPracticeRootView: View {
   private struct LocalGuidedRoute: Identifiable {
     let id = UUID()
     let entryIDs: [String]?
+    var startReview = false
   }
   #if DEBUG && targetEnvironment(simulator)
     private let controlledUI: ControlledUIConfiguration?
