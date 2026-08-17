@@ -266,16 +266,16 @@ struct DirectPracticeRootView: View {
             .foregroundStyle(DirectPracticeStyle.muted)
             .fixedSize(horizontal: false, vertical: true)
           Button {
-            if allowsLiveRoutes { selectedSound = PracticeLibrary.starterSound }
+            if allowsLiveRoutes { showingCACDemo = true }
           } label: {
             HStack {
-              Text("Start practice")
+              Text("Start a sound check")
               Spacer()
               Image(systemName: "arrow.right")
             }
           }
           .buttonStyle(DirectPracticeButtonStyle())
-          .accessibilityIdentifier("cadence.start")
+          .accessibilityIdentifier("cadence.cac-demo.open")
           .disabled(!allowsLiveRoutes)
           .padding(.top, 6)
         }
