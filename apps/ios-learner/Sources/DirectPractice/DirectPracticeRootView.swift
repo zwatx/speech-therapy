@@ -191,8 +191,6 @@ struct DirectPracticeRootView: View {
             Spacer(minLength: 0)
             aboutButton
           }
-          .buttonStyle(.plain)
-          .accessibilityLabel("About practice and privacy")
         }
         PracticeRule()
         #if DEBUG && targetEnvironment(simulator)
