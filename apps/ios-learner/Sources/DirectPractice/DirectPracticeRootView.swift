@@ -283,6 +283,32 @@ struct DirectPracticeRootView: View {
 
         PracticeRule()
         Button {
+          if allowsLiveRoutes { selectedSound = PracticeLibrary.starterSound }
+        } label: {
+          HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 5) {
+              Text("Free word practice").font(.body.weight(.medium))
+              Text("Record, listen back, and try a few words.")
+                .font(.subheadline).foregroundStyle(DirectPracticeStyle.muted)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 4)
+            if !dynamicTypeSize.isAccessibilitySize {
+              Image(systemName: "chevron.right")
+                .font(.subheadline)
+                .foregroundStyle(DirectPracticeStyle.muted)
+                .accessibilityHidden(true)
+            }
+          }
+          .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+          .contentShape(Rectangle())
+          .accessibilityElement(children: .combine)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("cadence.start")
+        .disabled(!allowsLiveRoutes)
+        PracticeRule()
+        Button {
           if allowsLiveRoutes { localGuidedRoute = LocalGuidedRoute(entryIDs: nil) }
         } label: {
           HStack(alignment: .center, spacing: 12) {
