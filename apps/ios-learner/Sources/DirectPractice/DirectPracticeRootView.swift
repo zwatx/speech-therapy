@@ -359,13 +359,9 @@ struct DirectPracticeRootView: View {
           .padding(.vertical, 28)
       }
       .padding(.horizontal, 24)
-      .padding(.top, 8)
       .frame(maxWidth: 680)
       .frame(maxWidth: .infinity)
     }
-    .modifier(PracticeTabSurface())
-    // Also runs when a pushed history route pops back to Today.
-    .onAppear { refreshCleanupRecovery() }
   }
 
   private var soundsTab: some View {
