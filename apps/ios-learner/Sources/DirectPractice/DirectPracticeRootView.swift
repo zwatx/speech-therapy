@@ -434,6 +434,34 @@ struct DirectPracticeRootView: View {
     #endif
   }
 
+  private var canPresentSummaryDestination: Bool {
+    guard allowsLiveRoutes, selectedSound == nil, !showingAbout, !showingCACDemo else {
+      return false
+    }
+    #if DEBUG && targetEnvironment(simulator)
+      guard researchRoute == nil else { return false }
+    #endif
+    return true
+  }
+
+  private func finishGuidedDismissal() {
+    let pending = pendingGuidedDeparture
+    let dismissedRouteID = presentedGuidedRouteID
+    pendingGuidedDeparture = nil
+    presentedGuidedRouteID = nil
+    refreshCleanupRecovery()
+    guard let pending, pending.routeID == dismissedRouteID,
+      localGuidedRoute == nil, canPresentSummaryDestination, pending.handoff.isCanonical
+    else { return }
+    switch pending.handoff.destination {
+    case .independentPractice:
+      selectedSound = pending.handoff.canonicalSound
+    case .repeatReview:
+      guard let ids = pending.handoff.canonicalRepeatEntryIDs else { return }
+      localGuidedRoute = LocalGuidedRoute(entryIDs: ids, startReview: true)
+    }
+  }
+
   #if DEBUG && targetEnvironment(simulator)
     @ViewBuilder private var soundPreviewContent: some View {
       if let controlledUI {
