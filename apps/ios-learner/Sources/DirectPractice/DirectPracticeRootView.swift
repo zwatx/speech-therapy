@@ -192,7 +192,56 @@ struct DirectPracticeRootView: View {
             aboutButton
           }
         }
-        PracticeRule()
+      } else {
+        HStack(spacing: 0) {
+          weekdayText
+          Spacer(minLength: 16)
+          aboutButton
+        }
+      }
+      PracticeRule()
+    }
+    .padding(.horizontal, 24)
+    .padding(.top, 8)
+    .frame(maxWidth: 680)
+    .frame(maxWidth: .infinity)
+  }
+
+  private var weekdayText: some View {
+    Text(Date.now, format: .dateTime.weekday(.wide))
+      .font(.subheadline)
+      .foregroundStyle(DirectPracticeStyle.muted)
+      .fixedSize(horizontal: false, vertical: true)
+      .accessibilityIdentifier("cadence.home.weekday")
+  }
+
+  private var aboutButton: some View {
+    Button {
+      showingAbout = true
+    } label: {
+      Text("About")
+        .font(.subheadline)
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel("About practice and privacy")
+    .accessibilityIdentifier("cadence.home.about")
+  }
+
+  @ViewBuilder
+  private var todayViewport: some View {
+    if #available(iOS 26.0, *) {
+      // Keep the privacy footer legible as it passes the floating tab bar.
+      todayScroll.clipped().scrollEdgeEffectHidden(true, for: .bottom)
+    } else {
+      todayScroll.clipped()
+    }
+  }
+
+  private var todayScroll: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 0) {
         #if DEBUG && targetEnvironment(simulator)
           if controlledUI != nil || ResearchGuidedWordUITestFixtures.selected() != nil
             || ResearchUnifiedFeedbackUITestFixtures.selected() != nil
