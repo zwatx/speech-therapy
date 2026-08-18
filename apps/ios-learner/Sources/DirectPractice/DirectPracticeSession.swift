@@ -89,13 +89,16 @@ final class DirectPracticeSession: ObservableObject {
   @Published private(set) var isTransitioning = false
   @Published private(set) var cleanupBlocked = false
   @Published private(set) var completedWords = 0
+  @Published private(set) var skippedWords = 0
+  @Published private var promptIndex = 0
   @Published private(set) var attemptCount = 0
   @Published private(set) var sound: PracticeSound
   @Published private(set) var wordCheckState: LocalWordCheckState = .idle
   // Ephemeral request-bound text, deliberately excluded from every persisted ledger.
-  private var wordGuess: (request: LocalWordRecognitionRequest, value: LocalWordGuess)?
+  private var wordGuess:
+    (request: LocalWordRecognitionRequest, value: LocalWordGuess, guidedVisit: GuidedMediaVisit?)?
   var currentWordGuess: LocalWordGuess? {
-    guard !managedForGuided, case .review = phase, transition == nil,
+    guard case .review = phase, transition == nil,
       !cleanupBlocked, !wordCleanupUnconfirmed, wordCheckOperation == nil,
       wordCheckState == .finished(.notMatched), let wordGuess,
       checkedTryID == wordGuess.request.tryID, takes.last?.id == wordGuess.request.tryID,
