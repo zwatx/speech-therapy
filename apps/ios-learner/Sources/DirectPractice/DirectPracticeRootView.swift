@@ -610,6 +610,15 @@ struct DirectPracticeRootView: View {
   }
 
   private var aboutPractice: some View {
+    VStack(spacing: 0) {
+      aboutDoneHeader
+      aboutNavigation
+    }
+    .background(DirectPracticeStyle.canvas)
+    .foregroundStyle(DirectPracticeStyle.ink)
+  }
+
+  private var aboutNavigation: some View {
     NavigationStack {
       ScrollView {
         VStack(alignment: .leading, spacing: 28) {
