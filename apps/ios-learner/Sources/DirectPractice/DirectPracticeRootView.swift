@@ -737,8 +737,14 @@ struct DirectPracticeRootView: View {
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
       }
+      PracticeRule()
     }
+    .padding(.horizontal, 24)
+    .padding(.top, 8)
+    .background(DirectPracticeStyle.canvas)
+    .foregroundStyle(DirectPracticeStyle.ink)
   }
 
   private func aboutItem(_ title: String, _ detail: String) -> some View {
