@@ -722,9 +722,20 @@ struct DirectPracticeRootView: View {
       .background(DirectPracticeStyle.canvas)
       .foregroundStyle(DirectPracticeStyle.ink)
       .tint(DirectPracticeStyle.ink)
-      .toolbar {
-        ToolbarItem(placement: .confirmationAction) {
-          Button("Done") { showingAbout = false }
+    }
+  }
+
+  private var aboutDoneHeader: some View {
+    VStack(spacing: 0) {
+      HStack(spacing: 0) {
+        Spacer(minLength: 0)
+        Button {
+          showingAbout = false
+        } label: {
+          Text("Done")
+            .font(.subheadline)
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
         }
       }
     }
