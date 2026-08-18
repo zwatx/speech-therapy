@@ -807,6 +807,8 @@ private struct LocalGuidedReviewPresenter: View {
   @StateObject private var session: LocalGuidedReviewSession
 
   private let store: SavedGuidedWordsStore?
+  private let onSummaryDeparture: (LocalGuidedSummaryHandoff) -> Void
+  private let startReview: Bool
   @Environment(\.dismiss) private var dismiss
 
   init(history: PracticeParticipationStore, store: SavedGuidedWordsStore?, entryIDs: [String]?) {
