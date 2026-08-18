@@ -811,8 +811,13 @@ private struct LocalGuidedReviewPresenter: View {
   private let startReview: Bool
   @Environment(\.dismiss) private var dismiss
 
-  init(history: PracticeParticipationStore, store: SavedGuidedWordsStore?, entryIDs: [String]?) {
+  init(history: PracticeParticipationStore, store: SavedGuidedWordsStore?, entryIDs: [String]?,
+    startReview: Bool,
+    onSummaryDeparture: @escaping (LocalGuidedSummaryHandoff) -> Void)
+  {
     self.store = store
+    self.onSummaryDeparture = onSummaryDeparture
+    self.startReview = startReview
     _session = StateObject(
       wrappedValue: LocalGuidedReviewSession(history: history, setupEntryIDs: entryIDs))
   }
