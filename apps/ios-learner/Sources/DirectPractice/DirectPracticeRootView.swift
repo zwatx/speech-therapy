@@ -832,7 +832,13 @@ private struct LocalGuidedReviewPresenter: View {
       }.padding(24).interactiveDismissDisabled(true)
         .background(DirectPracticeStyle.canvas.ignoresSafeArea())
     } else {
-      LocalGuidedReviewView(session: session, savedWordsStore: store)
+      LocalGuidedReviewView(session: session, savedWordsStore: store,
+        onSummaryDeparture: onSummaryDeparture)
+        .task {
+          if startReview, !session.setupSeedFailed, session.ledger == nil {
+            await session.startInitialReview()
+          }
+        }
     }
   }
 }
