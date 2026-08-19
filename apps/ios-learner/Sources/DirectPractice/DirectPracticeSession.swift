@@ -468,18 +468,22 @@ final class DirectPracticeSession: ObservableObject {
   private final class WordCheckOperation {
     let request: LocalWordRecognitionRequest
     let task: Task<LocalWordRecognitionReceipt, Never>
+    let promptID: String
     let guidedIdentity: LocalGuidedCheckIdentity?
+    let guidedVisit: GuidedMediaVisit?
     var guidedSettlementSent = false
     var resultEligible = true
     var cancelRequested = false
 
     init(
       request: LocalWordRecognitionRequest, task: Task<LocalWordRecognitionReceipt, Never>,
-      guidedIdentity: LocalGuidedCheckIdentity? = nil
+      promptID: String, guidedIdentity: LocalGuidedCheckIdentity? = nil, guidedVisit: GuidedMediaVisit?
     ) {
       self.request = request
+      self.promptID = promptID
       self.task = task
       self.guidedIdentity = guidedIdentity
+      self.guidedVisit = guidedVisit
     }
   }
   private var wordCheckOperation: WordCheckOperation?
