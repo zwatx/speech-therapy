@@ -104,7 +104,8 @@ final class DirectPracticeSession: ObservableObject {
       checkedTryID == wordGuess.request.tryID, takes.last?.id == wordGuess.request.tryID,
       takes.last?.removalRequested == false,
       currentPrompt.word == wordGuess.request.expectedWord,
-      wordGuess.value.expectedWord == LocalWordComparison.singleWord(currentPrompt.word)
+      wordGuess.value.expectedWord == LocalWordComparison.singleWord(currentPrompt.word),
+      wordGuessScopeIsCurrent(request: wordGuess.request, guidedVisit: wordGuess.guidedVisit)
     else { return nil }
     return wordGuess.value
   }
