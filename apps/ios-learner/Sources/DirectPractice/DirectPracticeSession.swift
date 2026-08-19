@@ -109,6 +109,33 @@ final class DirectPracticeSession: ObservableObject {
     else { return nil }
     return wordGuess.value
   }
+
+  /// Scope gates optional text only; first-review status and cleanup keep their own contract.
+  private func wordGuessScopeIsCurrent(
+    request: LocalWordRecognitionRequest, guidedVisit: GuidedMediaVisit?
+  ) -> Bool {
+    guard managedForGuided else { return guidedVisit == nil }
+    guard let guidedVisit, guidedVisit == guidedMediaVisit else { return false }
+    if case .review(let visit) = guidedVisit {
+      return guidedReviewSubmission
+        == LocalGuidedCheckIdentity(visit: visit, operationID: request.operationID, tryID: request.tryID)
+    }
+    return true
+  }
+  /// Status-only evidence belongs to its retained take, never to a guessed alternative.
+  func wordObservation(for tryID: UUID) -> LocalWordRecognitionStatus? {
+    guard case .review = phase, transition == nil, !isTransitioning,
+      !cleanupBlocked, !wordCleanupUnconfirmed,
+      let take = takes.first(where: { $0.id == tryID && !$0.removalRequested }),
+      let observation = take.wordObservation,
+      observation.request.tryID == take.id,
+      observation.promptID == currentPrompt.id,
+      observation.request.expectedWord == currentPrompt.word,
+      wordGuessScopeIsCurrent(request: observation.request, guidedVisit: observation.guidedVisit)
+    else { return nil }
+    return observation.status
+  }
+
   @Published private(set) var checkedTryID: UUID?
   @Published private(set) var spokenWordState: PracticeSpokenWordState = .idle
   @Published private var spokenWordError: String?
