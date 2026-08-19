@@ -167,6 +167,24 @@ final class DirectPracticeSession: ObservableObject {
     canUseSession && (!recordingStartupUnavailable || !takes.isEmpty)
   }
   var actionsDisabled: Bool { !canUseSession }
+  /// An unrecorded ordinary visit may be left without granting permission or participation.
+  var canSkipWord: Bool {
+    guard !managedForGuided, !actionsDisabled, transition == nil, cleanupTask == nil,
+      takes.isEmpty, !captureCleanupState.hasHardwareIssue, !captureCleanupState.hasFileIssue,
+      pendingCaptureOwners.isEmpty, pendingCaptureHardwareOwners.isEmpty,
+      mirrorStorage?.blocksRecordForCameraPermission != true
+    else { return false }
+    if let mirrorStorage {
+      switch mirrorStorage.state {
+      case .stopping, .stopFailed: return false
+      default: break
+      }
+    }
+    switch phase {
+    case .ready, .permissionDenied, .failed: return true
+    default: return false
+    }
+  }
   /// A kept take is only ever replaced through recordAnotherTry's eviction rules.
   var canStartRecording: Bool {
     guidedCaptureAllowed && !recordingStartupUnavailable && !actionsDisabled
