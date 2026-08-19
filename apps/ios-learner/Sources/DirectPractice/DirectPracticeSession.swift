@@ -207,6 +207,28 @@ final class DirectPracticeSession: ObservableObject {
       || !pendingCaptureOwners.isEmpty
   }
 
+  /// Stronger than ordinary Close: leaving files in process recovery cannot open
+  /// another owner. Read the retained receipts and live gates, never phase alone.
+  var hasFullyEndedCleanup: Bool {
+    phase == .ended && endAudioCleanupConfirmed && !cleanupBlocked && !isTransitioning
+      && !isRetryingPlaybackCleanup
+      && transition == nil && cleanupTask == nil && cleanupTaskID == nil
+      && takes.isEmpty && pendingCaptureOwners.isEmpty && pendingCaptureHardwareOwners.isEmpty
+      && !captureCleanupState.hasHardwareIssue && !captureCleanupState.hasFileIssue
+      && !capturer.cleanupState.hasHardwareIssue && !capturer.cleanupState.hasFileIssue
+      && activePlaybackID == nil && playbackState == .idle && !isPlaying
+      && activeSpokenWord == nil && spokenWordState == .idle && spokenWordGeneration == nil
+      && recordingGeneration == nil && recordingWordCheckIntent == nil
+      && wordCheckOperation == nil && !wordCleanupUnconfirmed && wordRuntimeRelease == nil
+      && (!(wordRecognizer is any LocalWordRuntimeReleasing) || wordRuntimeReleased)
+      && mirrorCloseStop != nil && mirrorStorage?.isReleasedForClose == true
+      && !participationSaveInProgress
+      && (cleanupOwnership == nil
+        || (cleanupOwnership?.hardware.currentLease == nil
+          && cleanupOwnership?.files.pendingCleanupOwners.isEmpty == true
+          && cleanupOwnership?.files.protectedURLs.isEmpty == true))
+  }
+
   /// At most two completed takes of the current word, oldest first.
   var tries: [DirectPracticeTry] {
     takes.map { .init(id: $0.id, summary: $0.recording.summary, assessment: $0.assessment) }
