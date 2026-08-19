@@ -153,7 +153,7 @@ final class DirectPracticeSession: ObservableObject {
   private var guidedPracticeFreshTryID: UUID?
 
   var totalWords: Int { sound.prompts.count }
-  var currentIndex: Int { min(completedWords, totalWords - 1) }
+  var currentIndex: Int { min(promptIndex, totalWords - 1) }
   var currentPrompt: PracticePrompt { sound.prompts[currentIndex] }
   private var canUseSession: Bool {
     (!managedForGuided || guidedMediaVisit != nil)
