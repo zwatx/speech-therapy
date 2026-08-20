@@ -917,6 +917,28 @@ final class DirectPracticeSession: ObservableObject {
   /// before microphone permission or any recording file is requested.
   func recordAnotherTry() async {
     guard canRecordAnotherTry else { return }
+    await prepareAndRecordAnotherTry()
+  }
+
+  var canRecordAnotherTryAndCheckWord: Bool {
+    guard managedForGuided, case .review = guidedMediaVisit,
+      guidedReviewSubmission == nil
+    else { return false }
+    return canRecordAnotherTry
+  }
+
+  /// An explicit replacement checks only its own stopped take, before any submission.
+  func recordAnotherTryAndCheckWord() async {
+    guard !Task.isCancelled, canRecordAnotherTryAndCheckWord,
+      case .review(let visit) = guidedMediaVisit
+    else { return }
+    await prepareAndRecordAnotherTry(checkingWordFor: visit)
+  }
+
+  private func prepareAndRecordAnotherTry(checkingWordFor visit: LocalGuidedReviewVisit? = nil)
+    async
+  {
+    let preparingSessionID = sessionID
     let evicting = takes.count >= 2 ? takes.first?.id : nil
     let token = beginTransition(.prepareTry(evicting: evicting))
     _ = await finishTransition(token)
