@@ -983,6 +983,7 @@ final class DirectPracticeSession: ObservableObject {
     else { return false }
     if checkedTryID == latest.id, case .finished(let status) = wordCheckState {
       return status == .unavailable || status == .cancelled
+        || (status == .timedOut && wordRecognizer.allowsTimedOutRetry)
     }
     return true
   }
