@@ -503,6 +503,13 @@ final class DirectPracticeSession: ObservableObject {
     return event
   }
   private var participationSaveInProgress = false
+  private struct AdmittedWordObservation {
+    let request: LocalWordRecognitionRequest
+    let promptID: String
+    let guidedVisit: GuidedMediaVisit?
+    let status: LocalWordRecognitionStatus
+  }
+
   private struct Take {
     // Injected recordings may lack a producer owner; this local ID is the take identity.
     let id = UUID()
@@ -510,6 +517,7 @@ final class DirectPracticeSession: ObservableObject {
     let assessment: CaptureAssessment
     // Set once before the producer discard; never cleared except by exact removal.
     var removalRequested = false
+    var wordObservation: AdmittedWordObservation?
   }
   private var takes: [Take] = []
   private var recordingGeneration: UUID?
