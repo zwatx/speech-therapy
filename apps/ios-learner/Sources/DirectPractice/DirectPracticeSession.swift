@@ -801,6 +801,10 @@ final class DirectPracticeSession: ObservableObject {
     guard isCurrent() else { return revoked() }
     completedWords = 0
     guard isCurrent() else { return revoked() }
+    skippedWords = 0
+    guard isCurrent() else { return revoked() }
+    promptIndex = 0
+    guard isCurrent() else { return revoked() }
     attemptCount = 0
     guard isCurrent() else { return revoked() }
     historyError = nil
