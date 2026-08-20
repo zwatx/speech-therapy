@@ -646,7 +646,7 @@ final class DirectPracticeSession: ObservableObject {
   }
 
   private enum Intent: Equatable {
-    case ready, recoverPlayback, advance, restart
+    case ready, recoverPlayback, advance, skip, restart
     // Explicit capture-cleanup recovery removes only takes whose removal was requested.
     case recoverCapture
     // Release playback and remove the oldest of two takes before any permission/allocation.
