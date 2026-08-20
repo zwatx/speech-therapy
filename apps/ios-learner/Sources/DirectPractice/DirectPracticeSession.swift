@@ -945,7 +945,18 @@ final class DirectPracticeSession: ObservableObject {
     // Commit publishes Requesting permission; any reentrant Close/background supersedes it.
     guard transition == nil, phase == .requestingPermission, !cleanupBlocked, takes.count < 2
     else { return }
-    await captureTake()
+    if let visit {
+      guard sessionID == preparingSessionID, guidedMediaVisit == .review(visit),
+        guidedReviewSubmission == nil
+      else { return }
+      if Task.isCancelled {
+        if let latest = takes.last {
+          phase = .review(latest.recording.summary, latest.assessment)
+        }
+        return
+      }
+    }
+    await captureTake(checkingWordFor: visit)
   }
 
   /// Explicit return from a denied/failed replacement. Never starts playback or capture.
