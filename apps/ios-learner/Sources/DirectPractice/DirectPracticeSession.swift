@@ -1009,7 +1009,25 @@ final class DirectPracticeSession: ObservableObject {
     let context = LocalWordCapturedContext(request: request, takeID: latest.id,
       recording: latest.recording, guidedVisit: guidedMediaVisit, entryID: currentPrompt.id)
     let task = Task { @MainActor [self, wordRecognizer] in
-      let receipt = await wordRecognizer.check(request: request)
+      let receipt: LocalWordRecognitionReceipt
+      if let capturedRecognizer = wordRecognizer as? any LocalWordCapturedContextRecognizing {
+        // Submitted/checking publications may synchronously revoke this exact handoff.
+        guard !Task.isCancelled, let operation = wordCheckOperation, operation.request == request,
+          operation.resultEligible, !operation.cancelRequested, transition == nil, takes.last?.removalRequested == false,
+          takes.last?.id == context.takeID, currentPrompt.id == context.entryID,
+          guidedMediaVisit == context.guidedVisit
+        else {
+          let receipt = LocalWordRecognitionReceipt(
+            request: request, status: .cancelled, cleanupConfirmed: true)
+          if let operation = wordCheckOperation, operation.request == request {
+            _ = settleWordCheck(operation, receipt: receipt)
+          }
+          return receipt
+        }
+        receipt = await capturedRecognizer.check(context: context)
+      } else {
+        receipt = await wordRecognizer.check(request: request)
+      }
       if let operation = wordCheckOperation, operation.request == request {
         _ = settleWordCheck(operation, receipt: receipt)
       }
