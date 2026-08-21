@@ -1034,7 +1034,8 @@ final class DirectPracticeSession: ObservableObject {
       return receipt
     }
     let operation = WordCheckOperation(
-      request: request, task: task, guidedIdentity: guidedIdentity)
+      request: request, task: task, promptID: currentPrompt.id, guidedIdentity: guidedIdentity,
+      guidedVisit: guidedMediaVisit)
     wordCheckOperation = operation
     // Freeze the first submission before any synchronous observer can request a retry,
     // cancellation or Close. The retained operation owns that same identity to settlement.
