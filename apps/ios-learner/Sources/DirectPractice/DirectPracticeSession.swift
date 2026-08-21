@@ -1117,6 +1117,28 @@ final class DirectPracticeSession: ObservableObject {
         wordGuess = nil
         wordCheckState = .idle
       }
+      // Publication above runs synchronous observers. Admit only after rechecking the
+      // exact operation, take, prompt and visit, so Close/retry cannot resurrect evidence.
+      if operation.resultEligible, !operation.cancelRequested, transition == nil,
+        !isTransitioning, !cleanupBlocked, !wordCleanupUnconfirmed,
+        wordCheckOperation == nil, case .review = phase,
+        checkedTryID == operation.request.tryID,
+        wordCheckState == .finished(status), currentPrompt.id == operation.promptID,
+        currentPrompt.word == operation.request.expectedWord,
+        wordGuessScopeIsCurrent(request: operation.request, guidedVisit: operation.guidedVisit),
+        let index = takes.indices.last,
+        takes[index].id == operation.request.tryID, !takes[index].removalRequested,
+        status == .matched || status == .notMatched || status == .uncertain
+      {
+        takes[index].wordObservation = AdmittedWordObservation(
+          request: operation.request, promptID: operation.promptID,
+          guidedVisit: operation.guidedVisit, status: status)
+      }
+      // Scope can change in a synchronous finished-state subscriber. Missing text must
+      // not reclassify an otherwise legitimate status-only first-review observation.
+      if !wordGuessScopeIsCurrent(request: operation.request, guidedVisit: operation.guidedVisit) {
+        wordGuess = nil
+      }
     } else {
       checkedTryID = nil
       wordCheckState = .idle
