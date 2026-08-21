@@ -1102,8 +1102,9 @@ final class DirectPracticeSession: ObservableObject {
     wordCheckOperation = nil
     wordGuess = nil
     if eligible, operation.resultEligible, transition == nil {
-      if !managedForGuided, status == .notMatched, let guess = receipt.wordGuess,
-        guess.expectedWord == LocalWordComparison.singleWord(operation.request.expectedWord)
+      if status == .notMatched, let guess = receipt.wordGuess,
+        guess.expectedWord == LocalWordComparison.singleWord(operation.request.expectedWord),
+        wordGuessScopeIsCurrent(request: operation.request, guidedVisit: operation.guidedVisit)
       {
         wordGuess = (operation.request, guess)
       }
