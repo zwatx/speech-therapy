@@ -1106,7 +1106,7 @@ final class DirectPracticeSession: ObservableObject {
         guess.expectedWord == LocalWordComparison.singleWord(operation.request.expectedWord),
         wordGuessScopeIsCurrent(request: operation.request, guidedVisit: operation.guidedVisit)
       {
-        wordGuess = (operation.request, guess)
+        wordGuess = (operation.request, guess, operation.guidedVisit)
       }
       wordCheckState = .finished(status)
       // A published observation can synchronously revoke eligibility too.
