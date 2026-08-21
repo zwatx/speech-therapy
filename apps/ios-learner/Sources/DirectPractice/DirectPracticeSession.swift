@@ -1006,6 +1006,8 @@ final class DirectPracticeSession: ObservableObject {
     } else {
       guidedIdentity = nil
     }
+    let context = LocalWordCapturedContext(request: request, takeID: latest.id,
+      recording: latest.recording, guidedVisit: guidedMediaVisit, entryID: currentPrompt.id)
     let task = Task { @MainActor [self, wordRecognizer] in
       let receipt = await wordRecognizer.check(request: request)
       if let operation = wordCheckOperation, operation.request == request {
