@@ -1682,7 +1682,7 @@ final class DirectPracticeSession: ObservableObject {
     guard transition?.id == token.id, !cleanupBlocked,
       !(token.intent == .advance && failedAdvanceTransitionID == token.id)
     else { return false }
-    if token.intent == .advance, completedWords + 1 == totalWords {
+    if token.intent == .advance, currentIndex + 1 == totalWords {
       _ = mirrorStorage?.requestStop(reason: .completion)
       // Camera subscribers can request Close or restart synchronously. Revalidate
       // before participation counters/history, not just before the stop request.
@@ -1690,7 +1690,7 @@ final class DirectPracticeSession: ObservableObject {
         failedAdvanceTransitionID != token.id
       else { return false }
     }
-    if token.intent == .advance { return commitAdvance(token) }
+    if token.intent == .advance || token.intent == .skip { return commitWordDeparture(token) }
     if case .guidedLeave(let visit) = token.intent {
       return commitGuidedDeparture(token, visit: visit)
     }
