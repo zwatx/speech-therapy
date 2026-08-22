@@ -1662,14 +1662,14 @@ final class DirectPracticeSession: ObservableObject {
     } else if managedForGuided {
       switch token.intent {
       case .guidedLeave, .advance:
-        guard await confirmGuidedMirrorRelease(token) else { return false }
+        guard await confirmMirrorRelease(token) else { return false }
       default: break
       }
     }
     return commitTransition(token)
   }
 
-  private func confirmGuidedMirrorRelease(_ token: Transition) async -> Bool {
+  private func confirmMirrorRelease(_ token: Transition) async -> Bool {
     if let mirrorStorage, !mirrorStorage.isReleasedForClose {
       let stop = mirrorStorage.requestStop(reason: .completion)
       guard await stop.released(), mirrorStorage.isReleasedForClose else { return false }
