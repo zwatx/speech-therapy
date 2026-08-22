@@ -1650,7 +1650,16 @@ final class DirectPracticeSession: ObservableObject {
       updateCloseNote()
       return false
     }
-    if managedForGuided {
+    if token.intent == .skip {
+      guard await confirmMirrorRelease(token) else {
+        // Failed cleanup cancels this Skip. Recovery never queues a later advance.
+        if transition?.id == token.id {
+          transition = nil
+          isTransitioning = false
+        }
+        return false
+      }
+    } else if managedForGuided {
       switch token.intent {
       case .guidedLeave, .advance:
         guard await confirmGuidedMirrorRelease(token) else { return false }
