@@ -1725,12 +1725,14 @@ final class DirectPracticeSession: ObservableObject {
       // Eviction (if any) is confirmed. recordAnotherTry continues synchronously.
       phase = .requestingPermission
     case .failed(let message): phase = .failed(message)
-    case .end, .advance, .guidedPrepare, .guidedLeave: break
+    case .end, .advance, .skip, .guidedPrepare, .guidedLeave: break
     case .restart, .more:
       if case .more(let next) = token.intent { sound = next }
       sessionID = UUID()
       historyError = nil
       completedWords = 0
+      skippedWords = 0
+      promptIndex = 0
       attemptCount = 0
       phase = .ready
     }
