@@ -1382,6 +1382,11 @@ final class DirectPracticeSession: ObservableObject {
     await performTransition(.advance)
   }
 
+  func skipWord() async {
+    guard canSkipWord else { return }
+    await performTransition(.skip)
+  }
+
   var canRetryParticipationSave: Bool {
     guard history != nil, historyError != nil, !participationSaveInProgress,
       let completion = participationCompletion
