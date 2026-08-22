@@ -1185,7 +1185,11 @@ final class DirectPracticeSession: ObservableObject {
     if visit != nil, Task.isCancelled {
       recordingWordCheckIntent = nil
       recordingGeneration = nil
-      phase = .ready
+      if let latest = takes.last {
+        phase = .review(latest.recording.summary, latest.assessment)
+      } else {
+        phase = .ready
+      }
       return
     }
     guard granted else {
