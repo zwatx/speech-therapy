@@ -1972,7 +1972,7 @@ final class DirectPracticeSession: ObservableObject {
     case .recoverCapture?, .failed(_)?: return takes.filter(\.removalRequested).map(\.id)
     case .prepareTry(let evicting)?:
       return takes.filter { $0.removalRequested || $0.id == evicting }.map(\.id)
-    case .ready?, .advance?, .restart?, .more(_)?, .end?, .guidedPrepare?, .guidedLeave?:
+    case .ready?, .advance?, .skip?, .restart?, .more(_)?, .end?, .guidedPrepare?, .guidedLeave?:
       return takes.map(\.id)
     }
   }
@@ -1982,7 +1982,7 @@ final class DirectPracticeSession: ObservableObject {
   /// on a negative playback acknowledgement.
   private func registersProducerRecovery(_ intent: Intent?) -> Bool {
     switch intent {
-    case nil, .advance?, .recoverPlayback?, .prepareTry(_)?: return false
+    case nil, .advance?, .skip?, .recoverPlayback?, .prepareTry(_)?: return false
     default: return true
     }
   }
