@@ -1812,12 +1812,14 @@ final class DirectPracticeSession: ObservableObject {
     if previousIndex + 1 == totalWords {
       // Match the numeric epoch precision used by the participation store, so its
       // exact saved row can acknowledge this completion without a false save failure.
-      let committed = PracticeParticipation(
-        id: advancedSessionID,
-        completedAt: Date(timeIntervalSince1970: Date().timeIntervalSince1970),
-        soundID: sound.id, wordCount: completedWords)
-      completion = committed
-      participationCompletion = committed
+      if completedWords > 0 {
+        let committed = PracticeParticipation(
+          id: advancedSessionID,
+          completedAt: Date(timeIntervalSince1970: Date().timeIntervalSince1970),
+          soundID: sound.id, wordCount: completedWords)
+        completion = committed
+        participationCompletion = committed
+      }
       phase = .completed
     } else {
       phase = .ready
