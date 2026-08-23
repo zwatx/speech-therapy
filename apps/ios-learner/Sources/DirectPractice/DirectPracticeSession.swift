@@ -1795,7 +1795,13 @@ final class DirectPracticeSession: ObservableObject {
       updateCloseNote()
       return false
     }
-    completedWords = previousWords + 1
+    if token.intent == .skip {
+      skippedWords = previousSkipped + 1
+    } else {
+      completedWords = previousWords + 1
+    }
+    guard isCurrent() else { return revoke() }
+    if previousIndex + 1 < totalWords { promptIndex = previousIndex + 1 }
     guard isCurrent() else { return revoke() }
     // Still held: no action entry point admits while a transition token exists.
     closeNote = nil
@@ -1803,7 +1809,7 @@ final class DirectPracticeSession: ObservableObject {
     playbackError = nil
     isTransitioning = false
     guard isCurrent() else { return revoke() }
-    if completedWords == totalWords {
+    if previousIndex + 1 == totalWords {
       // Match the numeric epoch precision used by the participation store, so its
       // exact saved row can acknowledge this completion without a false save failure.
       let committed = PracticeParticipation(
