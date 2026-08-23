@@ -1768,11 +1768,13 @@ final class DirectPracticeSession: ObservableObject {
 
   /// @Published emits from willSet, before storage: a subscriber can begin Close/background
   /// and the outer write still stores afterwards. Hold this token through every published
-  /// write and revalidate after each. A winning intent gets back exactly the pre-advance
+  /// write and revalidate after each. A winning intent gets back exactly the pre-departure
   /// word, phase and completion it would have seen had it won during cleanup.
-  private func commitAdvance(_ token: Transition) -> Bool {
+  private func commitWordDeparture(_ token: Transition) -> Bool {
     let advancedSessionID = sessionID
     let previousWords = completedWords
+    let previousSkipped = skippedWords
+    let previousIndex = promptIndex
     let previousPhase = phase
     var completion: PracticeParticipation?
     func isCurrent() -> Bool { transition?.id == token.id && sessionID == advancedSessionID }
