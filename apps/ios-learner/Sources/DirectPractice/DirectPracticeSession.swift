@@ -1786,6 +1786,8 @@ final class DirectPracticeSession: ObservableObject {
           guard sessionID == advancedSessionID else { return false }
         }
         if completedWords != previousWords { completedWords = previousWords }
+        if skippedWords != previousSkipped { skippedWords = previousSkipped }
+        if promptIndex != previousIndex { promptIndex = previousIndex }
         if phase != previousPhase { phase = previousPhase }
       }
       // A begin nested inside an outer `isTransitioning = false` was overwritten on store.
