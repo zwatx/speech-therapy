@@ -8,11 +8,14 @@
     case twoTryAX, finishAX, deniedAX, failedStartAX, saveFailureAX, wordCheckAX, wordCheckCancelAX
     case wordCheckUnavailable, wordCheckUnavailableAX
     case wordCheckGuess, wordCheckGuessAX
+    case wordCheckCompare, wordCheckCompareAX
+    case wordCheckTimeout, wordCheckTimeoutAX
+    case skip, skipAX
 
     var largeText: Bool { rawValue.hasSuffix("AX") }
     var holdsWordCheck: Bool {
       base == .wordCheck || base == .wordCheckCancel || base == .wordCheckUnavailable
-        || base == .wordCheckGuess
+        || base == .wordCheckGuess || base == .wordCheckCompare || base == .wordCheckTimeout
     }
     var base: DirectTryGeneratedCase {
       guard largeText else { return self }
