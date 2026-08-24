@@ -33,6 +33,12 @@ struct DirectPracticeButtonStyle: ButtonStyle {
 
   func makeBody(configuration: Configuration) -> some View {
     let shape = RoundedRectangle(cornerRadius: DirectPracticeStyle.cornerRadius, style: .continuous)
+    // A quieter surface distinguishes disabled actions while keeping their labels readable.
+    let foreground = secondary
+      ? (isEnabled ? DirectPracticeStyle.ink : DirectPracticeStyle.muted)
+      : (isEnabled ? DirectPracticeStyle.canvas : DirectPracticeStyle.ink)
+    let background = secondary ? Color.clear
+      : (isEnabled ? DirectPracticeStyle.ink : DirectPracticeStyle.border)
     return configuration.label
       .font(.body.weight(.medium))
       .multilineTextAlignment(.center)
