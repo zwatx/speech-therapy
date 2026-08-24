@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// "Paper" direction: warm paper, near-black ink, one tomato accent reserved for the
-/// target sound and recording. Every text pairing meets WCAG AA in both appearances.
+/// target sound and recording. Colors adapt to light and dark appearances.
 enum DirectPracticeStyle {
   static let ink = adaptive(0x1C1A16, dark: 0xF3EEE4)
   static let muted = adaptive(0x6B6459, dark: 0xA79F92)
