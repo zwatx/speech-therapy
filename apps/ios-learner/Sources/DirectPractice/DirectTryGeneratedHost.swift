@@ -72,7 +72,9 @@
           .accessibilityIdentifier("cadence.generated-files")
         Text(resources.playbackLine)
           .accessibilityIdentifier("cadence.generated-playback-file")
-        if testCase.base == .saveFailure || testCase.base == .wordCheckUnavailable {
+        if testCase.base == .saveFailure || testCase.base == .wordCheckUnavailable
+          || testCase.base == .skip || testCase.base == .wordCheckTimeout
+        {
           Text(resources.historyLine)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("cadence.generated-history")
