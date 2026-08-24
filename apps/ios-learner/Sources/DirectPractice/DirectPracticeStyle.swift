@@ -45,13 +45,13 @@ struct DirectPracticeButtonStyle: ButtonStyle {
       .padding(.horizontal, 20)
       .padding(.vertical, 16)
       .frame(maxWidth: .infinity, minHeight: 56)
-      .foregroundStyle(secondary ? DirectPracticeStyle.ink : DirectPracticeStyle.canvas)
-      .background(secondary ? Color.clear : DirectPracticeStyle.ink, in: shape)
+      .foregroundStyle(foreground)
+      .background(background, in: shape)
       .overlay {
         if secondary { shape.strokeBorder(DirectPracticeStyle.border) }
       }
       .contentShape(shape)
-      .opacity(isEnabled ? (configuration.isPressed ? 0.65 : 1) : 0.45)
+      .opacity(isEnabled && configuration.isPressed ? 0.65 : 1)
   }
 }
 
