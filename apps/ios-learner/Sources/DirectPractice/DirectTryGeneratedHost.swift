@@ -83,6 +83,11 @@
           Text(resources.wordCheckLine)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("cadence.generated-word-check")
+          if testCase.base == .wordCheckTimeout {
+            Text(resources.retryBindingLine)
+              .fixedSize(horizontal: false, vertical: true)
+              .accessibilityIdentifier("cadence.generated-retry-binding")
+          }
           Button {
             resources.finishGeneratedWordCheck()
           } label: {
