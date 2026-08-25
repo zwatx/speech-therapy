@@ -184,7 +184,7 @@
         }
       }
       let starter = PracticeLibrary.starterSound
-      let prompts = Array(starter.prompts.prefix(testCase == .finish ? 2 : 1))
+      let prompts = Array(starter.prompts.prefix(testCase == .skip ? 3 : testCase == .finish ? 2 : 1))
       let sound = PracticeSound(
         id: starter.id, symbol: starter.symbol, name: starter.name, position: starter.position,
         prompts: prompts)
