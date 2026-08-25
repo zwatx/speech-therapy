@@ -152,8 +152,11 @@
       // Inject for every old and new case: generated hosts never construct a system recognizer.
       let wordRecognizer = DirectTryGeneratedWordRecognizer(
         holdsResult: testCase.holdsWordCheck,
-        result: testCase == .wordCheckUnavailable ? .unavailable
-          : testCase == .wordCheckGuess ? .notMatched : .matched)
+        result: testCase == .wordCheckTimeout ? .timedOut
+          : testCase == .wordCheckUnavailable ? .unavailable
+          : testCase == .wordCheckGuess ? .notMatched : .matched,
+        followupResult: testCase == .wordCheckCompare ? .uncertain
+          : testCase == .wordCheckTimeout ? .matched : nil)
       self.wordRecognizer = wordRecognizer
       let player = ResearchAcknowledgedPlaybackUITestFixture(
         completion: .explicitStop, ownership: hardware, fileOwnership: files)
