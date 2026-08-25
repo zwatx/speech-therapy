@@ -291,6 +291,7 @@
   private final class DirectTryGeneratedWordRecognizer: LocalWordRecognizing {
     private let holdsResult: Bool
     private let result: LocalWordRecognitionStatus
+    private let followupResult: LocalWordRecognitionStatus?
     private var pending:
       (
         request: LocalWordRecognitionRequest,
@@ -301,9 +302,13 @@
     var changed: (() -> Void)?
     var isPending: Bool { pending != nil }
 
-    init(holdsResult: Bool, result: LocalWordRecognitionStatus) {
+    init(
+      holdsResult: Bool, result: LocalWordRecognitionStatus,
+      followupResult: LocalWordRecognitionStatus? = nil
+    ) {
       self.holdsResult = holdsResult
       self.result = result
+      self.followupResult = followupResult
     }
 
     func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
