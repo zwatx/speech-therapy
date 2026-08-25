@@ -335,6 +335,7 @@
     func finish() {
       guard let pending else { return }
       self.pending = nil
+      let result = requests.count > 1 ? (followupResult ?? self.result) : self.result
       changed?()
       pending.continuation.resume(
         returning: .init(
