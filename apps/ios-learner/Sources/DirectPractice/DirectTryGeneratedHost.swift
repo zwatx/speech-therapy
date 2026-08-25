@@ -224,6 +224,13 @@
         "Generated word checks: \(wordRecognizer.requests.count) · file \(file)"
         + " · latest \(latest ? "yes" : "no") · cancellations \(wordRecognizer.cancellations.count)"
         + " · pending \(wordRecognizer.isPending ? "yes" : "no")"
+      if let first = wordRecognizer.requests.first, wordRecognizer.requests.count >= 2,
+        let retry = wordRecognizer.requests.last {
+        let same = first.tryID == retry.tryID && first.fileURL == retry.fileURL
+          && first.expectedWord == retry.expectedWord
+        retryBindingLine = "Generated retry binding: same take \(same ? "yes" : "no")"
+          + " · new operation \(first.operationID != retry.operationID ? "yes" : "no")"
+      }
       canFinishWordCheck = wordRecognizer.isPending
     }
 
