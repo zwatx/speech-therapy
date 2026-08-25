@@ -130,6 +130,7 @@
     @Published private(set) var historyLine = ""
     @Published private(set) var canRestoreSavePath = false
     @Published private(set) var wordCheckLine = ""
+    @Published private(set) var retryBindingLine = "Generated retry binding: no retry"
     @Published private(set) var canFinishWordCheck = false
     private let wordRecognizer: DirectTryGeneratedWordRecognizer
     private let capture: DirectTryGeneratedCapture
