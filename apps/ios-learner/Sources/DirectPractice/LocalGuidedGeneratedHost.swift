@@ -12,7 +12,9 @@
     var base: Self {
       largeText ? Self(rawValue: String(rawValue.dropLast(2)))! : self
     }
-    var holdsCheck: Bool { base == .heldFinish || base == .heldClose }
+    var holdsCheck: Bool {
+      base == .heldFinish || base == .heldClose || base == .practiceTimeoutRetry
+    }
   }
 
   /// Closed DEBUG/simulator fixture. The product view has one injected managed owner.
