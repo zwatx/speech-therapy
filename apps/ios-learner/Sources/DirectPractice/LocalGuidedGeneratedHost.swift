@@ -4,8 +4,10 @@
   import SwiftUI
 
   enum LocalGuidedGeneratedCase: String, CaseIterable {
-    case setup, practice, recheck, heldFinish, heldClose, timeout
-    case setupAX, practiceAX, recheckAX, heldFinishAX, heldCloseAX, timeoutAX
+    case setup, practice, recheck, heldFinish, heldClose, timeout, wordGuess, retake, practiceQuality
+    case setupAX, practiceAX, recheckAX, heldFinishAX, heldCloseAX, timeoutAX, wordGuessAX, retakeAX, practiceQualityAX
+    case researchDetails, researchDetailsAX
+    case practiceTimeoutRetry, practiceTimeoutRetryAX
     var largeText: Bool { rawValue.hasSuffix("AX") }
     var base: Self {
       largeText ? Self(rawValue: String(rawValue.dropLast(2)))! : self
