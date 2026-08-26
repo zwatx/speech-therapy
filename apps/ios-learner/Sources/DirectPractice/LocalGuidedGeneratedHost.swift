@@ -112,12 +112,15 @@
     let recognizer: LocalGuidedGeneratedRecognizer
     let history: PracticeParticipationStore
     let files: ProcessAudioFileOwnership
+    private let researchProcessor: LocalGuidedGeneratedResearchProcessor?
     @Published private(set) var seedState: SeedState = .preparing
     @Published private(set) var seedLine = "Generated stage: preparing"
     @Published private(set) var filesLine = ""
     @Published private(set) var checkLine = ""
+    @Published private(set) var retryBindingLine = "Generated retry binding: no retry"
     @Published private(set) var historyLine = ""
     @Published private(set) var receiptLine = "Generated practice receipts: 0 exact"
+    @Published private(set) var modelLine = "Generated model calls: 0"
     private let testCase: LocalGuidedGeneratedCase
     private var seedStarted = false
     private var subscriptions: Set<AnyCancellable> = []
