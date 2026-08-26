@@ -75,6 +75,13 @@
         Text(resources.checkLine).accessibilityIdentifier("cadence.generated-guided.checks")
         Text(resources.historyLine).accessibilityIdentifier("cadence.generated-guided.history")
         Text(resources.receiptLine).accessibilityIdentifier("cadence.generated-guided.receipts")
+        if testCase.base == .researchDetails {
+          Text(resources.modelLine).accessibilityIdentifier("cadence.generated-guided.model-calls")
+        }
+        if testCase.base == .practiceTimeoutRetry {
+          Text(resources.retryBindingLine)
+            .accessibilityIdentifier("cadence.generated-guided.retry-binding")
+        }
         if testCase.holdsCheck {
           Button {
             resources.recognizer.finish()
