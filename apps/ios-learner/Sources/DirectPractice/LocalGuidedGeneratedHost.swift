@@ -138,7 +138,22 @@
           : testCase.base == .retake ? [0.2, 0.8] : [0.6, 0.8, 1.0])
       recognizer = LocalGuidedGeneratedRecognizer(
         files: files, holdsResult: testCase.holdsCheck,
-        returnedStatus: testCase.base == .timeout ? .timedOut : .matched)
+        returnedStatus: testCase.base == .timeout ? .timedOut
+          : testCase.base == .wordGuess ? .notMatched : .matched,
+        alternatives: testCase.base == .wordGuess ? ["wall", "call", "fall", "tall"] : [],
+        heldAfterRequestCount: testCase.base == .practiceTimeoutRetry ? 5 : 0,
+        timeoutRequestNumber: testCase.base == .practiceTimeoutRetry ? 6 : nil)
+      let processor = testCase.base == .researchDetails ? LocalGuidedGeneratedResearchProcessor() : nil
+      researchProcessor = processor
+      let researchModel: GuidedResearchModelRecognizer?
+      if let processor {
+        researchModel = GuidedResearchModelRecognizer(
+          wordRecognizer: recognizer, processor: processor, ownership: files,
+          availability: GuidedResearchModelAvailability())
+      } else {
+        researchModel = nil
+      }
+      let wordChecker: any LocalWordRecognizing = if let researchModel { researchModel } else { recognizer }
       let player = ResearchAcknowledgedPlaybackUITestFixture(
         completion: .explicitStop, ownership: hardware, fileOwnership: files)
       let recovery = ProcessPracticeMirrorRecovery()
