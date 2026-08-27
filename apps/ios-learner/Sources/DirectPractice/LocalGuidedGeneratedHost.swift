@@ -172,7 +172,7 @@
         prompts: [starter.prompts[0]])
       let media = DirectPracticeSession(
         sound: sound, capturer: capture, player: player, mirror: mirror, history: history,
-        managedForGuided: true, wordRecognizer: recognizer,
+        managedForGuided: true, wordRecognizer: wordChecker,
         cleanupHardwareOwnership: hardware, cleanupFileOwnership: files)
       session = LocalGuidedReviewSession(history: history, media: media)
       capture.changed = { [weak self] in self?.refresh() }
