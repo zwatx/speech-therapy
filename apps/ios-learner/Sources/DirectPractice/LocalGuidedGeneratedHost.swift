@@ -205,7 +205,8 @@
     func prepareSeed() async {
       guard !seedStarted else { return }
       seedStarted = true
-      guard testCase == .practice || testCase == .recheck else {
+      guard testCase == .practice || testCase == .practiceQuality || testCase == .recheck
+        || testCase == .researchDetails || testCase == .practiceTimeoutRetry else {
         seedLine = "Generated stage: unseeded setup"
         seedState = .ready
         return
