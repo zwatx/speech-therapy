@@ -132,7 +132,10 @@
       let hardware = AudioHardwareOwnership()
       let files = ProcessAudioFileOwnership()
       self.files = files
-      capture = LocalGuidedGeneratedCapture(hardware: hardware, files: files)
+      capture = LocalGuidedGeneratedCapture(
+        hardware: hardware, files: files,
+        durations: testCase.base == .practiceQuality ? [0.6, 0.8, 1.0, 0.6, 0.8, 0.2, 0.8]
+          : testCase.base == .retake ? [0.2, 0.8] : [0.6, 0.8, 1.0])
       recognizer = LocalGuidedGeneratedRecognizer(
         files: files, holdsResult: testCase.holdsCheck,
         returnedStatus: testCase.base == .timeout ? .timedOut : .matched)
