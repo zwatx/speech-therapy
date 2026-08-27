@@ -233,7 +233,8 @@
         failSeed()
         return
       }
-      if testCase == .practice {
+      if testCase == .practice || testCase == .practiceQuality || testCase == .researchDetails
+        || testCase == .practiceTimeoutRetry {
         seedLine = "Generated stage: five settled first checks; no choices preselected"
         seedState = .ready
         return
