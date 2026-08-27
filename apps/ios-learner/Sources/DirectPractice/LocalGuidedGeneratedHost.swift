@@ -174,7 +174,13 @@
         sound: sound, capturer: capture, player: player, mirror: mirror, history: history,
         managedForGuided: true, wordRecognizer: wordChecker,
         cleanupHardwareOwnership: hardware, cleanupFileOwnership: files)
-      session = LocalGuidedReviewSession(history: history, media: media)
+      if let researchModel {
+        session = LocalGuidedReviewSession(history: history, media: media, researchModel: researchModel)
+        precondition(session.configureResearchModel(enabled: true, ageYears: 9))
+      } else {
+        session = LocalGuidedReviewSession(history: history, media: media)
+      }
+      processor?.changed = { [weak self] in self?.refresh() }
       capture.changed = { [weak self] in self?.refresh() }
       recognizer.changed = { [weak self] in self?.refresh() }
       capture.cleanupStatePublisher.sink { [weak self] _ in
