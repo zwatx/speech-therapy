@@ -373,10 +373,10 @@
         return .init(request: request, status: .unavailable, cleanupConfirmed: true)
       }
       requests.append(request)
-      if !holdsResult {
+      if !holdsResult || requests.count <= heldAfterRequestCount {
         files.finishBorrowing(operation: request.operationID)
         changed?()
-        return .init(request: request, status: returnedStatus, cleanupConfirmed: true)
+        return receipt(for: request)
       }
       return await withCheckedContinuation { continuation in
         pending = (request, continuation)
