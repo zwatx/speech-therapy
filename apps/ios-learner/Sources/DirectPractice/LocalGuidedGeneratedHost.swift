@@ -402,11 +402,20 @@
       files.finishBorrowing(operation: request.operationID)
       pending = nil
       changed?()
-      continuation.resume(
-        returning: .init(
-          request: request,
-          status: cancellations.contains(request.operationID) ? .cancelled : returnedStatus,
-          cleanupConfirmed: true))
+      continuation.resume(returning: receipt(for: request))
+    }
+    private func receipt(for request: LocalWordRecognitionRequest) -> LocalWordRecognitionReceipt {
+      let index = requests.firstIndex(of: request)
+      let scriptedStatus: LocalWordRecognitionStatus =
+        timeoutRequestNumber != nil && index.map { $0 + 1 } == timeoutRequestNumber
+          ? .timedOut : returnedStatus
+      let status: LocalWordRecognitionStatus =
+        cancellations.contains(request.operationID) ? .cancelled : scriptedStatus
+      let alternative = index.flatMap { alternatives.indices.contains($0) ? alternatives[$0] : nil }
+      let guess = alternative.flatMap {
+        LocalWordGuess(completedText: $0, expectedWord: request.expectedWord)
+      }
+      return .init(request: request, status: status, cleanupConfirmed: true, wordGuess: guess)
     }
   }
 
