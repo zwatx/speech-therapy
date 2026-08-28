@@ -383,6 +383,15 @@
         changed?()
       }
     }
+    /// Unit-test failure cleanup only. Late-starting generated calls cannot hold
+    /// another continuation after the caller has begun joining its existing task.
+    func stopGeneratedChecks() {
+      acceptsGeneratedChecks = false
+      if let (request, _) = pending {
+        cancel(operationID: request.operationID)
+        finish()
+      }
+    }
     func cancel(operationID: UUID) {
       guard pending?.0.operationID == operationID else { return }
       cancellations.insert(operationID)
