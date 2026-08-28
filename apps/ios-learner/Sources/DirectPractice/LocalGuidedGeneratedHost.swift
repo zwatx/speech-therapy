@@ -338,8 +338,12 @@
   @MainActor
   final class LocalGuidedGeneratedRecognizer: LocalWordRecognizing {
     private let files: ProcessAudioFileOwnership
+    private var acceptsGeneratedChecks = true
     private let holdsResult: Bool
     private let returnedStatus: LocalWordRecognitionStatus
+    private let heldAfterRequestCount: Int
+    private let timeoutRequestNumber: Int?
+    private let alternatives: [String]
     private var pending:
       (
         LocalWordRecognitionRequest, CheckedContinuation<LocalWordRecognitionReceipt, Never>
