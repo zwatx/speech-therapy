@@ -361,9 +361,12 @@
       self.files = files
       self.holdsResult = holdsResult
       self.returnedStatus = returnedStatus
+      self.heldAfterRequestCount = heldAfterRequestCount
+      self.timeoutRequestNumber = timeoutRequestNumber
+      self.alternatives = alternatives
     }
     func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
-      guard !Task.isCancelled else {
+      guard acceptsGeneratedChecks, !Task.isCancelled else {
         return .init(request: request, status: .cancelled, cleanupConfirmed: true)
       }
       guard pending == nil, files.borrow(request.fileURL, operation: request.operationID) else {
