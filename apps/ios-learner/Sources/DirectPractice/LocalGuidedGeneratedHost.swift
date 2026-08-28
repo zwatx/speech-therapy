@@ -294,6 +294,42 @@
       checkLine =
         "Generated checks: \(recognizer.requests.count), pending \(recognizer.isPending ? 1 : 0)"
         + ", cancelled \(recognizer.cancellations.count), borrowed \(recognizer.borrowCount)"
+      if testCase == .practiceTimeoutRetry, recognizer.requests.count >= 7,
+        let retry = recognizer.requests.last {
+        let first = recognizer.requests[5]
+        let same = first.tryID == retry.tryID && first.fileURL == retry.fileURL
+          && first.expectedWord == retry.expectedWord
+        let latest = retry.tryID == session.media.latestTry?.id
+        retryBindingLine = "Generated retry binding: same take \(same ? "yes" : "no")"
+          + " · new operation \(first.operationID != retry.operationID ? "yes" : "no")"
+          + " · latest \(latest ? "yes" : "no")"
+      }
+      modelLine = "Generated model calls: \(researchProcessor?.calls ?? 0)"
+    }
+  }
+
+  /// Generated UI evidence only. Reads only this host's synthetic take; never runs a model.
+  @MainActor
+  private final class LocalGuidedGeneratedResearchProcessor: ResearchAssessmentProcessing {
+    private(set) var calls = 0
+    var changed: (() -> Void)?
+
+    func process(
+      attemptId: UUID, recording: CapturedRecording, entry: PracticeLibraryEntry, ageYears: Int
+    ) async throws -> ResearchAssessmentOutcome {
+      calls += 1
+      changed?()
+      let prompt = try ResearchAssessmentClient.prompt(for: entry)
+      let context = try ResearchAssessmentClient.context(
+        attemptId: attemptId, audio: Data(contentsOf: recording.url), entry: entry, ageYears: ageYears)
+      let probabilities = calls <= 5 ? [0.2, 0.3, 0.5] : [0.5, 0.25, 0.25]
+      return .processedResearch(.init(
+        context: context,
+        model: .init(id: "ages-6-12-research-mixture", manifestSha256: ResearchAssessmentClient.manifest),
+        targets: prompt.targets.map {
+          .init(id: $0.id, wordIndex: $0.wordIndex, phoneIndex: $0.phoneIndex,
+            targetPhone: $0.targetPhone, subjectiveCorpusRatingProbabilities: probabilities)
+        }, timingMilliseconds: .init(total: 1, inference: 0.5)))
     }
   }
 
