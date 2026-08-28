@@ -355,7 +355,8 @@
     var borrowCount: Int { isPending ? 1 : 0 }
     init(
       files: ProcessAudioFileOwnership, holdsResult: Bool,
-      returnedStatus: LocalWordRecognitionStatus = .matched
+      returnedStatus: LocalWordRecognitionStatus = .matched, alternatives: [String] = [],
+      heldAfterRequestCount: Int = 0, timeoutRequestNumber: Int? = nil
     ) {
       self.files = files
       self.holdsResult = holdsResult
