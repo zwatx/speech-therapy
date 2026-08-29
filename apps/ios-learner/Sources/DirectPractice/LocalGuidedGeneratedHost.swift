@@ -450,8 +450,11 @@
     func currentRecordingPower() -> Float? { active == nil ? nil : generatedInputPower }
 
     init(
-      hardware: AudioHardwareOwnership, files: ProcessAudioFileOwnership
+      hardware: AudioHardwareOwnership, files: ProcessAudioFileOwnership,
+      durations: [TimeInterval] = [0.6, 0.8, 1.0]
     ) {
+      precondition(!durations.isEmpty && durations.allSatisfy { $0.isFinite && $0 > 0 && $0 <= 4 })
+      self.durations = durations
       ownership = ResearchGeneratedCaptureFileOwnership(hardware: hardware, files: files)
     }
 
