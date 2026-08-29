@@ -435,7 +435,7 @@
   /// Fake permission and generated private WAV files through the reviewed exact producer.
   @MainActor
   final class LocalGuidedGeneratedCapture: AudioCapturing {
-    private static let durations: [TimeInterval] = [0.6, 0.8, 1.0]
+    private let durations: [TimeInterval]
     private let ownership: ResearchGeneratedCaptureFileOwnership
     private var active: URL?
     private(set) var permissionRequests = 0
