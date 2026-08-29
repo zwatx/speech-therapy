@@ -483,7 +483,7 @@
       defer { changed?() }
       let url = ownership.directory.appendingPathComponent("local-guided-\(UUID()).wav")
       try ownership.begin(url)
-      let duration = Self.durations[returnedURLs.count % Self.durations.count]
+      let duration = durations[returnedURLs.count % durations.count]
       let bytes = Self.wav(samples: Int((duration * 16000).rounded()))
       do { try bytes.write(to: url) } catch {
         try? ownership.cancel(url)
@@ -497,7 +497,7 @@
       defer { changed?() }
       let owner = try ownership.stop(url)
       active = nil
-      let duration = Self.durations[returnedURLs.count % Self.durations.count]
+      let duration = durations[returnedURLs.count % durations.count]
       returnedURLs.append(url)
       return .init(
         url: url, summary: .init(duration: duration, averagePower: -12), cleanupOwnerID: owner)
