@@ -117,6 +117,8 @@ struct LocalGuidedPracticeRow: Equatable, Sendable {
 struct LocalGuidedPairedReviewRow: Equatable, Sendable {
   let entry: PracticeLibraryEntry
   let initial: LocalGuidedReviewRow
+  /// Nil means this canonical entry was not selected for practice.
+  let practice: LocalGuidedPracticeRow?
   let recheck: LocalGuidedReviewRow
 }
 
