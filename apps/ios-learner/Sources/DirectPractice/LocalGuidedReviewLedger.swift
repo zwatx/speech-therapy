@@ -177,8 +177,11 @@ struct LocalGuidedReviewLedger: Sendable {
 
   var pairedRows: [LocalGuidedPairedReviewRow] {
     guard let recheckRound else { return [] }
-    return entries.indices.map {
-      .init(entry: entries[$0], initial: initialRound.rows[$0], recheck: recheckRound.rows[$0])
+    return entries.indices.map { index in
+      .init(
+        entry: entries[index], initial: initialRound.rows[index],
+        practice: practiceRows.first(where: { $0.entry.id == entries[index].id }),
+        recheck: recheckRound.rows[index])
     }
   }
 
