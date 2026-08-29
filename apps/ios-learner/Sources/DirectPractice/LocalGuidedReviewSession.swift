@@ -2,6 +2,60 @@
 import Combine
 import Foundation
 
+/// Repeat preserves the workflow, so both completed rounds belong to the action.
+struct LocalGuidedCompletedSummaryIdentity: Equatable, Sendable {
+  let workflowID: UUID
+  let initialRoundID: UUID
+  let recheckRoundID: UUID
+
+  init(workflowID: UUID, initialRoundID: UUID, recheckRoundID: UUID) {
+    self.workflowID = workflowID
+    self.initialRoundID = initialRoundID
+    self.recheckRoundID = recheckRoundID
+  }
+
+  init?(ledger: LocalGuidedReviewLedger) {
+    guard ledger.stage == .completed, ledger.initialRound.isFinished,
+      let recheck = ledger.recheckRound, recheck.isFinished,
+      ledger.activeReviewVisit == nil, ledger.activePracticeVisit == nil
+    else { return nil }
+    self.init(workflowID: ledger.workflowID, initialRoundID: ledger.initialRound.id,
+      recheckRoundID: recheck.id)
+  }
+}
+
+/// A canonical next destination; review observations and media are never transferred.
+struct LocalGuidedSummaryHandoff: Equatable, Sendable {
+  enum Destination: Equatable, Sendable {
+    case independentPractice(entry: PracticeLibraryEntry, sound: PracticeSound)
+    case repeatReview(entryIDs: [String])
+  }
+
+  let id: UUID
+  let summary: LocalGuidedCompletedSummaryIdentity
+  let destination: Destination
+
+  var canonicalSound: PracticeSound? {
+    guard case .independentPractice(let entry, let sound) = destination,
+      PracticeLibrary.entries().contains(entry),
+      let canonical = PracticeLibrary.session(soundID: entry.soundID, position: entry.position,
+        startingAt: entry.id, limit: 1),
+      canonical.prompts == [entry.prompt], canonical == sound
+    else { return nil }
+    return canonical
+  }
+
+  var canonicalRepeatEntryIDs: [String]? {
+    guard case .repeatReview(let ids) = destination,
+      let entries = try? SavedGuidedWordsValidation.entries(entryIDs: ids),
+      entries.map(\.id) == ids
+    else { return nil }
+    return ids
+  }
+
+  var isCanonical: Bool { canonicalSound != nil || canonicalRepeatEntryIDs != nil }
+}
+
 @MainActor
 final class LocalGuidedReviewSession: ObservableObject {
   @Published private(set) var ledger: LocalGuidedReviewLedger?
