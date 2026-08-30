@@ -265,7 +265,15 @@ final class LocalGuidedReviewSession: ObservableObject {
   }
 
   var canClose: Bool { !isClosed }
-  var statusNote: String? { media.closeNote ?? actionNote }
+  var statusNote: String? {
+    if independentPracticeCleanupPending {
+      if isTransitioning { return "Practice hasn’t opened. Waiting for cleanup to finish." }
+      return media.hasFullyEndedCleanup
+        ? "Cleanup finished. Practice hasn’t opened. Tap Practice again."
+        : "Practice hasn’t opened. Retry cleanup, then tap Practice again."
+    }
+    return media.closeNote ?? actionNote
+  }
   private var admitsAction: Bool { !isClosed && !closeIntent && actionID == nil }
   var canSaveSetupWords: Bool {
     admitsAction && ledger == nil && !isTransitioning && media.phase == .ready
