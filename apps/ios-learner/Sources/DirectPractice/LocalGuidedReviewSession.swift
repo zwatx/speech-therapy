@@ -496,6 +496,10 @@ final class LocalGuidedReviewSession: ObservableObject {
   /// A new round within the same open workflow. Permanent media/workflow ownership and
   /// retired visit IDs remain intact; no sensor, playback or recognizer starts here.
   func repeatReview() async {
+    if repeatRequiresSummaryDeparture {
+      await handoffToFreshReview()
+      return
+    }
     guard canRepeatReview, let previous = ledger, let id = beginAction() else { return }
     defer { finishAction(id) }
     func eligible() -> Bool { isCurrent(id) && !Task.isCancelled }
