@@ -334,6 +334,7 @@ final class LocalGuidedReviewSession: ObservableObject {
     guard admitsAction else { return nil }
     let id = UUID()
     actionID = id
+    independentPracticeCleanupPending = false
     objectWillChange.send()
     guard isCurrent(id) else { return nil }
     actionNote = nil
