@@ -360,7 +360,138 @@ final class LocalGuidedReviewSession: ObservableObject {
     await prepareNextVisit(action: id)
   }
 
-  var canRepeatReview: Bool { admitsAction && ledger?.stage == .completed }
+  var canRepeatReview: Bool {
+    admitsAction && ledger?.stage == .completed
+      && (!repeatRequiresSummaryDeparture || (!media.cleanupBlocked && !media.isTransitioning))
+  }
+
+  var repeatRequiresSummaryDeparture: Bool {
+    independentPracticeEndedOwner
+  }
+
+  var completedSummaryIdentity: LocalGuidedCompletedSummaryIdentity? {
+    ledger.flatMap(LocalGuidedCompletedSummaryIdentity.init(ledger:))
+  }
+
+  func canPracticeIndependently(
+    entryID: String, summary: LocalGuidedCompletedSummaryIdentity
+  ) -> Bool {
+    admitsAction && closeTask == nil && summaryHandoff == nil
+      && independentPracticeEntry(entryID: entryID, summary: summary) != nil
+  }
+
+  private func independentPracticeEntry(
+    entryID: String, summary: LocalGuidedCompletedSummaryIdentity
+  ) -> PracticeLibraryEntry? {
+    guard completedSummaryIdentity == summary, let ledger,
+      ledger.pairedRows.filter({ $0.entry.id == entryID }).count == 1,
+      let row = ledger.pairedRows.first(where: { $0.entry.id == entryID }),
+      row.initial.entry == row.entry, row.recheck.entry == row.entry,
+      PracticeLibrary.entries().contains(row.entry)
+    else { return nil }
+    return row.entry
+  }
+
+  /// This cleanup intent never authorizes an automatic recovered Close or launch.
+  /// Failure leaves the same completed ledger available for an explicit later tap.
+  func practiceIndependently(
+    entryID: String, summary: LocalGuidedCompletedSummaryIdentity
+  ) async {
+    guard !Task.isCancelled, canPracticeIndependently(entryID: entryID, summary: summary),
+      let entry = independentPracticeEntry(entryID: entryID, summary: summary),
+      let sound = PracticeLibrary.session(soundID: entry.soundID, position: entry.position,
+        startingAt: entryID, limit: 1), sound.prompts == [entry.prompt],
+      let id = beginAction()
+    else { return }
+    var committed = false
+    defer { if !committed { finishAction(id) } }
+    func eligible() -> Bool {
+      actionID == id && !closeIntent && closeTask == nil && !Task.isCancelled
+        && independentPracticeEntry(entryID: entryID, summary: summary) == entry
+    }
+    guard eligible(), !isClosed else { return }
+    if media.phase != .ended, !media.closeRequested { independentPracticeEndedOwner = true }
+    independentPracticeCleanupPending = true
+    let ended = await media.end()
+    guard eligible(), !isClosed else { return }
+    guard ended, media.hasFullyEndedCleanup else {
+      independentPracticeCleanupPending = true
+      return
+    }
+    summaryHandoff = .init(id: id, summary: summary,
+      destination: .independentPractice(entry: entry, sound: sound))
+    // Stage before willSet, but consumption requires the committed getter. A synchronous
+    // Close/lifecycle/cancellation observer can still revoke the token during publication.
+    isClosed = true
+    guard eligible(), media.hasFullyEndedCleanup,
+      summaryHandoff?.id == id, isClosed
+    else {
+      summaryHandoff = nil
+      if !closeIntent, isClosed { isClosed = false }
+      return
+    }
+    committed = true
+  }
+
+  /// Called by the closed-state observer, never during willSet or a cleanup waiter.
+  func consumeSummaryHandoff() -> LocalGuidedSummaryHandoff? {
+    guard isClosed, let handoff = summaryHandoff else { return nil }
+    guard !closeIntent, closeTask == nil, !Task.isCancelled, actionID == handoff.id,
+      handoffMatchesSummary(handoff), media.hasFullyEndedCleanup
+    else {
+      if !closeIntent {
+        summaryHandoff = nil
+        actionID = nil
+        independentPracticeCleanupPending = true
+        isClosed = false
+      }
+      return nil
+    }
+    summaryHandoff = nil
+    actionID = nil
+    return handoff
+  }
+
+  private func handoffMatchesSummary(_ handoff: LocalGuidedSummaryHandoff) -> Bool {
+    guard completedSummaryIdentity == handoff.summary, handoff.isCanonical else { return false }
+    switch handoff.destination {
+    case .independentPractice(let entry, _):
+      return independentPracticeEntry(entryID: entry.id, summary: handoff.summary) == entry
+    case .repeatReview(let ids):
+      return independentPracticeEndedOwner && ledger?.entries.map(\.id) == ids
+    }
+  }
+
+  private func handoffToFreshReview() async {
+    guard repeatRequiresSummaryDeparture, canRepeatReview,
+      let summary = completedSummaryIdentity, let ledger, let id = beginAction()
+    else { return }
+    var committed = false
+    defer { if !committed { finishAction(id) } }
+    func eligible() -> Bool {
+      actionID == id && !closeIntent && closeTask == nil && !Task.isCancelled
+        && completedSummaryIdentity == summary
+    }
+    guard eligible(), !isClosed else { return }
+    // File-only recovery can publish ready even after the mirror's terminal Close.
+    // Reconfirm end here; never prepare that released owner as a new review.
+    let ended = await media.end()
+    guard eligible(), !isClosed else { return }
+    guard ended, media.hasFullyEndedCleanup else {
+      independentPracticeCleanupPending = true
+      return
+    }
+    summaryHandoff = .init(id: id, summary: summary,
+      destination: .repeatReview(entryIDs: ledger.entries.map(\.id)))
+    guard let handoff = summaryHandoff, handoffMatchesSummary(handoff) else { return }
+    isClosed = true
+    guard eligible(), media.hasFullyEndedCleanup, summaryHandoff?.id == id, isClosed else {
+      summaryHandoff = nil
+      if !closeIntent, isClosed { isClosed = false }
+      return
+    }
+    committed = true
+  }
 
   /// A new round within the same open workflow. Permanent media/workflow ownership and
   /// retired visit IDs remain intact; no sensor, playback or recognizer starts here.
