@@ -85,6 +85,11 @@ final class LocalGuidedReviewSession: ObservableObject {
   private var uncommittedRepeatPrepared = false
   private var closeIntent = false
   private var closeTask: Task<Bool, Never>?
+  private var summaryHandoff: LocalGuidedSummaryHandoff?
+  private var independentPracticeCleanupPending = false
+  // A terminal mirror cannot be reopened. Only our own explicit end attempt may
+  // offer a fresh-owner Repeat after recovery; unrelated ended owners stay refused.
+  private var independentPracticeEndedOwner = false
 
   init(
     history: PracticeParticipationStore = .shared, media: DirectPracticeSession? = nil,
