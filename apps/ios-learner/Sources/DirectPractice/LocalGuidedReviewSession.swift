@@ -190,6 +190,35 @@ final class LocalGuidedReviewSession: ObservableObject {
     #endif
   }
 
+  #if DEBUG && targetEnvironment(simulator)
+    /// Resolve only the current workflow's canonical rows; opening details performs no work.
+    func researchDetails(workflowID: UUID, entryID: String) -> GuidedResearchDetailsPresentation? {
+      guard admitsAction, !isTransitioning, researchModelEnabled,
+        let age = researchAgeYears, let model = researchModel, let ledger,
+        ledger.workflowID == workflowID,
+        ledger.stage == .choosingPractice || ledger.stage == .completed,
+        ledger.initialRound.isFinished,
+        let entry = ledger.entries.first(where: { $0.id == entryID }),
+        ledger.initialRound.rows.filter({ $0.entry.id == entryID }).count == 1,
+        let initial = ledger.initialRound.rows.first(where: { $0.entry.id == entryID })
+      else { return nil }
+      let recheck: LocalGuidedReviewRow?
+      if ledger.stage == .completed {
+        guard let round = ledger.recheckRound, round.isFinished,
+          round.rows.filter({ $0.entry.id == entryID }).count == 1
+        else { return nil }
+        recheck = round.rows.first(where: { $0.entry.id == entryID })
+      } else {
+        recheck = nil
+      }
+      return .init(id: .init(workflowID: workflowID, entryID: entryID), word: entry.prompt.word,
+        initial: .resolve(row: initial, workflowID: workflowID, roundID: ledger.initialRound.id,
+          entry: entry, ageYears: age, observations: model.observations),
+        recheck: .resolve(row: recheck, workflowID: workflowID, roundID: ledger.recheckRound?.id,
+          entry: entry, ageYears: age, observations: model.observations))
+    }
+  #endif
+
   private var modelProcessingNote: String? {
     #if DEBUG && targetEnvironment(simulator)
       return researchModelEnabled ? researchModel?.statusNote : nil
