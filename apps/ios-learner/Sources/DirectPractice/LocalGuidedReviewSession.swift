@@ -852,9 +852,11 @@ final class LocalGuidedReviewSession: ObservableObject {
   }
 
   func close() async -> Bool {
+    summaryHandoff = nil
+    independentPracticeCleanupPending = false
+    closeIntent = true
     if isClosed { return true }
     if let closeTask { return await closeTask.value }
-    closeIntent = true
     actionID = UUID()
     objectWillChange.send()
     let task = Task { @MainActor [self] in
