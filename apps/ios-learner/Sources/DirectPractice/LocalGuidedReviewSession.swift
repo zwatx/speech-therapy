@@ -744,7 +744,7 @@ final class LocalGuidedReviewSession: ObservableObject {
     #if DEBUG && targetEnvironment(simulator)
       if let researchModel {
         guard let entry = ledger?.entries.first(where: { $0.id == media.currentPrompt.id }),
-          researchModel.prepare(entry: entry)
+          researchModel.prepare(entry: entry, visit: media.guidedMediaVisit)
         else { return }
       }
     #endif
