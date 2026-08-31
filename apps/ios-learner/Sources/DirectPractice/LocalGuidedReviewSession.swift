@@ -678,6 +678,18 @@ final class LocalGuidedReviewSession: ObservableObject {
     }
     return false
   }
+  private var practiceRecordingRequirement: DirectPracticeRecordingAdvice? {
+    guard !isClosed, !closeIntent, !isTransitioning, !media.isTransitioning,
+      !media.closeRequested, !media.cleanupBlocked,
+      let ledger, ledger.stage == .practice,
+      let row = activePracticeRow, row.state == .ready, let visit = row.visit,
+      media.guidedMediaVisit == .practice(visit), media.currentPrompt.id == visit.entryID,
+      case .review = media.phase, let latest = media.latestTry
+    else { return nil }
+    return DirectPracticeRecordingAdvice.practiceRequirement(
+      summary: latest.summary, assessment: latest.assessment)
+  }
+
   private var canSkip: Bool {
     guard admitsAction, !media.cleanupBlocked else { return false }
     return activeReviewRow?.state == .ready || activePracticeRow?.state == .ready
