@@ -897,7 +897,10 @@ final class LocalGuidedReviewSession: ObservableObject {
     media.viewDidDisappear()
   }
   private func revokeAction() {
+    let staged = summaryHandoff != nil
+    summaryHandoff = nil
     actionID = nil
+    if staged, isClosed, !closeIntent { isClosed = false }
     objectWillChange.send()
   }
 
