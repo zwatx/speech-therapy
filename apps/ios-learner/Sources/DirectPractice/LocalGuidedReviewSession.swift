@@ -721,7 +721,9 @@ final class LocalGuidedReviewSession: ObservableObject {
   }
 
   func recordAndCheckCurrentWord() async {
-    guard showsRecordAndCheck, admitsAction, media.canStartRecordingAndCheckWord else { return }
+    guard showsRecordAndCheck, admitsAction,
+      media.canStartRecordingAndCheckWord || media.canRecordAnotherTryAndCheckWord
+    else { return }
     #if DEBUG && targetEnvironment(simulator)
       if let researchModel {
         guard let entry = ledger?.entries.first(where: { $0.id == media.currentPrompt.id }),
