@@ -133,6 +133,9 @@ struct LocalGuidedReviewView: View {
       }
     }
     .onChange(of: session.ledger?.stage) { _, stage in
+      #if DEBUG && targetEnvironment(simulator)
+        researchSelection = nil
+      #endif
       let label: String? =
         switch stage {
         case .initialReview: "First review"
