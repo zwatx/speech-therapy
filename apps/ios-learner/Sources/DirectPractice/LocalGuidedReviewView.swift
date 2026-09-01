@@ -86,6 +86,28 @@ struct LocalGuidedReviewView: View {
         choose: { entry in session.replaceSetupEntry(at: slot.index, with: entry) }
       )
     }
+    #if DEBUG && targetEnvironment(simulator)
+      .sheet(item: $researchSelection) { selection in
+        Group {
+          if let details = session.researchDetails(
+            workflowID: selection.workflowID, entryID: selection.entryID)
+          {
+            GuidedResearchDetailsSheet(details: details)
+          } else {
+            VStack(alignment: .leading, spacing: 20) {
+              Text("Research details unavailable").font(.title2)
+              Text("This review is no longer available.")
+              Button("Close") { researchSelection = nil }
+                .buttonStyle(DirectPracticeButtonStyle())
+            }
+            .padding(24)
+          }
+        }
+        .environment(\.dynamicTypeSize, dynamicTypeSize)
+      }
+      .onChange(of: session.ledger?.workflowID) { _, _ in researchSelection = nil }
+      .onChange(of: session.ledger?.initialRound.id) { _, _ in researchSelection = nil }
+    #endif
     .onAppear { forwardScene(scenePhase) }
     .onChange(of: scenePhase) { _, phase in forwardScene(phase) }
     .onDisappear { session.disappeared() }
