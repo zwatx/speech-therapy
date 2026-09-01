@@ -119,7 +119,19 @@ struct LocalGuidedReviewView: View {
         session.interrupted()
       }
     }
-    .onChange(of: session.isClosed) { _, allowed in if allowed { dismiss() } }
+    .onChange(of: session.isClosed) { _, allowed in
+      if allowed, session.isClosed {
+        #if DEBUG && targetEnvironment(simulator)
+          researchSelection = nil
+        #endif
+        if let onSummaryDeparture,
+          let handoff = session.consumeSummaryHandoff()
+        {
+          onSummaryDeparture(handoff)
+        }
+        if session.isClosed { dismiss() }
+      }
+    }
     .onChange(of: session.ledger?.stage) { _, stage in
       let label: String? =
         switch stage {
