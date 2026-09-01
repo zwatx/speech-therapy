@@ -975,8 +975,10 @@ final class LocalGuidedReviewSession: ObservableObject {
     return .init(
       stageTitle: title, positionLabel: "\(ordinal) of \(count)", statusNote: statusNote,
       firstObservationNote: firstNote, firstCheckStatusNote: firstCheckStatus,
+      practiceRecordingRequirement: practiceRecordingRequirement,
       showsRecordAndCheck: showsRecordAndCheck,
-      canRecordAndCheck: showsRecordAndCheck && admitsAction && media.canStartRecordingAndCheckWord,
+      canRecordAndCheck: showsRecordAndCheck && admitsAction
+        && (media.canStartRecordingAndCheckWord || media.canRecordAnotherTryAndCheckWord),
       recordAndCheck: { [self] in await recordAndCheckCurrentWord() },
       showsWordCheck: true,
       checkLabel: modelCheckLabel, checkProgressNote: modelProcessingNote,
