@@ -301,6 +301,9 @@ struct LocalGuidedReviewView: View {
           .accessibilityValue(selected ? "Selected" : "Not selected")
           .accessibilityAddTraits(selected ? .isSelected : [])
           .accessibilityIdentifier("cadence.guided.select.\(row.entry.id)")
+          #if DEBUG && targetEnvironment(simulator)
+            researchDetailsButton(entryID: row.entry.id, workflowID: ledger.workflowID)
+          #endif
         }
         PracticeRule()
       }
