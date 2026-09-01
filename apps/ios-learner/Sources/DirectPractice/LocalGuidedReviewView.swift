@@ -8,9 +8,20 @@ struct LocalGuidedReviewView: View {
   // The presenter supplies one retained coordinator. Neither stage nor sheet creates an owner.
   @ObservedObject var session: LocalGuidedReviewSession
   var savedWordsStore: SavedGuidedWordsStore? = nil
+  var onSummaryDeparture: ((LocalGuidedSummaryHandoff) -> Void)? = nil
   @Environment(\.dismiss) private var dismiss
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @State private var editingSlot: EditingSlot?
+  #if DEBUG && targetEnvironment(simulator)
+    @State private var researchSelection: ResearchSelection?
+
+    private struct ResearchSelection: Identifiable {
+      let workflowID: UUID
+      let entryID: String
+      var id: String { workflowID.uuidString + ":" + entryID }
+    }
+  #endif
 
   private struct EditingSlot: Identifiable {
     let index: Int
