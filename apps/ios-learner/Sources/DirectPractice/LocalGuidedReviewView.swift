@@ -350,7 +350,8 @@ struct LocalGuidedReviewView: View {
         .accessibilityIdentifier("cadence.guided.done")
       Button("Review these five again") { Task { await session.repeatReview() } }
         .buttonStyle(DirectPracticeButtonStyle(secondary: true))
-        .disabled(!session.canRepeatReview)
+        .disabled(!session.canRepeatReview
+          || (session.repeatRequiresSummaryDeparture && onSummaryDeparture == nil))
         .accessibilityIdentifier("cadence.guided.repeat")
       note("Start a new review with the same words. These observations won’t carry over.")
       if session.media.canRetryCleanup {
