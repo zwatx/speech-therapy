@@ -407,6 +407,7 @@ struct LocalGuidedReviewView: View {
         "Skipped: no check chosen. Not reached: the round ended before this word. Unavailable: no word check could be made."
       )
       note("These observations are kept only while this flow is open.")
+      note("Practice describes participation, not sound improvement.")
     }
   }
 
