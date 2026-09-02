@@ -527,6 +527,7 @@ private struct LocalGuidedWordPicker: View {
   @State private var query = ""
   @State private var soundID: String?
   @State private var position: PracticeTargetPosition?
+  @State private var positionExpanded = false
   @FocusState private var searchFocused: Bool
 
   private var entries: [PracticeLibraryEntry] {
@@ -551,7 +552,7 @@ private struct LocalGuidedWordPicker: View {
           .frame(maxWidth: 680).frame(maxWidth: .infinity)
         List {
           VStack(alignment: .leading, spacing: 20) {
-            // Vertical menus keep their full labels at accessibility text sizes.
+            // Keep filter labels fully readable at accessibility text sizes.
             Menu {
               Picker("Sound", selection: $soundID) {
                 Text("All sounds").tag(String?.none)
