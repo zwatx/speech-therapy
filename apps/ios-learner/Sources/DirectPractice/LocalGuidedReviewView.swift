@@ -386,6 +386,20 @@ struct LocalGuidedReviewView: View {
           .padding(.vertical, 16)
           .accessibilityElement(children: .combine)
           .accessibilityIdentifier("cadence.guided.paired.\(row.entry.id)")
+          if onSummaryDeparture != nil,
+            let summary = LocalGuidedCompletedSummaryIdentity(ledger: ledger)
+          {
+            Button("Practice \(row.entry.prompt.word)") {
+              Task { await session.practiceIndependently(entryID: row.entry.id, summary: summary) }
+            }
+            .buttonStyle(PracticeTextButtonStyle())
+            .disabled(!session.canPracticeIndependently(entryID: row.entry.id, summary: summary))
+            .accessibilityIdentifier("cadence.guided.independent-practice.\(row.entry.id)")
+            .padding(.bottom, 12)
+          }
+          #if DEBUG && targetEnvironment(simulator)
+            researchDetailsButton(entryID: row.entry.id, workflowID: ledger.workflowID)
+          #endif
         }
         PracticeRule()
       }
