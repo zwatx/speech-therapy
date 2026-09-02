@@ -360,6 +360,10 @@ struct LocalGuidedReviewView: View {
           .disabled(session.isTransitioning)
           .accessibilityIdentifier("cadence.guided.repeat-cleanup")
       }
+      if onSummaryDeparture != nil {
+        note("Practice ends this review. These observations won’t carry over.")
+          .accessibilityIdentifier("cadence.guided.independent-practice-note")
+      }
       VStack(spacing: 0) {
         ForEach(ledger.pairedRows, id: \.entry.id) { row in
           PracticeRule()
@@ -371,6 +375,7 @@ struct LocalGuidedReviewView: View {
             if let note = session.researchModelNote(for: row.initial) {
               Text("First model check: \(note)").font(.subheadline)
             }
+            Text("Practice: \(row.practice.map { practiceDisposition($0.state) } ?? "Not selected")")
             Text("Recheck: \(observation(row.recheck.state))")
             if let note = session.researchModelNote(for: row.recheck) {
               Text("Model recheck: \(note)").font(.subheadline)
