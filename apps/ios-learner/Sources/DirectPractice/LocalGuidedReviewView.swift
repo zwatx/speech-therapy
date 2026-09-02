@@ -425,6 +425,20 @@ struct LocalGuidedReviewView: View {
   }
 
   #if DEBUG && targetEnvironment(simulator)
+    @ViewBuilder
+    private func researchDetailsButton(entryID: String, workflowID: UUID) -> some View {
+      if session.researchModelEnabled {
+        Button("Research details") {
+          researchSelection = .init(workflowID: workflowID, entryID: entryID)
+        }
+        .buttonStyle(PracticeTextButtonStyle())
+        .accessibilityLabel("Research details for \(session.ledger?.entries.first { $0.id == entryID }?.prompt.word ?? "this word")")
+        .accessibilityIdentifier("cadence.guided.research-details.\(entryID)")
+        .disabled(session.isTransitioning || session.isClosed)
+        .padding(.bottom, 12)
+      }
+    }
+
     private var researchSetup: some View {
       VStack(alignment: .leading, spacing: 12) {
         Toggle(
