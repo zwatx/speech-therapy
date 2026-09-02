@@ -566,13 +566,9 @@ private struct LocalGuidedWordPicker: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("cadence.guided.sound-filter")
             .accessibilityLabel("Sound").accessibilityValue(selectedSoundName)
-            Menu {
-              Picker("Position", selection: $position) {
-                Text("All positions").tag(PracticeTargetPosition?.none)
-                ForEach(PracticeTargetPosition.allCases, id: \.self) { value in
-                  Text(value.label).tag(Optional(value))
-                }
-              }
+            Button {
+              searchFocused = false
+              positionExpanded.toggle()
             } label: {
               filterMenuLabel(position?.label ?? "All positions")
             }
