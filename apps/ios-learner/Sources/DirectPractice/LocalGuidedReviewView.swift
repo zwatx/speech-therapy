@@ -583,6 +583,15 @@ private struct LocalGuidedWordPicker: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier("cadence.guided.position-filter")
             .accessibilityLabel("Position").accessibilityValue(position?.label ?? "All positions")
+            .accessibilityHint(positionExpanded ? "Hide position choices" : "Show position choices")
+            if positionExpanded {
+              VStack(alignment: .leading, spacing: 8) {
+                positionOption(nil)
+                ForEach(PracticeTargetPosition.allCases, id: \.self) { value in
+                  positionOption(value)
+                }
+              }
+            }
             Text("\(matchingEntries.count) entries · Words already chosen are unavailable.")
               .font(.subheadline).foregroundStyle(DirectPracticeStyle.muted)
               .fixedSize(horizontal: false, vertical: true)
