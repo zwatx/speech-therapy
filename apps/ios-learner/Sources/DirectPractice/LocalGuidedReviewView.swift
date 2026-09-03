@@ -570,7 +570,15 @@ private struct LocalGuidedWordPicker: View {
               searchFocused = false
               positionExpanded.toggle()
             } label: {
-              filterMenuLabel(position?.label ?? "All positions")
+              HStack(spacing: 12) {
+                Text("Position: \(position?.label ?? "All positions")")
+                  .font(.body).fixedSize(horizontal: false, vertical: true)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: positionExpanded ? "chevron.down" : "chevron.right")
+                  .font(.system(size: 17, weight: .semibold)).accessibilityHidden(true)
+              }
+              .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+              .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier("cadence.guided.position-filter")
