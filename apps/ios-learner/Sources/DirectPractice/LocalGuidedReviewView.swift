@@ -692,7 +692,12 @@ private struct LocalGuidedWordPicker: View {
           Image(systemName: "checkmark").accessibilityHidden(true)
         }
       }
+      .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+      .contentShape(Rectangle())
     }
+    .buttonStyle(.plain)
+    .accessibilityIdentifier("cadence.guided.position-option.\(value?.rawValue ?? "all")")
+    .accessibilityAddTraits(selected ? .isSelected : [])
   }
 
   private var cancelHeader: some View {
