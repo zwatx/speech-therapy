@@ -6,7 +6,34 @@ enum LocalWordRecognitionPresentation {
   static let availabilityNote =
     "Word recognition runs on this device using a bundled English model for short word recordings. It does not use an age or assess individual sounds. Word checks are optional. Use the available controls to record or listen."
 
-  static func wordGuess(_ guess: LocalWordGuess?) -> String? {
+  static func retryActionLabel(
+    _ status: LocalWordRecognitionStatus, checkedTryID: UUID?, latestTryID: UUID?,
+    hasEarlierTry: Bool, canCheck: Bool
+  ) -> String? {
+    guard canCheck, let checkedTryID, let latestTryID, checkedTryID == latestTryID else { return nil }
+    switch status {
+    case .timedOut, .unavailable, .cancelled:
+      return hasEarlierTry ? "Try word check again on latest try" : "Try word check again"
+    case .matched, .notMatched, .uncertain:
+      return nil
+    }
+  }
+
+  static func checkActionLabel(
+    customLabel: String?, state: LocalWordCheckState,
+    checkedTryID: UUID?, latestTryID: UUID?, hasEarlierTry: Bool, canCheck: Bool
+  ) -> String {
+    if let customLabel { return customLabel }
+    if case .finished(let status) = state,
+      let retry = retryActionLabel(status, checkedTryID: checkedTryID, latestTryID: latestTryID,
+        hasEarlierTry: hasEarlierTry, canCheck: canCheck)
+    {
+      return retry
+    }
+    return hasEarlierTry ? "Check words in latest try" : "Check words in this try"
+  }
+
+  static func wordGuess(_ guess: LocalWordGuess?, hasEarlierTry: Bool = false) -> String? {
     guard let guess else { return nil }
     return "Word guess: “\(guess.word)”. This may be wrong; individual sounds aren’t assessed."
   }
