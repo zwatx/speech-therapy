@@ -669,6 +669,7 @@ private struct LocalGuidedWordPicker: View {
           query = ""
         } label: {
           Image(systemName: "xmark").frame(width: 44, height: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain).accessibilityLabel("Clear search")
       }
