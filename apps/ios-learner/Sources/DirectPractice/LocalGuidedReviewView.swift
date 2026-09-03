@@ -672,6 +672,25 @@ private struct LocalGuidedWordPicker: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain).accessibilityLabel("Clear search")
+        .accessibilityIdentifier("cadence.guided.search.clear")
+      }
+    }
+  }
+
+  private func positionOption(_ value: PracticeTargetPosition?) -> some View {
+    let selected = position == value
+    return Button {
+      searchFocused = false
+      positionExpanded = false
+      position = value
+    } label: {
+      HStack(spacing: 12) {
+        Text(value?.label ?? "All positions")
+          .font(.body).fixedSize(horizontal: false, vertical: true)
+          .frame(maxWidth: .infinity, alignment: .leading)
+        if selected {
+          Image(systemName: "checkmark").accessibilityHidden(true)
+        }
       }
     }
   }
