@@ -281,8 +281,13 @@ struct PracticeWordSearchView: View {
       do { try await Task.sleep(for: .milliseconds(400)) } catch { return }
       guard !trimmedQuery.isEmpty else { return }
       let count = entries.count
+      let soundCount = matchingSounds.count
+      let results = [
+        soundCount > 0 ? "\(soundCount) \(soundCount == 1 ? "sound group" : "sound groups")" : nil,
+        count > 0 ? "\(count) practice \(count == 1 ? "entry" : "entries")" : nil,
+      ].compactMap { $0 }
       AccessibilityNotification.Announcement(
-        count == 0 ? "No words match" : "\(count) practice entries"
+        results.isEmpty ? "No words or sounds match" : results.joined(separator: ", ")
       ).post()
     }
     .fullScreenCover(
