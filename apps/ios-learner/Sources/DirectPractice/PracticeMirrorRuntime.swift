@@ -77,12 +77,17 @@ typealias PracticeMirrorDriverFactory =
 /// retains its runtime after screen/session destruction. No new camera can reserve this slot.
 @MainActor
 final class ProcessPracticeMirrorRecovery {
-  static let shared = ProcessPracticeMirrorRecovery()
+  static let shared = ProcessPracticeMirrorRecovery(cameraLease: .shared)
+  private let cameraLease: ProcessCameraLease
   private(set) var owner: PracticeMirrorOwner?
   private(set) var runtime: PracticeMirrorRuntime?
 
+  init(cameraLease: ProcessCameraLease = ProcessCameraLease()) {
+    self.cameraLease = cameraLease
+  }
+
   fileprivate func reserve(_ owner: PracticeMirrorOwner, runtime: PracticeMirrorRuntime) -> Bool {
-    guard self.owner == nil else { return false }
+    guard self.owner == nil, cameraLease.acquire(owner.id) else { return false }
     self.owner = owner
     self.runtime = runtime
     return true
