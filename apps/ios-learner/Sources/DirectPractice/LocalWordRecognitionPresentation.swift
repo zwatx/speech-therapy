@@ -35,7 +35,8 @@ enum LocalWordRecognitionPresentation {
 
   static func wordGuess(_ guess: LocalWordGuess?, hasEarlierTry: Bool = false) -> String? {
     guard let guess else { return nil }
-    return "Word guess: “\(guess.word)”. This may be wrong; individual sounds aren’t assessed."
+    let take = hasEarlierTry ? "the latest try" : "this try"
+    return "Word guess for \(take): “\(guess.word)”. This may be wrong; individual sounds aren’t assessed."
   }
 
   static func observation(
