@@ -83,7 +83,7 @@ enum LocalWordRecognitionPresentation {
         "No match for “\(word)” in this try. No sound error is identified."
     case .uncertain:
       return
-        "No clear match for “\(word)” in this try."
+        "No clear match for “\(word)” in this try. Individual sounds aren’t assessed."
     case .timedOut:
       return "Word check took too long. Your recording is still here."
     case .unavailable:
