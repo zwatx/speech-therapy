@@ -44,6 +44,36 @@ enum LocalWordRecognitionPresentation {
     checkedTryID: UUID?, latestTryID: UUID?
   ) -> String? {
     guard let checkedTryID, let latestTryID, checkedTryID == latestTryID else { return nil }
+    return statusText(status, word: word)
+  }
+
+  /// Only admitted whole-word outcomes belong beside a retained recording.
+  static func retainedObservation(_ status: LocalWordRecognitionStatus, word: String) -> String? {
+    switch status {
+    case .matched, .notMatched, .uncertain: return statusText(status, word: word)
+    case .timedOut, .unavailable, .cancelled: return nil
+    }
+  }
+
+  static func practiceDecision(
+    _ status: LocalWordRecognitionStatus, observedTryID: UUID?, checkedTryID: UUID?,
+    latestTryID: UUID?, isSelectedPractice: Bool, canContinue: Bool, canRecordAnotherTry: Bool
+  ) -> String? {
+    guard isSelectedPractice, canContinue, canRecordAnotherTry,
+      let observedTryID, let checkedTryID, let latestTryID,
+      observedTryID == checkedTryID, checkedTryID == latestTryID
+    else { return nil }
+    switch status {
+    case .notMatched, .uncertain:
+      return "A word match isn’t required. You can move on or record another try."
+    case .matched, .timedOut, .unavailable, .cancelled:
+      return nil
+    }
+  }
+
+  static let noRetainedObservation = "No word-check result for this try."
+
+  private static func statusText(_ status: LocalWordRecognitionStatus, word: String) -> String {
     switch status {
     case .matched:
       return
