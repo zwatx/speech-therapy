@@ -94,7 +94,9 @@ final class ProcessPracticeMirrorRecovery {
   }
 
   fileprivate func release(_ owner: PracticeMirrorOwner, runtime: PracticeMirrorRuntime) -> Bool {
-    guard self.owner == owner, self.runtime === runtime else { return false }
+    guard self.owner == owner, self.runtime === runtime, cameraLease.release(owner.id) else {
+      return false
+    }
     self.owner = nil
     self.runtime = nil
     return true
