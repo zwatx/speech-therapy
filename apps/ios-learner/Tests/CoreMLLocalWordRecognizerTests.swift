@@ -434,3 +434,165 @@ extension CoreMLLocalWordRecognizerTests {
         XCTAssertFalse(files.canRemove(original.fileURL, owner: producer))
     }
 }
+
+extension CoreMLLocalWordRecognizerTests {
+    private enum ProcessingFixtureError: Error { case prediction }
+
+    func testProductionProcessingBoundaryClassifiesRealTensorAndOperationalThrows() {
+        let operations: [() throws -> Void] = [
+            { _ = try WhisperCoreMLWorker.maximum(logits: [], stop: WhisperOperationStop(), isAllowed: { _ in true }) },
+            { var scores = [Float](repeating: 0, count: 51864); scores[17] = .nan
+              _ = try WhisperCoreMLWorker.maximum(logits: scores, stop: WhisperOperationStop(), isAllowed: { $0 == 1 }) },
+            { throw ProcessingFixtureError.prediction },
+            { throw WhisperProviderError.rejectedInput },
+            { throw WhisperFeatureError.nonfiniteSamples },
+            { throw CancellationError() },
+        ]
+        for operation in operations {
+            var evictions = 0
+            let result = WhisperCoreMLWorker.processingCompletion(stop: WhisperOperationStop(), evict: { evictions += 1 }) {
+                try operation()
+                XCTFail("Expected processing throw")
+                return .init(status: .matched, cleanupConfirmed: true, retainedHandle: nil)
+            }
+            XCTAssertEqual(result.status, .unavailable)
+            XCTAssertEqual(evictions, 1)
+            XCTAssertTrue(result.cleanupConfirmed)
+            XCTAssertNil(result.retainedHandle)
+            XCTAssertNil(result.wordGuess)
+        }
+    }
+
+    func testProductionProcessingBoundaryKeepsOnlyTwoTokenAbstentionsAndNormalUncertainty() {
+        let errors: [WhisperTokenError] = [.assetBinding, .malformedAsset, .invalidID, .tokenLimit,
+            .unexpectedControl, .suppressedToken, .tokensAfterEOS, .cancelled, .malformedUTF8, .byteLimit]
+        for (index, error) in errors.enumerated() {
+            var evictions = 0
+            let result = WhisperCoreMLWorker.processingCompletion(stop: WhisperOperationStop(), evict: { evictions += 1 }) {
+                throw error
+            }
+            XCTAssertEqual(result.status, index >= 8 ? .uncertain : .unavailable)
+            XCTAssertEqual(evictions, 1)
+            XCTAssertTrue(result.cleanupConfirmed)
+            XCTAssertNil(result.retainedHandle)
+            XCTAssertNil(result.wordGuess)
+        }
+        for text in ["ball", "wall", "two words", ""] {
+            var evictions = 0
+            let stop = WhisperOperationStop()
+            let expected = WhisperCoreMLWorker.completedRecognition(text: text, expectedWord: "ball", stop: stop)
+            let result = WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { evictions += 1 }) { expected }
+            XCTAssertEqual(result.status, expected.status)
+            XCTAssertEqual(result.wordGuess, expected.wordGuess)
+            XCTAssertTrue(result.cleanupConfirmed)
+            XCTAssertNil(result.retainedHandle)
+            XCTAssertEqual(evictions, 0)
+        }
+    }
+
+    func testProductionProcessingThrowUsesActualStopPriorityBeforeAndDuringWork() {
+        for before in [false, true] {
+            for order in 0..<4 {
+                for error in [ProcessingFixtureError.prediction as any Error, WhisperTokenError.malformedUTF8, WhisperTokenError.byteLimit] {
+                    let stop = WhisperOperationStop()
+                    func interrupt() {
+                        if order == 0 { stop.request(.deadline) }
+                        if order == 1 { stop.request(.cancellation) }
+                        if order == 2 { stop.request(.deadline); stop.request(.cancellation) }
+                        if order == 3 { stop.request(.cancellation); stop.request(.deadline) }
+                    }
+                    if before { interrupt() }
+                    var evictions = 0
+                    let result = WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { evictions += 1 }) {
+                        if !before { interrupt() }
+                        throw error
+                    }
+                    XCTAssertEqual(result.status, order == 0 ? .timedOut : .cancelled)
+                    XCTAssertEqual(evictions, 1)
+                    XCTAssertTrue(result.cleanupConfirmed)
+                    XCTAssertNil(result.wordGuess)
+                    XCTAssertNil(result.retainedHandle)
+                }
+            }
+        }
+    }
+
+    @MainActor
+    func testProductionProcessingFailureProviderHoldsBorrowThenAllowsExplicitNextRequest() async {
+        for interruption in 0..<3 {
+            let gate = HeldWhisperWorker(producer: { _, stop in
+                WhisperCoreMLWorker.processingCompletion(stop: stop, evict: {}) { throw WhisperProviderError.invalidTensor }
+            })
+            defer { gate.release() }
+            let (provider, ownership, owner, request) = fixture(gate)
+            let task = Task { await provider.check(request: request) }
+            await gate.waitForEntry()
+            if interruption == 1 { gate.signalDeadline() }
+            if interruption == 2 { gate.signalDeadline(); provider.cancel(operationID: request.operationID) }
+            XCTAssertFalse(ownership.canRemove(request.fileURL, owner: owner))
+            let occupied = await provider.check(request: request)
+            XCTAssertEqual(occupied.status, .unavailable)
+            XCTAssertFalse(occupied.cleanupConfirmed)
+            gate.release()
+            let receipt = await task.value
+            XCTAssertEqual(receipt.request, request)
+            XCTAssertEqual(receipt.status, interruption == 0 ? .unavailable : interruption == 1 ? .timedOut : .cancelled)
+            XCTAssertTrue(receipt.cleanupConfirmed)
+            XCTAssertNil(receipt.wordGuess)
+            XCTAssertTrue(ownership.canRemove(request.fileURL, owner: owner))
+            let next = LocalWordRecognitionRequest(operationID: UUID(), tryID: request.tryID, fileURL: request.fileURL, expectedWord: request.expectedWord)
+            let retried = await provider.check(request: next)
+            XCTAssertEqual(retried.request, next)
+            XCTAssertEqual(retried.status, .unavailable)
+            XCTAssertTrue(retried.cleanupConfirmed)
+        }
+    }
+
+    @MainActor
+    func testProductionCleanupThrowRetainsExactHandleAndProviderBorrowDespiteStop() async throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("inert-processing-handle-\(UUID())")
+        try Data().write(to: url)
+        let handle = try FileHandle(forReadingFrom: url)
+        let cleanupFailure = WhisperHandleCleanupFailure(handle: handle)
+        defer {
+            do { try handle.close(); try FileManager.default.removeItem(at: url) }
+            catch { XCTFail("Could not release the test-owned inert handle: \(error)") }
+        }
+        for interruption in 0..<3 {
+            let gate = HeldWhisperWorker(producer: { _, stop in
+                WhisperCoreMLWorker.processingCompletion(stop: stop, evict: {}) {
+                    throw cleanupFailure
+                }
+            })
+            defer { gate.release() }
+            let (provider, ownership, owner, request) = fixture(gate)
+            let task = Task { await provider.check(request: request) }
+            await gate.waitForEntry()
+            if interruption == 1 { gate.signalDeadline() }
+            if interruption == 2 { provider.cancel(operationID: request.operationID) }
+            XCTAssertFalse(ownership.canRemove(request.fileURL, owner: owner))
+            gate.release()
+            let receipt = await task.value
+            XCTAssertEqual(receipt.request, request)
+            XCTAssertEqual(receipt.status, interruption == 0 ? .unavailable : interruption == 1 ? .timedOut : .cancelled)
+            XCTAssertFalse(receipt.cleanupConfirmed)
+            XCTAssertNil(receipt.wordGuess)
+            XCTAssertFalse(ownership.canRemove(request.fileURL, owner: owner))
+            let next = await provider.check(request: request)
+            XCTAssertEqual(next.status, .unavailable)
+            XCTAssertFalse(next.cleanupConfirmed)
+            let stop = WhisperOperationStop()
+            if interruption == 1 { stop.request(.deadline) }
+            if interruption == 2 { stop.request(.cancellation) }
+            var evictions = 0
+            let direct = WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { evictions += 1 }) {
+                throw WhisperHandleCleanupFailure(handle: handle)
+            }
+            XCTAssertEqual(evictions, 1)
+            XCTAssertEqual(direct.status, receipt.status)
+            XCTAssertTrue(direct.retainedHandle === handle)
+            XCTAssertFalse(direct.cleanupConfirmed)
+            XCTAssertNil(direct.wordGuess)
+        }
+    }
+}
