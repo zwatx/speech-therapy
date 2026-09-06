@@ -237,6 +237,23 @@
       }
     }
 
+    func testTimeoutRetryFixturesUseExplicitGeneratedAdmissionAndHeldWordOnlyCases() {
+      for testCase in [DirectTryGeneratedCase.wordCheckTimeout, .wordCheckTimeoutAX] {
+        XCTAssertTrue(testCase.holdsWordCheck)
+        let args = directTryArguments(value: testCase.rawValue)
+        XCTAssertEqual(directTrySelection(args), .generated(.init(
+          fixture: .directTry(testCase), runID: directTryRunID)))
+        XCTAssertEqual(directTrySelection(args, environment: [:]), .inert)
+      }
+      for testCase in [LocalGuidedGeneratedCase.practiceTimeoutRetry, .practiceTimeoutRetryAX] {
+        XCTAssertTrue(testCase.holdsCheck)
+        let args = directTryArguments("LocalGuided", "LocalGuided", value: testCase.rawValue)
+        XCTAssertEqual(directTrySelection(args), .generated(.init(
+          fixture: .localGuided(testCase), runID: directTryRunID)))
+        XCTAssertEqual(directTrySelection(args, environment: [:]), .inert)
+      }
+    }
+
     func testDirectTryAdmissionIsExplicitClosedAndHasNoHomeOrHistoryRoutes() {
       for testCase in DirectTryGeneratedCase.allCases {
         let args = directTryArguments(value: testCase.rawValue)
