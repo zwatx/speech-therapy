@@ -222,7 +222,7 @@
     func testDirectTryCasesAreClosedNormalAndLargestTextPairs() {
       let bases: [DirectTryGeneratedCase] = [
         .twoTry, .finish, .denied, .failedStart, .saveFailure, .wordCheck, .wordCheckCancel,
-        .wordCheckUnavailable, .wordCheckGuess,
+        .wordCheckUnavailable, .wordCheckGuess, .wordCheckCompare, .wordCheckTimeout, .skip,
       ]
       XCTAssertEqual(DirectTryGeneratedCase.allCases.count, bases.count * 2)
       for base in bases {
