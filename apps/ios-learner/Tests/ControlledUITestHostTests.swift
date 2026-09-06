@@ -407,8 +407,10 @@
     }
     func testLocalGuidedCompactAndLargestCasesHaveOneToOnePairs() {
       let compact = LocalGuidedGeneratedCase.allCases.filter { !$0.largeText }
-      XCTAssertEqual(compact.count, 6)
-      XCTAssertEqual(LocalGuidedGeneratedCase.allCases.count, 12)
+      XCTAssertEqual(compact.count, 11)
+      XCTAssertEqual(LocalGuidedGeneratedCase.allCases.count, 22)
+      XCTAssertEqual(Set(compact.map(\.rawValue)),
+        ["setup", "practice", "recheck", "heldFinish", "heldClose", "timeout", "wordGuess", "retake", "practiceQuality", "researchDetails", "practiceTimeoutRetry"])
       for testCase in compact {
         let large = LocalGuidedGeneratedCase(rawValue: testCase.rawValue + "AX")
         XCTAssertEqual(large?.base, testCase)
