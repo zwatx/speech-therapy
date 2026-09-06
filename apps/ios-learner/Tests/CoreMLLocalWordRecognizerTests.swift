@@ -15,6 +15,7 @@ private final class HeldWhisperWorker: @unchecked Sendable {
     init(cleanup: Bool = true, completion: WhisperWorkerCompletion? = nil,
          producer: (@Sendable (LocalWordRecognitionRequest, WhisperOperationStop) -> WhisperWorkerCompletion)? = nil) {
         self.completion = completion ?? .init(status: .matched, cleanupConfirmed: cleanup, retainedHandle: nil)
+        self.producer = producer
     }
     func run(_ request: LocalWordRecognitionRequest, _ stop: WhisperOperationStop) -> WhisperWorkerCompletion {
         condition.lock()
@@ -22,7 +23,7 @@ private final class HeldWhisperWorker: @unchecked Sendable {
         entered.continuation.yield(())
         while !released { condition.wait() }
         condition.unlock()
-        return completion
+        return producer?(request, stop) ?? completion
     }
     func waitForEntry() async {
         var iterator = entered.stream.makeAsyncIterator()
