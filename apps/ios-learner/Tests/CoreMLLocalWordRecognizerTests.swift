@@ -11,7 +11,9 @@ private final class HeldWhisperWorker: @unchecked Sendable {
     private var stop: WhisperOperationStop?
     private let entered = AsyncStream<Void>.makeStream(bufferingPolicy: .bufferingNewest(1))
     let completion: WhisperWorkerCompletion
-    init(cleanup: Bool = true, completion: WhisperWorkerCompletion? = nil) {
+    private let producer: (@Sendable (LocalWordRecognitionRequest, WhisperOperationStop) -> WhisperWorkerCompletion)?
+    init(cleanup: Bool = true, completion: WhisperWorkerCompletion? = nil,
+         producer: (@Sendable (LocalWordRecognitionRequest, WhisperOperationStop) -> WhisperWorkerCompletion)? = nil) {
         self.completion = completion ?? .init(status: .matched, cleanupConfirmed: cleanup, retainedHandle: nil)
     }
     func run(_ request: LocalWordRecognitionRequest, _ stop: WhisperOperationStop) -> WhisperWorkerCompletion {
