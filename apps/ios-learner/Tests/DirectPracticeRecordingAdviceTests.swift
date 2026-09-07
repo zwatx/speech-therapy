@@ -27,10 +27,10 @@ final class DirectPracticeRecordingAdviceTests: XCTestCase {
       DirectPracticeRecordingAdvice.observation(summary: rail, assessment: .acceptable),
       .init(
         title: "Recording reached its volume limit",
-        detail: "Try recording with the phone a little farther away, using your usual voice."))
+        detail: "For future recordings, try holding the phone a little farther away and use your usual voice."))
     XCTAssertEqual(
       DirectPracticeRecordingAdvice.observation(summary: rail, assessment: quiet)?.detail,
-      "Make another recording using your usual voice.")
+      "For future recordings, use your usual voice.")
   }
 
   func testOnlyExactLatestZeroAndSemanticQuietCoachingSuppressRedundantTip() {
