@@ -5021,7 +5021,12 @@ extension DirectPracticeSessionTests {
     XCTAssertEqual(retryRequest.fileURL, request.fileURL)
     XCTAssertEqual(retryRequest.expectedWord, request.expectedWord)
     await h.session.startWordCheck()
-    XCTAssertEqual(h.recognizer.requests.count, 1)
+    XCTAssertEqual(h.recognizer.requests.count, 2, "A held retry must not start a sibling.")
+    h.recognizer.resolve(index: 1, status: .timedOut)
+    await retry.value
+    XCTAssertEqual(h.recognizer.requests.count, 2, "A second timeout must not start a third check.")
+    XCTAssertEqual(h.session.wordCheckState, .finished(.timedOut))
+    XCTAssertEqual(h.capturer.events, events)
     await h.session.togglePlayback()
     XCTAssertEqual(h.session.playingTryID, take.id)
     await h.session.togglePlayback()
