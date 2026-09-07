@@ -20,7 +20,7 @@ final class DirectPracticeRecordingAdviceTests: XCTestCase {
       DirectPracticeRecordingAdvice.observation(summary: zero, assessment: quiet),
       .init(
         title: "No sound was saved in this try",
-        detail: "Make another try with the microphone uncovered."))
+        detail: "For future recordings, keep the microphone uncovered."))
     let rail = summary([-32768, 0, 32767])
     XCTAssertEqual(assessor.assess(rail), .acceptable)
     XCTAssertEqual(
