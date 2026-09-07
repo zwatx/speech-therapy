@@ -5011,7 +5011,15 @@ extension DirectPracticeSessionTests {
     await checking.value
     XCTAssertEqual(h.session.wordCheckState, .finished(.timedOut))
     XCTAssertEqual(h.session.checkedTryID, take.id)
-    XCTAssertFalse(h.session.canCheckWordsInLatestTry)
+    XCTAssertTrue(h.session.canCheckWordsInLatestTry)
+    XCTAssertEqual(h.recognizer.requests.count, 1, "Timeout must not start a retry.")
+    let events = h.capturer.events
+    let retry = Task { await h.session.startWordCheck() }
+    let retryRequest = try await timeoutRequest(retry, recognizer: h.recognizer, index: 1)
+    XCTAssertNotEqual(retryRequest.operationID, request.operationID)
+    XCTAssertEqual(retryRequest.tryID, request.tryID)
+    XCTAssertEqual(retryRequest.fileURL, request.fileURL)
+    XCTAssertEqual(retryRequest.expectedWord, request.expectedWord)
     await h.session.startWordCheck()
     XCTAssertEqual(h.recognizer.requests.count, 1)
     await h.session.togglePlayback()
