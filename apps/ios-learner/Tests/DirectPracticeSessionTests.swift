@@ -5006,7 +5006,7 @@ extension DirectPracticeSessionTests {
     await h.record()
     let take = try XCTUnwrap(h.session.latestTry)
     let checking = Task { await h.session.startWordCheck() }
-    _ = try await h.recognizer.waitForRequest(index: 0)
+    let request = try await timeoutRequest(checking, recognizer: h.recognizer, index: 0)
     h.recognizer.resolve(index: 0, status: .timedOut)
     await checking.value
     XCTAssertEqual(h.session.wordCheckState, .finished(.timedOut))
