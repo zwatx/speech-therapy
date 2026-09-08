@@ -5277,6 +5277,17 @@ private struct LocalWordSessionHarness {
   }
 }
 
+@MainActor
+private final class TimedOutRetryExcludedRecognizer: LocalWordRecognizing {
+  let base: DirectControlledWordRecognizer
+  var allowsTimedOutRetry: Bool { false }
+  init(base: DirectControlledWordRecognizer) { self.base = base }
+  func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
+    await base.check(request: request)
+  }
+  func cancel(operationID: UUID) { base.cancel(operationID: operationID) }
+}
+
 /// Test-only worker control. A cancel request deliberately cannot complete its receipt.
 @MainActor
 private final class DirectControlledWordRecognizer: LocalWordRecognizing {
