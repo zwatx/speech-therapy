@@ -5243,9 +5243,11 @@ private struct LocalWordSessionHarness {
   let capturer: TwoTryCapturer
   let player: DirectPracticePlayer
   let recognizer: DirectControlledWordRecognizer
+  let provider: any LocalWordRecognizing
+  let history: PracticeParticipationStore?
   let session: DirectPracticeSession
 
-  init(singleWord: Bool = false) throws {
+  init(singleWord: Bool = false, allowsTimedOutRetry: Bool = true, recordHistory: Bool = false) throws {
     fixture = try DirectOwnedFixture()
     capturer = TwoTryCapturer(directory: fixture.directory, files: files)
     player = DirectPracticePlayer(files: files, gate: gate)
