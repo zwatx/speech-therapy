@@ -5036,7 +5036,7 @@ extension DirectPracticeSessionTests {
     XCTAssertNotEqual(h.session.latestTry?.id, take.id)
     XCTAssertEqual(h.session.wordCheckState, .idle)
     XCTAssertTrue(h.session.canCheckWordsInLatestTry)
-    XCTAssertEqual(h.recognizer.requests.count, 1)
+    XCTAssertEqual(h.recognizer.requests.count, 2)
     let ended = await h.session.end()
     XCTAssertTrue(ended)
     XCTAssertTrue(h.files.protectedURLs.isEmpty)
