@@ -5262,7 +5262,7 @@ private struct LocalWordSessionHarness {
       ? PracticeSound(id: starter.id, symbol: starter.symbol, name: starter.name,
           position: starter.position, prompts: Array(starter.prompts.prefix(1))) : starter
     session = DirectPracticeSession(
-      sound: sound, capturer: capturer, player: player, wordRecognizer: recognizer,
+      sound: sound, capturer: capturer, player: player, history: history, wordRecognizer: provider,
       cleanupHardwareOwnership: gate, cleanupFileOwnership: files)
   }
 
