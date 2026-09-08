@@ -5297,6 +5297,7 @@ private final class DirectControlledWordRecognizer: LocalWordRecognizing {
   private(set) var workCount = 0
   private(set) var alreadyCancelledCount = 0
   private let files: ProcessAudioFileOwnership
+  private var stoppedForTeardown = false
   private var borrows: Set<UUID> = []
   private var pending: [Int: CheckedContinuation<LocalWordRecognitionReceipt, Never>] = [:]
   private var requestWaiters: [Int: XCTestExpectation] = [:]
@@ -5305,6 +5306,9 @@ private final class DirectControlledWordRecognizer: LocalWordRecognizing {
   init(files: ProcessAudioFileOwnership) { self.files = files }
 
   func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
+    guard !stoppedForTeardown else {
+      return .init(request: request, status: .cancelled, cleanupConfirmed: true)
+    }
     let index = requests.count
     requests.append(request)
     if honorsAlreadyCancelledTask, Task.isCancelled {
