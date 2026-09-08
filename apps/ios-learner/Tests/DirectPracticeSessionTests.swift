@@ -5252,6 +5252,11 @@ private struct LocalWordSessionHarness {
     capturer = TwoTryCapturer(directory: fixture.directory, files: files)
     player = DirectPracticePlayer(files: files, gate: gate)
     recognizer = DirectControlledWordRecognizer(files: files)
+    provider = allowsTimedOutRetry
+      ? recognizer : TimedOutRetryExcludedRecognizer(base: recognizer)
+    history = recordHistory
+      ? PracticeParticipationStore(fileURL: fixture.directory.appendingPathComponent("word-history.json"))
+      : nil
     let starter = PracticeLibrary.starterSound
     let sound = singleWord
       ? PracticeSound(id: starter.id, symbol: starter.symbol, name: starter.name,
