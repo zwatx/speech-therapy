@@ -6948,10 +6948,10 @@ extension DirectPracticeSessionTests {
       XCTAssertEqual(flow.ledger?.practiceRows.first?.state, .ready)
       XCTAssertTrue(h.history.entries.isEmpty)
       XCTAssertTrue(flow.playerPresentation.canContinue)
-      if status == .unavailable || status == .cancelled {
+      if status == .unavailable || status == .cancelled || status == .timedOut {
         XCTAssertTrue(flow.playerPresentation.canCheckWords)
         let retry = Task { await flow.checkCurrentWord() }
-        let retryRequest = try await h.recognizer.waitForRequest(index: 2)
+        let retryRequest = try await timeoutRequest(retry, recognizer: h.recognizer, index: 2)
         XCTAssertEqual(retryRequest.tryID, take.id)
         XCTAssertNotEqual(retryRequest.operationID, request.operationID)
         h.recognizer.resolve(index: 2, status: status)
