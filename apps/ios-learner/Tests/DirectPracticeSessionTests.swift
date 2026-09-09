@@ -5892,20 +5892,23 @@ private struct GuidedOwnerHarness {
   let capturer: TwoTryCapturer
   let player: DirectPracticePlayer
   let recognizer: DirectControlledWordRecognizer
+  let provider: any LocalWordRecognizing
   let historyURL: URL
   let history: PracticeParticipationStore
   let session: DirectPracticeSession
 
-  init() throws {
+  init(allowsTimedOutRetry: Bool = true) throws {
     fixture = try DirectOwnedFixture()
     historyURL = fixture.directory.appendingPathComponent("guided-participation.json")
     history = PracticeParticipationStore(fileURL: historyURL)
     capturer = TwoTryCapturer(directory: fixture.directory, files: files)
     player = DirectPracticePlayer(files: files, gate: gate)
     recognizer = DirectControlledWordRecognizer(files: files)
+    provider = allowsTimedOutRetry
+      ? recognizer : TimedOutRetryExcludedRecognizer(base: recognizer)
     session = DirectPracticeSession(
       capturer: capturer, player: player, history: history, managedForGuided: true,
-      wordRecognizer: recognizer, cleanupHardwareOwnership: gate, cleanupFileOwnership: files)
+      wordRecognizer: provider, cleanupHardwareOwnership: gate, cleanupFileOwnership: files)
   }
 
   func entry(_ id: String) throws -> PracticeLibraryEntry {
