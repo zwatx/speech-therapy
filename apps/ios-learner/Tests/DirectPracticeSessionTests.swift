@@ -7103,7 +7103,8 @@ extension DirectPracticeSessionTests {
   }
 
   func testGuidedPracticeInvalidReceiptRetainsBorrowAndBlocksDepartureAndHistory() async throws {
-    for wrongRequest in [false, true] {
+    for (status, wrongRequest) in [(LocalWordRecognitionStatus.matched, false), (.matched, true),
+                                  (.timedOut, false), (.timedOut, true)] {
       let h = try GuidedOwnerHarness()
       defer { h.removeGeneratedFixture() }
       let flow = try await readyWordCheckPractice(h)
