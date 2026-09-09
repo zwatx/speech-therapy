@@ -5380,6 +5380,12 @@ private final class DirectControlledWordRecognizer: LocalWordRecognizing {
           request: requests[index], status: .cancelled, cleanupConfirmed: true))
     }
   }
+
+  /// Failed admission waits must also prevent a late task from entering a new hold.
+  func stopAndDrainGeneratedChecks() {
+    stoppedForTeardown = true
+    releaseGeneratedBorrows()
+  }
 }
 
 // Generated managed-owner cases. Reuse the existing controlled producer, playback runtime
