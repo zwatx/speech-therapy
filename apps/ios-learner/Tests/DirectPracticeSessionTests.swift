@@ -6930,7 +6930,7 @@ extension DirectPracticeSessionTests {
       let take = try XCTUnwrap(h.session.latestTry)
       XCTAssertTrue(flow.playerPresentation.canCheckWords)
       let checking = Task { await flow.checkCurrentWord() }
-      let request = try await h.recognizer.waitForRequest(index: 1)
+      let request = try await timeoutRequest(checking, recognizer: h.recognizer, index: 1)
       XCTAssertEqual(request.tryID, take.id)
       XCTAssertEqual(request.fileURL, try XCTUnwrap(h.capturer.urls.last))
       XCTAssertEqual(request.expectedWord, "pig")
