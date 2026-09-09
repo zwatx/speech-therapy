@@ -6954,6 +6954,9 @@ extension DirectPracticeSessionTests {
         let retryRequest = try await timeoutRequest(retry, recognizer: h.recognizer, index: 2)
         XCTAssertEqual(retryRequest.tryID, take.id)
         XCTAssertNotEqual(retryRequest.operationID, request.operationID)
+        XCTAssertEqual(retryRequest.fileURL, request.fileURL)
+        XCTAssertEqual(retryRequest.expectedWord, request.expectedWord)
+        XCTAssertEqual(h.session.guidedMediaVisit, .practice(visit))
         h.recognizer.resolve(index: 2, status: status)
         await retry.value
       } else {
