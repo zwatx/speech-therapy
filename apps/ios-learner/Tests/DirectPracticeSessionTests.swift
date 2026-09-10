@@ -8051,7 +8051,8 @@ extension DirectPracticeSessionTests {
       wordGuess: LocalWordGuess(completedText: "wall", expectedWord: request.expectedWord))
     await checking.value
     XCTAssertEqual(h.session.wordCheckState, .finished(.notMatched))
-    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertEqual(h.session.currentWordGuess?.word, "wall")
+    XCTAssertEqual(h.session.checkedTryID, request.tryID)
     XCTAssertEqual(observation.settled.first?.status, .notMatched)
     XCTAssertTrue(h.history.entries.isEmpty)
     assertGuidedTrue(await h.leave(visit))
