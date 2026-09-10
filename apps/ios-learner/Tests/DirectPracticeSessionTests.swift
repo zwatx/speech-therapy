@@ -8027,12 +8027,13 @@ extension DirectPracticeSessionTests {
         wordGuess: LocalWordGuess(completedText: "wall", expectedWord: request.expectedWord))
       await checking.value
       XCTAssertNil(h.session.currentWordGuess)
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
       if sibling { XCTAssertEqual(h.session.wordCheckState, .cleanupBlocked) }
       else { XCTAssertTrue(revoked); await settle(h.session); XCTAssertEqual(h.session.phase, .ended) }
     }
   }
 
-  func testGuidedWordGuessNeverEntersCurrentPresentationOrSettlement() async throws {
+  func testGuidedWordGuessBindsCurrentReviewWhileFirstStatusAndAdmissionStayFrozen() async throws {
     let h = try GuidedOwnerHarness()
     defer { h.removeGeneratedFixture() }
     let entry = try h.entry("b-beginning-ball")
