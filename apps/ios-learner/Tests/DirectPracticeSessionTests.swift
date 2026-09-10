@@ -7239,6 +7239,77 @@ extension DirectPracticeSessionTests {
     XCTAssertFalse(FileManager.default.fileExists(atPath: request.fileURL.path))
   }
 
+  func testGuidedPracticeRequirementFollowsLatestCaptureThroughMatchReplacementAndFinish()
+    async throws
+  {
+    for invalid in [
+      CaptureSummary(duration: 0.1, averagePower: -20),
+      CaptureSummary(duration: 0.9, averagePower: -90),
+      CaptureSummary(duration: .nan, averagePower: -20),
+      CaptureSummary(duration: .infinity, averagePower: -20),
+      CaptureSummary(duration: 0.9, averagePower: .nan),
+      CaptureSummary(duration: 0.9, averagePower: .infinity),
+    ] {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      h.capturer.durations = [invalid.duration, 0.9]
+      h.capturer.averagePower = invalid.averagePower
+      let flow = LocalGuidedReviewSession(history: h.history, media: h.session)
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      await flow.startInitialReview()
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      await flow.finishStageNow()
+      let initial = try XCTUnwrap(flow.ledger?.initialRound)
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      let entry = try XCTUnwrap(flow.setupEntries.first)
+      flow.togglePracticeSelection(entryID: entry.id)
+      await flow.startPractice()
+      let visit = try XCTUnwrap(flow.ledger?.activePracticeVisit)
+      XCTAssertEqual(h.session.guidedMediaVisit, .practice(visit))
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      await h.record()
+      let invalidTake = try XCTUnwrap(h.session.latestTry)
+      let requirement = try XCTUnwrap(flow.playerPresentation.practiceRecordingRequirement)
+      XCTAssertFalse(flow.playerPresentation.canContinue)
+      let checking = Task { await flow.checkCurrentWord() }
+      let request = try await h.recognizer.waitForRequest(index: 0)
+      XCTAssertEqual(request.tryID, invalidTake.id)
+      XCTAssertEqual(request.fileURL, h.capturer.urls[0])
+      XCTAssertEqual(flow.playerPresentation.practiceRecordingRequirement, requirement)
+      h.recognizer.resolve(index: 0, status: .matched)
+      await checking.value
+      XCTAssertEqual(h.session.wordCheckState, .finished(.matched))
+      XCTAssertEqual(flow.playerPresentation.practiceRecordingRequirement, requirement)
+      XCTAssertFalse(flow.playerPresentation.canContinue)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      h.capturer.averagePower = -20
+      await h.session.recordAnotherTry()
+      h.session.stopRecording()
+      let accepted = try XCTUnwrap(h.session.latestTry)
+      XCTAssertNotEqual(accepted.id, invalidTake.id)
+      XCTAssertEqual(h.session.earlierTry?.id, invalidTake.id)
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      XCTAssertTrue(flow.playerPresentation.canContinue)
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+      XCTAssertEqual(flow.ledger?.activePracticeVisit, visit)
+      await flow.advanceVisit()
+      XCTAssertEqual(flow.ledger?.stage, .readyToRecheck)
+      XCTAssertNil(flow.ledger?.activePracticeVisit)
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      XCTAssertEqual(h.history.entries.count, 1)
+      XCTAssertEqual(h.history.entries.first?.id, visit.visitID)
+      XCTAssertEqual(flow.ledger?.practiceRows.first?.freshTryID, accepted.id)
+      XCTAssertEqual(flow.ledger?.initialRound, initial)
+      await flow.startRecheck()
+      XCTAssertNil(flow.playerPresentation.practiceRecordingRequirement)
+      XCTAssertEqual(flow.ledger?.initialRound, initial)
+      assertGuidedTrue(await flow.close())
+      XCTAssertTrue(h.files.protectedURLs.isEmpty)
+      XCTAssertEqual(h.history.entries.count, 1)
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+    }
+  }
+
   func testGuidedPracticeMatchedShortTakeDoesNotCreateParticipationOrFreezeFreshTake() async throws {
     let h = try GuidedOwnerHarness()
     defer { h.removeGeneratedFixture() }
