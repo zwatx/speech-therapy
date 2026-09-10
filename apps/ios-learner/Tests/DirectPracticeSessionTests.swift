@@ -8036,9 +8036,9 @@ extension DirectPracticeSessionTests {
   func testGuidedWordGuessBindsCurrentReviewWhileFirstStatusAndAdmissionStayFrozen() async throws {
     let h = try GuidedOwnerHarness()
     defer { h.removeGeneratedFixture() }
-    let entry = try h.entry("b-beginning-ball")
-    let visit = h.review(entry)
-    assertGuidedTrue(await h.prepare(entry, visit))
+    let flow = LocalGuidedReviewSession(history: h.history, media: h.session)
+    await flow.startInitialReview()
+    let visit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
     await h.record()
     let observation = GuidedOwnerObservation()
     let events = h.session.guidedReviewEvents.sink { event in
