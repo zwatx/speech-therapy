@@ -7475,6 +7475,152 @@ extension DirectPracticeSessionTests {
 
 @MainActor
 extension DirectPracticeSessionTests {
+  func testGuidedCombinedReplacementChecksExactFreshTakeBeforeFreezing() async throws {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    h.capturer.durations = [0.4, 0.9]
+    let flow = LocalGuidedReviewSession(history: h.history, media: h.session)
+    await flow.startInitialReview()
+    let visit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
+    await h.session.startRecordingAndCheckWord()
+    h.session.stopRecording()
+    let rejected = try XCTUnwrap(h.session.latestTry)
+    XCTAssertTrue(h.recognizer.requests.isEmpty)
+    XCTAssertTrue(h.session.canRecordAnotherTryAndCheckWord)
+    await h.session.recordAnotherTryAndCheckWord()
+    h.session.stopRecording()
+    let replacement = try XCTUnwrap(h.session.latestTry)
+    let request = try await h.recognizer.waitForRequest(index: 0)
+    XCTAssertNotEqual(replacement.id, rejected.id)
+    XCTAssertEqual(request.tryID, replacement.id)
+    XCTAssertEqual(request.fileURL, h.capturer.urls[1])
+    XCTAssertEqual(flow.ledger?.activeRound?.rows.first?.firstSubmission?.visit, visit)
+    XCTAssertEqual(flow.ledger?.activeRound?.rows.first?.firstSubmission?.tryID, replacement.id)
+    XCTAssertFalse(h.session.canRecordAnotherTryAndCheckWord)
+    await h.session.recordAnotherTryAndCheckWord()
+    XCTAssertEqual(h.capturer.urls.count, 2)
+    h.recognizer.resolve(index: 0, status: .notMatched)
+    await twoTryWait { h.session.wordCheckState == .finished(.notMatched) }
+    XCTAssertFalse(h.session.canRecordAnotherTryAndCheckWord)
+    XCTAssertEqual(h.recognizer.requests.count, 1)
+    assertGuidedTrue(await flow.close())
+  }
+
+  func testGuidedCombinedThirdTryRequiresConfirmedEvictionBeforePermission() async throws {
+    for fails in [false, true] {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      h.capturer.durations = [0.4, 0.4, 0.9]
+      let entry = try h.entry("b-beginning-ball")
+      assertGuidedTrue(await h.prepare(entry, h.review(entry)))
+      await h.record()
+      await h.session.recordAnotherTry()
+      h.session.stopRecording()
+      h.capturer.failDiscardIndices = fails ? [0] : []
+      let eventCount = h.capturer.events.count
+      await h.session.recordAnotherTryAndCheckWord()
+      if fails {
+        XCTAssertEqual(h.capturer.permissionRequests, 2)
+        XCTAssertEqual(h.capturer.urls.count, 2)
+        XCTAssertTrue(twoTryExists(h.capturer.urls[0]))
+        XCTAssertTrue(h.recognizer.requests.isEmpty)
+        h.capturer.failDiscardIndices = []
+        await h.session.retryCleanup()
+        XCTAssertTrue(h.recognizer.requests.isEmpty)
+      } else {
+        XCTAssertEqual(Array(h.capturer.events.dropFirst(eventCount)), [.cancel, .discard(0), .permission, .start(2)])
+        XCTAssertFalse(twoTryExists(h.capturer.urls[0]))
+        XCTAssertTrue(twoTryExists(h.capturer.urls[1]))
+        h.session.stopRecording()
+        let request = try await h.recognizer.waitForRequest(index: 0)
+        XCTAssertEqual(request.fileURL, h.capturer.urls[2])
+        XCTAssertEqual(request.tryID, h.session.latestTry?.id)
+        h.recognizer.resolve(index: 0, status: .matched)
+        await twoTryWait { h.session.wordCheckState == .finished(.matched) }
+      }
+      _ = await h.session.end()
+    }
+  }
+
+  func testGuidedCombinedReplacementPreparationRevocationCannotArmCapture() async throws {
+    enum Revocation: CaseIterable { case close, background, cancellation }
+    for revocation in Revocation.allCases {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      h.capturer.durations = [0.4, 0.4, 0.9]
+      let entry = try h.entry("b-beginning-ball")
+      assertGuidedTrue(await h.prepare(entry, h.review(entry)))
+      await h.record()
+      await h.session.recordAnotherTry()
+      h.session.stopRecording()
+      var replacement: Task<Void, Never>?
+      var revoked = false
+      let observation = h.session.$phase.sink { phase in
+        guard phase == .requestingPermission, !revoked else { return }
+        revoked = true
+        switch revocation {
+        case .close: h.session.viewDidDisappear()
+        case .background: h.session.appDidEnterBackground()
+        case .cancellation: replacement?.cancel()
+        }
+      }
+      replacement = Task { await h.session.recordAnotherTryAndCheckWord() }
+      await replacement?.value
+      observation.cancel()
+      await settle(h.session)
+      XCTAssertTrue(revoked)
+      XCTAssertEqual(h.capturer.permissionRequests, 2)
+      XCTAssertEqual(h.capturer.urls.count, 2)
+      XCTAssertTrue(h.recognizer.requests.isEmpty)
+      _ = await h.session.end()
+    }
+  }
+
+  func testGuidedCombinedReplacementCancelledPermissionNeverChecksLaterManualTake() async throws {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    h.capturer.durations = [0.4, 0.9]
+    let entry = try h.entry("b-beginning-ball")
+    assertGuidedTrue(await h.prepare(entry, h.review(entry)))
+    await h.record()
+    h.capturer.holdsPermission = true
+    let replacement = Task { await h.session.recordAnotherTryAndCheckWord() }
+    await twoTryWait { h.capturer.permissionHeld }
+    replacement.cancel()
+    h.capturer.resolvePermission(true)
+    await replacement.value
+    XCTAssertEqual(h.capturer.urls.count, 1)
+    XCTAssertTrue(h.recognizer.requests.isEmpty)
+    h.capturer.holdsPermission = false
+    h.session.returnToReview()
+    await h.session.recordAnotherTry()
+    h.session.stopRecording()
+    XCTAssertTrue(h.recognizer.requests.isEmpty)
+    _ = await h.session.end()
+  }
+
+  func testCombinedReplacementUnavailableForDirectAndGuidedPractice() async throws {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    let entry = try h.entry("b-beginning-ball")
+    assertGuidedTrue(await h.session.prepareGuidedVisit(entry: entry, visit: .practice(h.practice(entry))))
+    await h.record()
+    XCTAssertFalse(h.session.canRecordAnotherTryAndCheckWord)
+    await h.session.recordAnotherTryAndCheckWord()
+    XCTAssertEqual(h.capturer.urls.count, 1)
+    XCTAssertTrue(h.recognizer.requests.isEmpty)
+    _ = await h.session.end()
+    let direct = try LocalWordSessionHarness()
+    defer { direct.removeGeneratedFixture() }
+    await direct.session.startRecording()
+    direct.session.stopRecording()
+    XCTAssertFalse(direct.session.canRecordAnotherTryAndCheckWord)
+    await direct.session.recordAnotherTryAndCheckWord()
+    XCTAssertEqual(direct.capturer.urls.count, 1)
+    XCTAssertTrue(direct.recognizer.requests.isEmpty)
+    _ = await direct.session.end()
+  }
+
   func testGuidedRecordAndCheckManualAndAutomaticCompletionBindFreshReviewAndRecheck() async throws
   {
     for automatic in [false, true] {
