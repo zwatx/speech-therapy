@@ -7111,19 +7111,20 @@ extension DirectPracticeSessionTests {
       let ledger = try XCTUnwrap(flow.ledger)
       await h.recordValidPractice()
       let checking = Task { await flow.checkCurrentWord() }
-      let request = try await h.recognizer.waitForRequest(index: 1)
+      let request = try await timeoutRequest(checking, recognizer: h.recognizer, index: 1)
       let sibling = LocalWordRecognitionRequest(
         operationID: UUID(), tryID: request.tryID, fileURL: request.fileURL,
         expectedWord: request.expectedWord)
       let discarded = h.capturer.discardedIndices
       h.recognizer.resolve(
-        index: 1, status: .matched, cleanupConfirmed: wrongRequest,
+        index: 1, status: status, cleanupConfirmed: wrongRequest,
         receiptRequest: wrongRequest ? sibling : nil)
       await checking.value
       XCTAssertEqual(h.session.wordCheckState, .cleanupBlocked)
       XCTAssertTrue(h.session.cleanupBlocked)
       XCTAssertFalse(flow.playerPresentation.canCheckWords)
       XCTAssertTrue(h.files.protectedURLs.contains(request.fileURL))
+      await flow.checkCurrentWord()
       await flow.advanceVisit()
       await flow.skipVisit()
       await flow.finishStageNow()
