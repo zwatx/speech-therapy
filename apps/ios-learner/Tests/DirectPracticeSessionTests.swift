@@ -8068,6 +8068,1520 @@ extension DirectPracticeSessionTests {
     XCTAssertEqual(flow.ledger?.activeRound?.rows.first, frozen)
     XCTAssertEqual(h.session.currentWordGuess?.word, "wall")
     XCTAssertTrue(h.history.entries.isEmpty)
-    assertGuidedTrue(await h.leave(visit))
+    await flow.finishStageNow()
+    XCTAssertNil(h.session.wordObservation(for: request.tryID))
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertEqual(flow.ledger?.initialRound.rows.first, frozen)
+    assertGuidedTrue(await flow.close())
+  }
+}
+
+// Ordinary Skip uses only generated producers and the existing exact-owner test harnesses.
+@MainActor
+extension DirectPracticeSessionTests {
+  func testSkipCursorPublicationCannotOutrunCloseOrBackground() async throws {
+    for close in [true, false] {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      var countPublished = false
+      var fired = false
+      let counted = h.session.$skippedWords.sink { value in
+        MainActor.assumeIsolated { if value == 1 { countPublished = true } }
+      }
+      // After the count stores, the next publication is the cursor's willSet.
+      // Observe the public state without exposing the private cursor publisher.
+      let changed = h.session.objectWillChange.sink {
+        MainActor.assumeIsolated {
+          guard countPublished, !fired, h.session.skippedWords == 1,
+            h.session.currentIndex == 0 else { return }
+          fired = true
+          if close { h.session.viewDidDisappear() }
+          else { h.session.appDidEnterBackground() }
+        }
+      }
+      defer { counted.cancel(); changed.cancel() }
+      await h.session.skipWord()
+      await settle(h.session)
+      XCTAssertTrue(fired)
+      XCTAssertEqual(h.session.currentIndex, 0)
+      XCTAssertEqual(h.session.skippedWords, 0)
+      XCTAssertEqual(h.session.completedWords, 0)
+      XCTAssertEqual(h.session.phase, close ? .ended : .ready)
+      XCTAssertNil(h.session.participationCompletion)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      XCTAssertEqual(h.capturer.permissionRequests, 0)
+      _ = await h.session.end()
+    }
+  }
+
+  func testFinalMixedSkipCompletionSupersessionDoesNotSaveOrConsumeLastWord() async throws {
+    for close in [true, false] {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      await h.session.skipWord()
+      await h.session.startRecording()
+      h.session.stopRecording()
+      await h.session.continuePractice()
+      XCTAssertEqual(h.session.currentPrompt.word, "bee")
+      var fired = false
+      let subscription = h.session.$phase.sink { phase in
+        MainActor.assumeIsolated {
+          guard phase == .completed, !fired else { return }
+          fired = true
+          if close { h.session.viewDidDisappear() }
+          else { h.session.appDidEnterBackground() }
+        }
+      }
+      defer { subscription.cancel() }
+      await h.session.skipWord()
+      await settle(h.session)
+      XCTAssertTrue(fired)
+      XCTAssertEqual(h.session.phase, close ? .ended : .ready)
+      XCTAssertEqual(h.session.currentIndex, 2)
+      XCTAssertEqual(h.session.completedWords, 1)
+      XCTAssertEqual(h.session.skippedWords, 1)
+      XCTAssertNil(h.session.participationCompletion)
+      XCTAssertNil(h.session.currentParticipationSaveAnnouncement)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      if !close {
+        XCTAssertTrue(h.session.canSkipWord)
+        await h.session.skipWord()
+        XCTAssertEqual(h.session.phase, .completed)
+        XCTAssertEqual(h.session.skippedWords, 2)
+        XCTAssertEqual(h.history.entries.count, 1)
+        XCTAssertEqual(h.history.entries.first?.wordCount, 1)
+      }
+      XCTAssertEqual(h.capturer.permissionRequests, 1)
+      _ = await h.session.end()
+    }
+  }
+
+  func testSkippingEveryWordVisitsFirstMiddleAndLastWithoutMediaOrHistory() async throws {
+    let h = try TwoTryHarness()
+    defer { h.fixture.removeDirectory() }
+    let recognizer = DirectControlledWordRecognizer(files: h.files)
+    defer { recognizer.releaseGeneratedBorrows() }
+    let session = DirectPracticeSession(
+      capturer: h.capturer, player: h.player, history: h.history, wordRecognizer: recognizer)
+    for (index, word) in ["ball", "boat", "bee"].enumerated() {
+      XCTAssertEqual(session.currentIndex, index)
+      XCTAssertEqual(session.currentPrompt.word, word)
+      XCTAssertTrue(session.canSkipWord)
+      await session.skipWord()
+      XCTAssertEqual(session.skippedWords, index + 1)
+      XCTAssertEqual(session.completedWords, 0)
+      XCTAssertEqual(session.attemptCount, 0)
+    }
+    XCTAssertEqual(session.phase, .completed)
+    XCTAssertEqual(session.currentIndex, 2)
+    XCTAssertFalse(session.canSkipWord)
+    XCTAssertNil(session.participationCompletion)
+    XCTAssertNil(session.currentParticipationSaveAnnouncement)
+    XCTAssertFalse(session.canRetryParticipationSave)
+    XCTAssertNil(session.historyError)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    XCTAssertFalse(FileManager.default.fileExists(
+      atPath: h.fixture.directory.appendingPathComponent("two-try-history.json").path))
+    XCTAssertTrue(recognizer.requests.isEmpty)
+    XCTAssertTrue(h.player.playedURLs.isEmpty)
+    XCTAssertEqual(h.capturer.permissionRequests, 0)
+    XCTAssertTrue(h.capturer.urls.isEmpty)
+    await session.skipWord()
+    session.retryParticipationSave()
+    XCTAssertEqual(session.skippedWords, 3)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    _ = await session.end()
+    XCTAssertFalse(session.canSkipWord)
+    await session.skipWord()
+    XCTAssertEqual(session.skippedWords, 3)
+  }
+
+  func testFirstMiddleOrFinalSkipSavesOnlyExplicitlyContinuedRecordings() async throws {
+    for skippedIndex in 0..<3 {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      for index in 0..<3 {
+        XCTAssertEqual(h.session.currentIndex, index)
+        if index == skippedIndex {
+          await h.session.skipWord()
+        } else {
+          await h.session.startRecording()
+          h.session.stopRecording()
+          XCTAssertFalse(h.session.canSkipWord)
+          await h.session.continuePractice()
+        }
+      }
+      XCTAssertEqual(h.session.phase, .completed)
+      XCTAssertEqual(h.session.currentIndex, 2)
+      XCTAssertEqual(h.session.completedWords, 2)
+      XCTAssertEqual(h.session.skippedWords, 1)
+      XCTAssertEqual(h.session.attemptCount, 2)
+      XCTAssertEqual(h.capturer.permissionRequests, 2)
+      XCTAssertEqual(h.capturer.discardedIndices.sorted(), [0, 1])
+      XCTAssertEqual(h.history.entries.count, 1)
+      let completion = try XCTUnwrap(h.session.participationCompletion)
+      XCTAssertEqual(completion.wordCount, 2)
+      assertSameParticipations(h.history.entries, [completion])
+      XCTAssertEqual(h.session.currentParticipationSaveAnnouncement?.completion, completion)
+      XCTAssertTrue(h.player.playedURLs.isEmpty)
+    }
+  }
+
+  func testSkipRestartAndMoreResetCursorAndBothWordCounts() async throws {
+    let h = try TwoTryHarness()
+    defer { h.fixture.removeDirectory() }
+    await h.session.skipWord()
+    await h.session.startRecording()
+    h.session.stopRecording()
+    await h.session.continuePractice()
+    XCTAssertEqual(h.session.currentIndex, 2)
+    XCTAssertEqual(h.session.completedWords, 1)
+    XCTAssertEqual(h.session.skippedWords, 1)
+    await h.session.restart()
+    XCTAssertEqual(h.session.currentIndex, 0)
+    XCTAssertEqual(h.session.currentPrompt.word, "ball")
+    XCTAssertEqual(h.session.completedWords, 0)
+    XCTAssertEqual(h.session.skippedWords, 0)
+    XCTAssertEqual(h.session.attemptCount, 0)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    for _ in 0..<h.session.totalWords { await h.session.skipWord() }
+    let next = try XCTUnwrap(h.session.nextPracticeSound)
+    await h.session.practiceMore()
+    XCTAssertEqual(h.session.sound, next)
+    XCTAssertEqual(h.session.phase, .ready)
+    XCTAssertEqual(h.session.currentIndex, 0)
+    XCTAssertEqual(h.session.completedWords, 0)
+    XCTAssertEqual(h.session.skippedWords, 0)
+    XCTAssertEqual(h.session.attemptCount, 0)
+    XCTAssertNil(h.session.participationCompletion)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    XCTAssertTrue(h.session.canSkipWord)
+  }
+
+  func testMixedSkipSaveRetryKeepsExactCompletionAndDoesNotRepeatAnyWord() async throws {
+    let fixture = try DirectOwnedFixture()
+    defer { fixture.removeDirectory() }
+    let file = fixture.directory.appendingPathComponent("skip-history.json")
+    let history = PracticeParticipationStore(fileURL: file)
+    try FileManager.default.createDirectory(at: file, withIntermediateDirectories: true)
+    let capturer = DirectPracticeCapturer(recordingDirectory: fixture.directory)
+    let player = DirectPracticePlayer()
+    let session = DirectPracticeSession(capturer: capturer, player: player, history: history)
+    await session.skipWord()
+    await session.startRecording()
+    session.stopRecording()
+    await session.continuePractice()
+    await session.skipWord()
+    let completion = try XCTUnwrap(session.participationCompletion)
+    XCTAssertEqual(completion.wordCount, 1)
+    XCTAssertEqual(session.completedWords, 1)
+    XCTAssertEqual(session.skippedWords, 2)
+    XCTAssertTrue(session.canRetryParticipationSave)
+    let audio = participationDraftAudioCounts(capturer, player)
+    try FileManager.default.removeItem(at: file)
+    session.retryParticipationSave()
+    XCTAssertEqual(session.participationCompletion, completion)
+    assertSameParticipations(history.entries, [completion])
+    XCTAssertEqual(session.completedWords, 1)
+    XCTAssertEqual(session.skippedWords, 2)
+    XCTAssertEqual(session.currentIndex, 2)
+    XCTAssertEqual(participationDraftAudioCounts(capturer, player), audio)
+    XCTAssertFalse(session.canRetryParticipationSave)
+    XCTAssertEqual(session.currentParticipationSaveAnnouncement?.message, "Saved to practice history.")
+  }
+
+  func testSkipFromDeniedOrFailedEmptyVisitDoesNotAskAgainOrCapture() async throws {
+    for denied in [true, false] {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      h.capturer.permissionGranted = !denied
+      h.capturer.failStart = !denied
+      await h.session.startRecording()
+      if denied { XCTAssertEqual(h.session.phase, .permissionDenied) }
+      else { guard case .failed = h.session.phase else { return XCTFail("Expected failed start") } }
+      XCTAssertTrue(h.session.tries.isEmpty)
+      XCTAssertTrue(h.session.canSkipWord)
+      let events = h.capturer.events
+      await h.session.skipWord()
+      XCTAssertEqual(h.session.phase, .ready)
+      XCTAssertEqual(h.session.currentPrompt.word, "boat")
+      XCTAssertEqual(h.session.completedWords, 0)
+      XCTAssertEqual(h.session.skippedWords, 1)
+      XCTAssertEqual(h.capturer.permissionRequests, 1)
+      XCTAssertFalse(h.capturer.events.dropFirst(events.count).contains(.permission))
+      XCTAssertFalse(h.capturer.events.dropFirst(events.count).contains {
+        if case .start = $0 { return true }; return false
+      })
+      XCTAssertTrue(h.player.playedURLs.isEmpty)
+      XCTAssertTrue(h.history.entries.isEmpty)
+    }
+  }
+
+  func testSkipRejectsPendingPermissionRecordingReviewAndUnconfirmedCleanup() async throws {
+    let h = try TwoTryHarness()
+    defer { h.fixture.removeDirectory() }
+    h.capturer.holdsPermission = true
+    let starting = Task { await h.session.startRecording() }
+    await twoTryWait { h.capturer.permissionHeld }
+    XCTAssertEqual(h.session.phase, .requestingPermission)
+    XCTAssertFalse(h.session.canSkipWord)
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.currentIndex, 0)
+    h.capturer.resolvePermission(true)
+    await starting.value
+    XCTAssertEqual(h.session.phase, .recording)
+    XCTAssertFalse(h.session.canSkipWord)
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.phase, .recording)
+    h.session.stopRecording()
+    XCTAssertFalse(h.session.canSkipWord)
+    let kept = h.session.latestTry
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.latestTry, kept)
+    h.capturer.failDiscardIndices = [0]
+    await h.session.continuePractice()
+    XCTAssertTrue(h.session.cleanupBlocked)
+    XCTAssertFalse(h.session.canSkipWord)
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.currentIndex, 0)
+    XCTAssertEqual(h.session.skippedWords, 0)
+    XCTAssertEqual(h.session.completedWords, 0)
+    h.capturer.failDiscardIndices = []
+    await h.session.retryCleanup()
+    _ = await h.session.end()
+  }
+
+  func testSkipRejectsFailedAndDeniedReplacementWithKeptTake() async throws {
+    for denied in [true, false] {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      await h.session.startRecording()
+      h.session.stopRecording()
+      let kept = try XCTUnwrap(h.session.latestTry)
+      h.capturer.permissionGranted = !denied
+      h.capturer.failStart = !denied
+      await h.session.recordAnotherTry()
+      XCTAssertTrue(h.session.canReturnToReview)
+      XCTAssertFalse(h.session.canSkipWord)
+      let before = h.session.phase
+      await h.session.skipWord()
+      XCTAssertEqual(h.session.phase, before)
+      XCTAssertEqual(h.session.latestTry, kept)
+      XCTAssertEqual(h.session.currentIndex, 0)
+      XCTAssertEqual(h.session.skippedWords, 0)
+      h.session.returnToReview()
+      await h.session.continuePractice()
+      XCTAssertEqual(h.session.completedWords, 1)
+      XCTAssertEqual(h.session.currentIndex, 1)
+    }
+  }
+
+  func testSkipDoesNotInterruptAnExplicitCurrentWordCheck() async throws {
+    let h = try LocalWordSessionHarness()
+    defer { h.removeGeneratedFixture() }
+    await h.record()
+    let checking = Task { await h.session.startWordCheck() }
+    _ = try await h.recognizer.waitForRequest(index: 0)
+    XCTAssertFalse(h.session.canSkipWord)
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.wordCheckState, .checking)
+    XCTAssertTrue(h.recognizer.cancellations.isEmpty)
+    XCTAssertEqual(h.session.currentIndex, 0)
+    h.recognizer.resolve(index: 0, status: .matched)
+    await checking.value
+    XCTAssertEqual(h.session.skippedWords, 0)
+    _ = await h.session.end()
+  }
+
+  func testGuidedReviewAndPracticeNeverAdmitOrdinarySkip() async throws {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    XCTAssertFalse(h.session.canSkipWord)
+    let entry = try h.entry("b-beginning-ball")
+    let review = h.review(entry)
+    assertGuidedTrue(await h.prepare(entry, review))
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.guidedMediaVisit, .review(review))
+    XCTAssertEqual(h.session.phase, .ready)
+    XCTAssertEqual(h.session.skippedWords, 0)
+    assertGuidedTrue(await h.leave(review))
+    let practice = h.practice(entry)
+    assertGuidedTrue(await h.session.prepareGuidedVisit(entry: entry, visit: .practice(practice)))
+    XCTAssertFalse(h.session.canSkipWord)
+    await h.session.skipWord()
+    XCTAssertEqual(h.session.guidedMediaVisit, .practice(practice))
+    XCTAssertEqual(h.session.skippedWords, 0)
+    XCTAssertEqual(h.capturer.permissionRequests, 0)
+    XCTAssertTrue(h.recognizer.requests.isEmpty)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    _ = await h.session.end()
+  }
+
+  func testCloseOrBackgroundInSkipCountPublicationRevokesPromptAndCounts() async throws {
+    for close in [true, false] {
+      let h = try TwoTryHarness()
+      defer { h.fixture.removeDirectory() }
+      var fired = false
+      let subscription = h.session.$skippedWords.sink { value in
+        MainActor.assumeIsolated {
+          guard value == 1, !fired else { return }
+          fired = true
+          if close { h.session.viewDidDisappear() }
+          else { h.session.appDidEnterBackground() }
+        }
+      }
+      defer { subscription.cancel() }
+      await h.session.skipWord()
+      await settle(h.session)
+      XCTAssertTrue(fired)
+      XCTAssertEqual(h.session.skippedWords, 0)
+      XCTAssertEqual(h.session.completedWords, 0)
+      XCTAssertEqual(h.session.currentIndex, 0)
+      XCTAssertNil(h.session.participationCompletion)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      if close { XCTAssertEqual(h.session.phase, .ended) }
+      else { XCTAssertEqual(h.session.phase, .ready) }
+    }
+  }
+}
+
+@MainActor
+extension DirectPracticeSessionTests {
+  func testSkipDuringHearWordRequiresFreshTapAfterExactSpokenStop() async throws {
+    let h = try TwoTryHarness()
+    defer { h.fixture.removeDirectory() }
+    let driver = SpokenWordDriverControl()
+    let spoken = PracticeSpokenWordRuntime(ownership: h.gate) { operation, event in
+      driver.make(operation, event)
+    }
+    let session = DirectPracticeSession(
+      capturer: h.capturer, player: h.player, history: h.history, spokenWord: spoken)
+    let hear = Task { await session.toggleSpokenWord() }
+    await entered(driver.enqueued)
+    driver.send(.started)
+    await hear.value
+    XCTAssertFalse(session.canSkipWord)
+    await session.skipWord()
+    XCTAssertEqual(session.skippedWords, 0)
+    XCTAssertEqual(session.currentIndex, 0)
+    XCTAssertEqual(driver.stopRequests, 0)
+    let stop = Task { await session.toggleSpokenWord() }
+    await entered(driver.stopped)
+    XCTAssertFalse(session.canSkipWord)
+    driver.send(.cancelled)
+    await stop.value
+    XCTAssertTrue(session.canSkipWord)
+    XCTAssertEqual(session.currentIndex, 0, "No Skip was queued behind the spoken word.")
+    await session.skipWord()
+    XCTAssertEqual(session.currentIndex, 1)
+    XCTAssertEqual(session.skippedWords, 1)
+    XCTAssertEqual(h.capturer.permissionRequests, 0)
+    XCTAssertTrue(h.player.playedURLs.isEmpty)
+    XCTAssertEqual(driver.factoryCalls, 1)
+    _ = await session.end()
+  }
+}
+
+#if DEBUG
+@MainActor
+extension DirectPracticeSessionTests {
+  func testSkipWaitsForExactMirrorCleanupAndCloseOrBackgroundWinsWithoutLateCounts() async throws {
+    for oneWord in [false, true] {
+      for supersedingIntent in ["none", "close", "background"] {
+        let h = try TwoTryHarness()
+        defer { h.fixture.removeDirectory() }
+        let camera = SessionMirrorFixture(holdsCleanup: true)
+        defer { camera.driver.releaseAll() }
+        let sound = oneWord ? try oneWordSound() : PracticeLibrary.starterSound
+        let session = DirectPracticeSession(
+          sound: sound, capturer: h.capturer, player: h.player,
+          mirror: camera.mirror, history: h.history)
+        session.appDidBecomeActive()
+        session.showMirror()
+        await mirrorWait {
+          if case .live = camera.mirror.state { return true }; return false
+        }
+        let owner = try XCTUnwrap(camera.runtime.currentOwner)
+        let acknowledgement = try XCTUnwrap(camera.runtime.cleanupAcknowledgement(owner: owner))
+        XCTAssertTrue(session.canSkipWord)
+        let skipping = Task { await session.skipWord() }
+        await entered(camera.driver.cleaning)
+        XCTAssertTrue(session.isTransitioning)
+        XCTAssertFalse(session.canSkipWord)
+        XCTAssertEqual(session.currentIndex, 0)
+        XCTAssertEqual(session.skippedWords, 0)
+        XCTAssertEqual(session.completedWords, 0)
+        XCTAssertNil(acknowledgement.receipt)
+        XCTAssertTrue(h.history.entries.isEmpty)
+        // A second Skip never acquires another transition or camera owner.
+        await session.skipWord()
+        if supersedingIntent == "close" { session.viewDidDisappear() }
+        if supersedingIntent == "background" { session.appDidEnterBackground() }
+        if supersedingIntent == "close" {
+          XCTAssertNotEqual(session.phase, .ended)
+          XCTAssertFalse(session.canSkipWord)
+          XCTAssertNil(acknowledgement.receipt)
+          XCTAssertEqual(session.currentIndex, 0)
+          XCTAssertEqual(session.skippedWords, 0)
+        }
+        camera.driver.releaseCleanup()
+        await skipping.value
+        if supersedingIntent == "close" {
+          // Audio recovery can become available before Close finishes mirror/runtime cleanup.
+          // Observe the original Close reaching its terminal phase without issuing another Close.
+          await twoTryWait { session.phase == .ended }
+        } else {
+          await settle(session)
+        }
+        if supersedingIntent == "none" {
+          XCTAssertEqual(session.skippedWords, 1)
+          XCTAssertEqual(session.currentIndex, oneWord ? 0 : 1)
+          XCTAssertEqual(session.phase, oneWord ? .completed : .ready)
+        } else {
+          XCTAssertEqual(session.skippedWords, 0)
+          XCTAssertEqual(session.currentIndex, 0)
+          XCTAssertEqual(session.phase, supersedingIntent == "close" ? .ended : .ready)
+        }
+        XCTAssertTrue(camera.mirror.isReleasedForClose)
+        XCTAssertEqual(acknowledgement.receipt?.result, .released)
+        XCTAssertEqual(session.completedWords, 0)
+        XCTAssertNil(session.participationCompletion)
+        XCTAssertNil(session.currentParticipationSaveAnnouncement)
+        XCTAssertTrue(h.history.entries.isEmpty)
+        XCTAssertEqual(h.capturer.permissionRequests, 0)
+        XCTAssertTrue(h.capturer.urls.isEmpty)
+        XCTAssertTrue(h.player.playedURLs.isEmpty)
+        _ = await session.end()
+      }
+    }
+  }
+
+  func testFailedSkipMirrorCleanupRequiresRecoveryThenFreshSkipAndPermissionNeverQueuesIt()
+    async throws
+  {
+    let h = try TwoTryHarness()
+    defer { h.fixture.removeDirectory() }
+    let camera = SessionMirrorFixture(permission: .notDetermined, cleanupFailures: 1)
+    let session = DirectPracticeSession(
+      capturer: h.capturer, player: h.player, mirror: camera.mirror, history: h.history)
+    session.appDidBecomeActive()
+    session.showMirror()
+    XCTAssertFalse(session.canSkipWord)
+    await session.skipWord()
+    XCTAssertEqual(session.skippedWords, 0)
+    camera.permission.complete(true)
+    await mirrorWait {
+      if case .live = camera.mirror.state { return true }; return false
+    }
+    XCTAssertEqual(session.currentIndex, 0)
+    XCTAssertTrue(session.canSkipWord)
+    await session.skipWord()
+    XCTAssertFalse(session.isTransitioning)
+    XCTAssertFalse(session.canSkipWord)
+    XCTAssertEqual(session.currentIndex, 0)
+    XCTAssertEqual(session.skippedWords, 0)
+    await session.retryMirrorStop()
+    XCTAssertTrue(session.canSkipWord)
+    XCTAssertEqual(session.currentIndex, 0, "Recovery must not resume a failed Skip.")
+    await session.skipWord()
+    XCTAssertEqual(session.currentIndex, 1)
+    XCTAssertEqual(session.skippedWords, 1)
+    XCTAssertEqual(camera.permission.requests, 1)
+    XCTAssertEqual(h.capturer.permissionRequests, 0)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    _ = await session.end()
+  }
+}
+#endif
+
+// Guided alternatives stay ephemeral on the exact stopped take; frozen rows carry status only.
+@MainActor
+extension DirectPracticeSessionTests {
+  func testGuidedGuessPracticeReplacementAndSameWordRecheckKeepFrozenRowsAndHistoryMetadata()
+    async throws
+  {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    let flow = LocalGuidedReviewSession(history: h.history, media: h.session)
+    await flow.startInitialReview()
+    let initialVisit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
+    XCTAssertNil(h.session.currentWordGuess)
+    await h.record()
+    let initialCheck = Task { await flow.checkCurrentWord() }
+    let initialRequest = try await h.recognizer.waitForRequest(index: 0)
+    h.recognizer.resolve(index: 0, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "wall", expectedWord: initialRequest.expectedWord))
+    await initialCheck.value
+    XCTAssertEqual(h.session.currentWordGuess?.word, "wall")
+    await flow.finishStageNow()
+    let initial = try XCTUnwrap(flow.ledger?.initialRound)
+    XCTAssertEqual(initial.rows.first?.state, .finished(.notMatched))
+    XCTAssertNil(h.session.currentWordGuess)
+    flow.togglePracticeSelection(entryID: initialVisit.entryID)
+    await flow.startPractice()
+    let practiceVisit = try XCTUnwrap(flow.ledger?.activePracticeVisit)
+    XCTAssertNotEqual(practiceVisit.visitID, initialVisit.visitID)
+    XCTAssertEqual(practiceVisit.entryID, initialVisit.entryID)
+    XCTAssertNil(h.session.currentWordGuess)
+    let context = flow.playerPresentation.firstObservationNote
+    XCTAssertEqual(context,
+      "First review: No word match. Word checks cannot identify which sound was made.")
+    await h.recordValidPractice()
+    let practiceCheck = Task { await flow.checkCurrentWord() }
+    let practiceRequest = try await h.recognizer.waitForRequest(index: 1)
+    XCTAssertNotEqual(practiceRequest.tryID, initialRequest.tryID)
+    h.recognizer.resolve(index: 1, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "call", expectedWord: practiceRequest.expectedWord))
+    await practiceCheck.value
+    XCTAssertEqual(h.session.currentWordGuess?.word, "call")
+    await h.session.togglePlayback()
+    XCTAssertEqual(h.player.playedURLs.last, practiceRequest.fileURL)
+    await h.session.togglePlayback()
+    XCTAssertEqual(h.session.currentWordGuess?.word, "call")
+    XCTAssertEqual(h.session.wordObservation(for: practiceRequest.tryID), .notMatched)
+    await h.session.recordAnotherTry()
+    XCTAssertNil(h.session.currentWordGuess, "Fresh capture invalidates text before its Stop/check.")
+    XCTAssertEqual(h.session.phase, .recording)
+    h.session.stopRecording()
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertEqual(h.recognizer.requests.count, 2, "Replacement must not automatically check.")
+    XCTAssertEqual(h.session.wordObservation(for: practiceRequest.tryID), .notMatched)
+    XCTAssertNil(h.session.wordObservation(for: try XCTUnwrap(h.session.latestTry).id))
+    let replacementCheck = Task { await flow.checkCurrentWord() }
+    let replacementRequest = try await h.recognizer.waitForRequest(index: 2)
+    XCTAssertNotEqual(replacementRequest.operationID, practiceRequest.operationID)
+    XCTAssertNotEqual(replacementRequest.tryID, practiceRequest.tryID)
+    h.recognizer.resolve(index: 2, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "fall", expectedWord: replacementRequest.expectedWord))
+    await replacementCheck.value
+    XCTAssertEqual(h.session.currentWordGuess?.word, "fall")
+    XCTAssertEqual(h.session.checkedTryID, replacementRequest.tryID)
+    XCTAssertEqual(h.session.wordObservation(for: practiceRequest.tryID), .notMatched)
+    XCTAssertEqual(h.session.wordObservation(for: replacementRequest.tryID), .notMatched)
+    XCTAssertEqual(flow.ledger?.initialRound, initial)
+    XCTAssertEqual(flow.playerPresentation.firstObservationNote, context)
+    await flow.advanceVisit()
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertNil(h.session.wordObservation(for: practiceRequest.tryID))
+    XCTAssertNil(h.session.wordObservation(for: replacementRequest.tryID))
+    XCTAssertEqual(flow.ledger?.stage, .readyToRecheck)
+    let saved = h.history.entries
+    XCTAssertEqual(saved.count, 1)
+    XCTAssertEqual(saved.first?.id, practiceVisit.visitID)
+    XCTAssertEqual(saved.first?.wordCount, 1)
+    await flow.startRecheck()
+    let recheckVisit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
+    XCTAssertEqual(recheckVisit.entryID, initialVisit.entryID)
+    XCTAssertNotEqual(recheckVisit.visitID, initialVisit.visitID)
+    XCTAssertNotEqual(recheckVisit.roundID, initialVisit.roundID)
+    XCTAssertNil(h.session.currentWordGuess)
+    await h.capturer.finish(index: 0) // Old capture completion cannot revive initial text.
+    XCTAssertNil(h.session.currentWordGuess)
+    await h.record()
+    let recheck = Task { await flow.checkCurrentWord() }
+    let recheckRequest = try await h.recognizer.waitForRequest(index: 3)
+    XCTAssertNotEqual(recheckRequest.tryID, replacementRequest.tryID)
+    XCTAssertEqual(recheckRequest.expectedWord, initialRequest.expectedWord)
+    h.recognizer.resolve(index: 3, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "tall", expectedWord: recheckRequest.expectedWord))
+    await recheck.value
+    XCTAssertEqual(h.session.currentWordGuess?.word, "tall")
+    XCTAssertEqual(h.session.checkedTryID, recheckRequest.tryID)
+    await flow.finishStageNow()
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertEqual(flow.ledger?.initialRound, initial)
+    XCTAssertEqual(flow.ledger?.pairedRows.first?.initial, initial.rows.first)
+    XCTAssertEqual(flow.ledger?.pairedRows.first?.recheck.state, .finished(.notMatched))
+    XCTAssertEqual(flow.practiceSelectionIDs, [initialVisit.entryID])
+    XCTAssertEqual(h.history.entries, saved)
+    XCTAssertEqual(PracticeParticipationStore(fileURL: h.historyURL).entries, saved)
+    XCTAssertEqual(h.recognizer.requests.count, 4)
+    assertGuidedTrue(await flow.close())
+  }
+
+  func testGuidedGuessMissingAlternativeAndNoneligibleReceiptsKeepStatusAndCleanupContracts()
+    async throws
+  {
+    for mode in 0..<9 {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      let entry = try h.entry("b-beginning-ball")
+      let visit = h.review(entry)
+      assertGuidedTrue(await h.prepare(entry, visit))
+      await h.record()
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await h.recognizer.waitForRequest(index: 0)
+      if mode == 1 { h.session.cancelWordCheck() }
+      let status: LocalWordRecognitionStatus = mode == 2 ? .matched : mode == 3 ? .uncertain
+        : mode == 4 ? .timedOut : mode == 5 ? .unavailable : .notMatched
+      let sibling = LocalWordRecognitionRequest(operationID: UUID(), tryID: request.tryID,
+        fileURL: request.fileURL, expectedWord: request.expectedWord)
+      let expected = mode == 8 ? "pig" : request.expectedWord
+      h.recognizer.resolve(index: 0, status: status, cleanupConfirmed: mode != 6,
+        receiptRequest: mode == 7 ? sibling : nil,
+        wordGuess: mode == 0 ? nil : LocalWordGuess(completedText: "wall", expectedWord: expected))
+      await checking.value
+      XCTAssertNil(h.session.currentWordGuess)
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      if mode == 6 || mode == 7 {
+        XCTAssertEqual(h.session.wordCheckState, .cleanupBlocked)
+        XCTAssertTrue(h.session.cleanupBlocked)
+        XCTAssertTrue(h.files.protectedURLs.contains(request.fileURL))
+        assertGuidedFalse(await h.leave(visit))
+      } else {
+        XCTAssertEqual(h.session.wordCheckState, .finished(mode == 1 ? .cancelled : status))
+        XCTAssertFalse(h.session.canCheckWordsInLatestTry)
+        assertGuidedTrue(await h.leave(visit))
+        XCTAssertNil(h.session.currentWordGuess)
+        _ = await h.session.end()
+      }
+    }
+  }
+
+  func testGuidedGuessSettlementAndFinishedPublicationCloseOrBackgroundCannotResurrectText()
+    async throws
+  {
+    for duringSettlement in [true, false] {
+      for close in [true, false] {
+        let h = try GuidedOwnerHarness()
+        defer { h.removeGeneratedFixture() }
+        let entry = try h.entry("b-beginning-ball")
+        let visit = h.review(entry)
+        assertGuidedTrue(await h.prepare(entry, visit))
+        let observations = GuidedOwnerObservation()
+        var fired = false
+        func revoke() {
+          guard !fired else { return }
+          fired = true
+          if close { h.session.viewDidDisappear() }
+          else { h.session.appDidEnterBackground() }
+          XCTAssertNil(h.session.currentWordGuess)
+        }
+        let events = h.session.guidedReviewEvents.sink { event in
+          MainActor.assumeIsolated {
+            observations.receive(event)
+            if duringSettlement, case .settled(_, .notMatched, _, _) = event { revoke() }
+          }
+        }
+        let states = h.session.$wordCheckState.sink { state in
+          MainActor.assumeIsolated {
+            if !duringSettlement, state == .finished(.notMatched) { revoke() }
+          }
+        }
+        defer { events.cancel(); states.cancel() }
+        await h.record()
+        let checking = Task { await h.session.startWordCheck() }
+        let request = try await h.recognizer.waitForRequest(index: 0)
+        h.recognizer.resolve(index: 0, status: .notMatched,
+          wordGuess: LocalWordGuess(completedText: "wall", expectedWord: request.expectedWord))
+        await checking.value
+        // End publishes isTransitioning=false before phase.ended; wait for the real phase.
+        await twoTryWait {
+          close ? h.session.phase == .ended
+            : h.session.phase == .ready && !h.session.isTransitioning
+        }
+        XCTAssertTrue(fired)
+        XCTAssertNil(h.session.wordObservation(for: request.tryID))
+        XCTAssertNil(h.session.currentWordGuess)
+        XCTAssertEqual(observations.settled.count, 1)
+        XCTAssertEqual(observations.settled.first?.status, .notMatched)
+        XCTAssertTrue(observations.settled.first?.eligible == true)
+        XCTAssertTrue(observations.settled.first?.cleanup == true)
+        XCTAssertTrue(h.session.tries.isEmpty)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: request.fileURL.path))
+        XCTAssertTrue(h.files.protectedURLs.isEmpty)
+        XCTAssertTrue(h.history.entries.isEmpty)
+        if !close {
+          assertGuidedTrue(await h.leave(visit))
+          let successor = h.review(entry)
+          XCTAssertNotEqual(successor.visitID, visit.visitID)
+          assertGuidedTrue(await h.prepare(entry, successor))
+          await h.capturer.finish(index: 0)
+          XCTAssertNil(h.session.currentWordGuess)
+          XCTAssertEqual(h.session.wordCheckState, .idle)
+          XCTAssertEqual(h.recognizer.requests.count, 1)
+          assertGuidedTrue(await h.leave(successor))
+        }
+        XCTAssertNil(h.session.currentWordGuess)
+      }
+    }
+  }
+
+  func testGuidedGuessPublicWrongVisitCannotReplaceScopeAndSameWordSuccessorStartsEmpty()
+    async throws
+  {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    let entry = try h.entry("b-beginning-ball")
+    let first = h.review(entry)
+    assertGuidedTrue(await h.prepare(entry, first))
+    await h.record()
+    let checking = Task { await h.session.startWordCheck() }
+    let request = try await h.recognizer.waitForRequest(index: 0)
+    h.recognizer.resolve(index: 0, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "wall", expectedWord: request.expectedWord))
+    await checking.value
+    let wrong = h.review(entry)
+    assertGuidedFalse(await h.prepare(entry, wrong))
+    assertGuidedFalse(await h.leave(wrong))
+    XCTAssertEqual(h.session.guidedMediaVisit, .review(first))
+    XCTAssertEqual(h.session.currentWordGuess?.word, "wall")
+    XCTAssertEqual(h.session.wordObservation(for: request.tryID), .notMatched)
+    assertGuidedTrue(await h.leave(first))
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertNil(h.session.wordObservation(for: request.tryID))
+    assertGuidedTrue(await h.prepare(entry, wrong))
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertNil(h.session.wordObservation(for: request.tryID))
+    await h.capturer.finish(index: 0)
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertNil(h.session.wordObservation(for: request.tryID))
+    await h.record()
+    let nextCheck = Task { await h.session.startWordCheck() }
+    let next = try await h.recognizer.waitForRequest(index: 1)
+    XCTAssertNotEqual(next.operationID, request.operationID)
+    XCTAssertNotEqual(next.tryID, request.tryID)
+    h.recognizer.resolve(index: 1, status: .notMatched,
+      wordGuess: LocalWordGuess(completedText: "call", expectedWord: next.expectedWord))
+    await nextCheck.value
+    XCTAssertEqual(h.session.currentWordGuess?.word, "call")
+    XCTAssertEqual(h.session.checkedTryID, next.tryID)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    assertGuidedTrue(await h.leave(wrong))
+    XCTAssertNil(h.session.currentWordGuess)
+    XCTAssertNil(h.session.wordObservation(for: request.tryID))
+  }
+}
+
+@MainActor
+extension DirectPracticeSessionTests {
+  func testGuidedGuessLateNonmatchAfterCloseOrBackgroundCannotEnterSameWordSuccessor()
+    async throws
+  {
+    for close in [true, false] {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      let entry = try h.entry("b-beginning-ball")
+      let visit = h.review(entry)
+      assertGuidedTrue(await h.prepare(entry, visit))
+      await h.record()
+      let observations = GuidedOwnerObservation()
+      let events = h.session.guidedReviewEvents.sink { event in
+        MainActor.assumeIsolated { observations.receive(event) }
+      }
+      defer { events.cancel() }
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await h.recognizer.waitForRequest(index: 0)
+      if close { h.session.viewDidDisappear() }
+      else { h.session.appDidEnterBackground() }
+      await h.recognizer.waitForCancellation(index: 0)
+      XCTAssertNil(h.session.currentWordGuess)
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      XCTAssertFalse(h.session.tries.isEmpty)
+      XCTAssertTrue(FileManager.default.fileExists(atPath: request.fileURL.path))
+      h.recognizer.resolve(index: 0, status: .notMatched,
+        wordGuess: LocalWordGuess(completedText: "wall", expectedWord: request.expectedWord))
+      await checking.value
+      await twoTryWait {
+        close ? h.session.phase == .ended
+          : h.session.phase == .ready && !h.session.isTransitioning
+      }
+      XCTAssertNil(h.session.currentWordGuess)
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      XCTAssertEqual(observations.settled.count, 1)
+      XCTAssertEqual(observations.settled.first?.status, .cancelled)
+      XCTAssertTrue(observations.settled.first?.eligible == false)
+      XCTAssertTrue(h.session.tries.isEmpty)
+      XCTAssertFalse(FileManager.default.fileExists(atPath: request.fileURL.path))
+      XCTAssertTrue(h.history.entries.isEmpty)
+      if !close {
+        assertGuidedTrue(await h.leave(visit))
+        let successor = h.review(entry)
+        assertGuidedTrue(await h.prepare(entry, successor))
+        XCTAssertEqual(h.session.currentPrompt.word, request.expectedWord)
+        XCTAssertNil(h.session.currentWordGuess)
+        XCTAssertNil(h.session.wordObservation(for: request.tryID))
+        await h.capturer.finish(index: 0)
+        XCTAssertNil(h.session.currentWordGuess)
+        XCTAssertNil(h.session.wordObservation(for: request.tryID))
+        XCTAssertEqual(h.recognizer.requests.count, 1)
+        assertGuidedTrue(await h.leave(successor))
+      }
+    }
+  }
+}
+
+extension DirectPracticeSessionTests {
+  func testProductionProcessingFailureAllowsOnlyExplicitOrdinarySameTakeRetry() async throws {
+    let fixture = try DirectOwnedFixture()
+    defer { fixture.removeDirectory() }
+    let files = ProcessAudioFileOwnership()
+    let hardware = AudioHardwareOwnership()
+    let capture = TwoTryCapturer(directory: fixture.directory, files: files)
+    let player = DirectPracticePlayer(files: files, gate: hardware)
+    let history = PracticeParticipationStore(fileURL: fixture.directory.appendingPathComponent("history.json"))
+    let log = OperationalSessionRequestLog()
+    let recognizer = CoreMLLocalWordRecognizer(ownership: files, deadlineNanoseconds: 15_000_000_000,
+      fixtureWorker: { request, stop in
+        log.append(request)
+        return WhisperCoreMLWorker.processingCompletion(stop: stop, evict: {}) {
+          _ = try WhisperCoreMLWorker.maximum(logits: [], stop: stop, isAllowed: { _ in true })
+          return .init(status: .matched, cleanupConfirmed: true, retainedHandle: nil)
+        }
+      })
+    let session = DirectPracticeSession(capturer: capture, player: player, history: history,
+      wordRecognizer: recognizer, cleanupHardwareOwnership: hardware, cleanupFileOwnership: files)
+    await session.startRecording()
+    session.stopRecording()
+    let take = try XCTUnwrap(session.latestTry)
+    let events = capture.events
+    await session.startWordCheck()
+    XCTAssertEqual(session.wordCheckState, .finished(.unavailable))
+    XCTAssertEqual(session.checkedTryID, take.id)
+    XCTAssertNil(session.currentWordGuess)
+    XCTAssertTrue(session.canCheckWordsInLatestTry)
+    XCTAssertEqual(capture.events, events)
+    XCTAssertTrue(player.playedURLs.isEmpty)
+    XCTAssertTrue(history.entries.isEmpty)
+    XCTAssertTrue(files.canRemove(capture.urls[0], owner: capture.ownerIDs[0]))
+    await Task.yield()
+    XCTAssertEqual(session.wordCheckState, .finished(.unavailable))
+    XCTAssertEqual(log.requests.count, 1)
+    await session.startWordCheck()
+    XCTAssertEqual(session.wordCheckState, .finished(.unavailable))
+    XCTAssertEqual(session.latestTry?.id, take.id)
+    XCTAssertEqual(log.requests.last?.fileURL, capture.urls[0])
+    XCTAssertEqual(session.checkedTryID, take.id)
+    XCTAssertEqual(capture.events, events)
+    XCTAssertTrue(player.playedURLs.isEmpty)
+    XCTAssertTrue(history.entries.isEmpty)
+    let requests = log.requests
+    XCTAssertEqual(requests.count, 2)
+    XCTAssertNotEqual(requests.first?.operationID, requests.last?.operationID)
+    XCTAssertEqual(requests.first?.tryID, requests.last?.tryID)
+    XCTAssertEqual(requests.first?.fileURL, requests.last?.fileURL)
+    XCTAssertEqual(requests.first?.expectedWord, requests.last?.expectedWord)
+    let ended = await session.end()
+    XCTAssertTrue(ended)
+    XCTAssertEqual(capture.discardedIndices, [0])
+    XCTAssertTrue(files.protectedURLs.isEmpty)
+    XCTAssertFalse(FileManager.default.fileExists(atPath: capture.urls[0].path))
+  }
+}
+
+private final class OperationalSessionRequestLog: @unchecked Sendable {
+  private let lock = NSLock()
+  private var values: [LocalWordRecognitionRequest] = []
+  func append(_ request: LocalWordRecognitionRequest) {
+    lock.lock(); defer { lock.unlock() }; values.append(request)
+  }
+  var requests: [LocalWordRecognitionRequest] {
+    lock.lock(); defer { lock.unlock() }; return values
+  }
+}
+
+extension DirectPracticeSessionTests {
+  func testProductionNormalUncertainCompletionDoesNotEnableOrdinarySameTakeRetry() async throws {
+    let fixture = try DirectOwnedFixture()
+    defer { fixture.removeDirectory() }
+    let files = ProcessAudioFileOwnership()
+    let capture = TwoTryCapturer(directory: fixture.directory, files: files)
+    let log = OperationalSessionRequestLog()
+    let provider = CoreMLLocalWordRecognizer(ownership: files, deadlineNanoseconds: 15_000_000_000,
+      fixtureWorker: { request, stop in
+        log.append(request)
+        return WhisperCoreMLWorker.processingCompletion(stop: stop, evict: {}) {
+          WhisperCoreMLWorker.completedRecognition(text: "two words", expectedWord: request.expectedWord, stop: stop)
+        }
+      })
+    let session = DirectPracticeSession(capturer: capture, player: DirectPracticePlayer(files: files),
+      wordRecognizer: provider, cleanupFileOwnership: files)
+    await session.startRecording()
+    session.stopRecording()
+    await session.startWordCheck()
+    XCTAssertEqual(session.wordCheckState, .finished(.uncertain))
+    XCTAssertFalse(session.canCheckWordsInLatestTry)
+    XCTAssertNil(session.currentWordGuess)
+    await session.startWordCheck()
+    XCTAssertEqual(log.requests.count, 1)
+    XCTAssertEqual(capture.permissionRequests, 1)
+    XCTAssertEqual(capture.urls.count, 1)
+    let ended = await session.end()
+    XCTAssertTrue(ended)
+    XCTAssertEqual(capture.discardedIndices, [0])
+    XCTAssertTrue(files.protectedURLs.isEmpty)
+  }
+}
+
+// Retained evidence is status-only and remains separate from the current check slot.
+@MainActor
+extension DirectPracticeSessionTests {
+  func testRetainedTakeObservationsKeepTwoCheckedTakesAndEvictOnlyOldest() async throws {
+    let h = try LocalWordSessionHarness()
+    defer { h.removeGeneratedFixture() }
+    await h.record()
+    var ids: [UUID] = []
+    for (index, status) in [LocalWordRecognitionStatus.matched, .uncertain].enumerated() {
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await h.recognizer.waitForRequest(index: index)
+      ids.append(request.tryID)
+      h.recognizer.resolve(index: index, status: status)
+      await checking.value
+      XCTAssertEqual(h.session.wordObservation(for: request.tryID), status)
+      if index == 0 {
+        await h.session.recordAnotherTry()
+        XCTAssertNil(h.session.wordObservation(for: request.tryID)) // Recording is not review.
+        h.session.stopRecording()
+        XCTAssertEqual(h.session.wordCheckState, .idle)
+        XCTAssertNil(h.session.checkedTryID)
+        XCTAssertEqual(h.session.wordObservation(for: request.tryID), .matched)
+        XCTAssertNil(h.session.wordObservation(for: try XCTUnwrap(h.session.latestTry).id))
+      }
+    }
+    XCTAssertEqual(h.session.wordObservation(for: ids[0]), .matched)
+    XCTAssertEqual(h.session.wordObservation(for: ids[1]), .uncertain)
+    await h.session.recordAnotherTry()
+    h.session.stopRecording()
+    XCTAssertEqual(h.session.tries.count, 2)
+    XCTAssertNil(h.session.wordObservation(for: ids[0]))
+    XCTAssertEqual(h.session.wordObservation(for: ids[1]), .uncertain)
+    XCTAssertNil(h.session.wordObservation(for: try XCTUnwrap(h.session.latestTry).id))
+    XCTAssertEqual(h.session.wordCheckState, .idle)
+    XCTAssertNil(h.session.checkedTryID)
+    XCTAssertEqual(h.recognizer.requests.count, 2)
+    let ended = await h.session.end()
+    XCTAssertTrue(ended)
+    XCTAssertNil(h.session.wordObservation(for: ids[1]))
+  }
+
+  func testRetainedTakeObservationSurvivesDeniedOrFailedReplacementReturn() async throws {
+    for denied in [true, false] {
+      let h = try LocalWordSessionHarness()
+      defer { h.removeGeneratedFixture() }
+      await h.record()
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await h.recognizer.waitForRequest(index: 0)
+      h.recognizer.resolve(index: 0, status: .notMatched)
+      await checking.value
+      await h.session.recordAnotherTry()
+      h.session.stopRecording()
+      let replacementCheck = Task { await h.session.startWordCheck() }
+      let replacement = try await h.recognizer.waitForRequest(index: 1)
+      h.recognizer.resolve(index: 1, status: .uncertain)
+      await replacementCheck.value
+      h.capturer.permissionGranted = !denied
+      h.capturer.failStart = !denied
+      await h.session.recordAnotherTry()
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      XCTAssertTrue(h.session.canReturnToReview)
+      h.session.returnToReview()
+      XCTAssertNil(h.session.wordObservation(for: request.tryID)) // Oldest was evicted first.
+      XCTAssertEqual(h.session.tries.count, 1)
+      XCTAssertEqual(h.session.wordObservation(for: replacement.tryID), .uncertain)
+      XCTAssertEqual(h.session.wordCheckState, .idle)
+      XCTAssertNil(h.session.checkedTryID)
+      XCTAssertEqual(h.recognizer.requests.count, 2)
+      let ended = await h.session.end()
+      XCTAssertTrue(ended)
+    }
+  }
+
+  func testRetainedTakeObservationRejectsUnavailableTimeoutAndCancelled() async throws {
+    for status in [LocalWordRecognitionStatus.unavailable, .timedOut, .cancelled] {
+      let h = try LocalWordSessionHarness()
+      defer { h.removeGeneratedFixture() }
+      await h.record()
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await h.recognizer.waitForRequest(index: 0)
+      h.recognizer.resolve(index: 0, status: status)
+      await checking.value
+      XCTAssertEqual(h.session.wordCheckState, .finished(status))
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      let ended = await h.session.end()
+      XCTAssertTrue(ended)
+    }
+  }
+  func testRetainedTakeNewAdmittedCheckReplacesPriorResultAfterFailedRetake() async throws {
+    let h = try LocalWordSessionHarness()
+    defer { h.removeGeneratedFixture() }
+    await h.record()
+    let firstCheck = Task { await h.session.startWordCheck() }
+    let first = try await h.recognizer.waitForRequest(index: 0)
+    h.recognizer.resolve(index: 0, status: .matched)
+    await firstCheck.value
+    XCTAssertEqual(h.session.wordObservation(for: first.tryID), .matched)
+    h.capturer.permissionGranted = false
+    await h.session.recordAnotherTry()
+    h.session.returnToReview()
+    XCTAssertTrue(h.session.canCheckWordsInLatestTry)
+    let secondCheck = Task { await h.session.startWordCheck() }
+    let second = try await h.recognizer.waitForRequest(index: 1)
+    XCTAssertEqual(second.tryID, first.tryID)
+    XCTAssertNotEqual(second.operationID, first.operationID)
+    h.recognizer.resolve(index: 1, status: .notMatched)
+    await secondCheck.value
+    XCTAssertEqual(h.session.wordCheckState, .finished(.notMatched))
+    XCTAssertEqual(h.session.wordObservation(for: first.tryID), .notMatched)
+    XCTAssertEqual(h.recognizer.requests.count, 2)
+    let ended = await h.session.end()
+    XCTAssertTrue(ended)
+  }
+
+}
+
+@MainActor
+extension DirectPracticeSessionTests {
+  private final class CapturedContextRecognizer: LocalWordCapturedContextRecognizing {
+    var contexts: [LocalWordCapturedContext] = []
+    var URLOnlyRequests: [LocalWordRecognitionRequest] = []
+    func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
+      URLOnlyRequests.append(request)
+      return .init(request: request, status: .unavailable, cleanupConfirmed: true)
+    }
+    func check(context: LocalWordCapturedContext) async -> LocalWordRecognitionReceipt {
+      contexts.append(context)
+      return .init(request: context.request, status: .matched, cleanupConfirmed: true)
+    }
+    func cancel(operationID: UUID) {}
+  }
+
+  func testCapturedContextCapabilityReceivesExactStoppedTakeWithoutExtraCaptureOrURLCheck() async throws {
+    let fixture = try DirectOwnedFixture()
+    defer { fixture.removeDirectory() }
+    let files = ProcessAudioFileOwnership()
+    let capture = TwoTryCapturer(directory: fixture.directory, files: files)
+    let recognizer = CapturedContextRecognizer()
+    let session = DirectPracticeSession(capturer: capture,
+      player: DirectPracticePlayer(files: files, gate: AudioHardwareOwnership()), wordRecognizer: recognizer)
+    await session.startRecording()
+    session.stopRecording()
+    let take = try XCTUnwrap(session.latestTry)
+    await session.startWordCheck()
+    let context = try XCTUnwrap(recognizer.contexts.first)
+    XCTAssertEqual(recognizer.contexts.count, 1)
+    XCTAssertTrue(recognizer.URLOnlyRequests.isEmpty)
+    XCTAssertEqual(capture.permissionRequests, 1)
+    XCTAssertEqual(capture.urls.count, 1)
+    XCTAssertEqual(context.request.tryID, take.id)
+    XCTAssertEqual(context.takeID, take.id)
+    XCTAssertEqual(context.request.fileURL, capture.urls.first)
+    XCTAssertEqual(context.recording.url, capture.urls.first)
+    XCTAssertEqual(context.recording.cleanupOwnerID, capture.ownerIDs.first)
+    XCTAssertEqual(context.recording.summary, take.summary)
+    XCTAssertEqual(context.entryID, session.currentPrompt.id)
+    XCTAssertNil(context.guidedVisit)
+    XCTAssertEqual(session.wordCheckState, .finished(.matched))
+    let ended = await session.end()
+    XCTAssertTrue(ended)
+  }
+
+  func testSynchronousCheckingPublicationExplicitCancelRevokesCapturedContextHandoff() async throws {
+    let fixture = try DirectOwnedFixture()
+    defer { fixture.removeDirectory() }
+    let files = ProcessAudioFileOwnership()
+    let capture = TwoTryCapturer(directory: fixture.directory, files: files)
+    let recognizer = CapturedContextRecognizer()
+    let session = DirectPracticeSession(capturer: capture,
+      player: DirectPracticePlayer(files: files, gate: AudioHardwareOwnership()), wordRecognizer: recognizer)
+    await session.startRecording()
+    session.stopRecording()
+    let subscription = session.$wordCheckState.sink { state in
+      MainActor.assumeIsolated {
+        if state == .checking { session.cancelWordCheck() }
+      }
+    }
+    await session.startWordCheck()
+    XCTAssertTrue(recognizer.contexts.isEmpty)
+    XCTAssertTrue(recognizer.URLOnlyRequests.isEmpty)
+    XCTAssertEqual(session.wordCheckState, .finished(.cancelled))
+    XCTAssertFalse(session.cleanupBlocked)
+    subscription.cancel()
+    let ended = await session.end()
+    XCTAssertTrue(ended)
+  }
+
+  func testSynchronousCheckingPublicationCloseOrBackgroundRevokesCapturedContextHandoff() async throws {
+    for close in [true, false] {
+      let fixture = try DirectOwnedFixture()
+      defer { fixture.removeDirectory() }
+      let files = ProcessAudioFileOwnership()
+      let capture = TwoTryCapturer(directory: fixture.directory, files: files)
+      let recognizer = CapturedContextRecognizer()
+      let session = DirectPracticeSession(capturer: capture,
+        player: DirectPracticePlayer(files: files, gate: AudioHardwareOwnership()), wordRecognizer: recognizer)
+      await session.startRecording()
+      session.stopRecording()
+      var revoked = false
+      let subscription = session.$wordCheckState.sink { state in
+        MainActor.assumeIsolated {
+          if state == .checking, !revoked {
+            revoked = true
+            if close { session.viewDidDisappear() }
+            else { session.appDidEnterBackground() }
+          }
+        }
+      }
+      await session.startWordCheck()
+      await settle(session)
+      XCTAssertTrue(revoked)
+      XCTAssertTrue(recognizer.contexts.isEmpty)
+      XCTAssertTrue(recognizer.URLOnlyRequests.isEmpty)
+      XCTAssertEqual(capture.permissionRequests, 1)
+      XCTAssertEqual(capture.urls.count, 1)
+      XCTAssertTrue(session.tries.isEmpty)
+      subscription.cancel()
+      if !close { let ended = await session.end(); XCTAssertTrue(ended) }
+    }
+  }
+}
+
+// Explicit timeout recovery reuses the retained take and the existing receipt owner.
+@MainActor
+extension DirectPracticeSessionTests {
+  func testControlledWordStopDrainsHeldReceiptAndRejectsLateStarts() async throws {
+    let files = ProcessAudioFileOwnership()
+    let recognizer = DirectControlledWordRecognizer(files: files)
+    let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    let owner = UUID()
+    files.retain(url, owner: owner)
+    let request = LocalWordRecognitionRequest(
+      operationID: UUID(), tryID: UUID(), fileURL: url, expectedWord: "ball")
+    let checking = Task { await recognizer.check(request: request) }
+    do { _ = try await recognizer.waitForRequest(index: 0) }
+    catch {
+      recognizer.stopAndDrainGeneratedChecks()
+      _ = await checking.value
+      throw error
+    }
+    XCTAssertFalse(files.canRemove(url, owner: owner))
+    recognizer.stopAndDrainGeneratedChecks()
+    let heldReceipt = await checking.value
+    XCTAssertEqual(heldReceipt.request, request)
+    XCTAssertEqual(heldReceipt.status, .cancelled)
+    XCTAssertTrue(heldReceipt.cleanupConfirmed)
+    XCTAssertTrue(files.canRemove(url, owner: owner))
+
+    let lateRequest = LocalWordRecognitionRequest(
+      operationID: UUID(), tryID: request.tryID, fileURL: url, expectedWord: request.expectedWord)
+    let lateReceipt = await recognizer.check(request: lateRequest)
+    XCTAssertEqual(lateReceipt.request, lateRequest)
+    XCTAssertEqual(lateReceipt.status, .cancelled)
+    XCTAssertTrue(lateReceipt.cleanupConfirmed)
+    XCTAssertEqual(recognizer.requests, [request])
+    XCTAssertEqual(recognizer.workCount, 1)
+    XCTAssertTrue(recognizer.cancellations.isEmpty)
+    XCTAssertTrue(files.canRemove(url, owner: owner))
+    recognizer.stopAndDrainGeneratedChecks()
+    files.didRemove(url, owner: owner)
+    XCTAssertTrue(files.protectedURLs.isEmpty)
+  }
+
+  func testTimedOutRetryRechecksLatestExactTakeWithoutCapturePlaybackOrHistory() async throws {
+    for twoTakes in [false, true] {
+      let h = try LocalWordSessionHarness(recordHistory: true)
+      defer { h.removeGeneratedFixture() }
+      await h.record()
+      if twoTakes { await h.session.recordAnotherTry(); h.session.stopRecording() }
+      let latest = try XCTUnwrap(h.session.latestTry)
+      let earlier = h.session.earlierTry
+      let owner = try XCTUnwrap(h.capturer.ownerIDs.last)
+      let bytes = try h.capturer.urls.map { try Data(contentsOf: $0) }
+      let captureEvents = h.capturer.events
+      let attempts = h.session.attemptCount
+      let history = try XCTUnwrap(h.history)
+      let first = Task { await h.session.startWordCheck() }
+      let original = try await timeoutRequest(first, recognizer: h.recognizer, index: 0)
+      h.recognizer.resolve(index: 0, status: .timedOut)
+      await first.value
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+      XCTAssertTrue(h.files.canRemove(original.fileURL, owner: owner))
+      XCTAssertNil(h.session.wordObservation(for: latest.id))
+
+      let retry = Task { await h.session.startWordCheck() }
+      let request = try await timeoutRequest(retry, recognizer: h.recognizer, index: 1)
+      XCTAssertNotEqual(request.operationID, original.operationID)
+      XCTAssertEqual(request.tryID, latest.id)
+      XCTAssertEqual(request.tryID, original.tryID)
+      XCTAssertEqual(request.fileURL, original.fileURL)
+      XCTAssertEqual(request.expectedWord, original.expectedWord)
+      XCTAssertFalse(h.files.canRemove(request.fileURL, owner: owner))
+      await h.session.startWordCheck()
+      XCTAssertEqual(h.recognizer.requests.count, 2)
+      XCTAssertEqual(h.capturer.events, captureEvents)
+      XCTAssertTrue(h.player.playedURLs.isEmpty)
+      XCTAssertTrue(history.entries.isEmpty)
+      h.recognizer.resolve(index: 1, status: .matched)
+      await retry.value
+      XCTAssertEqual(h.session.wordObservation(for: latest.id), .matched)
+      if let earlier { XCTAssertNil(h.session.wordObservation(for: earlier.id)) }
+      XCTAssertEqual(h.session.earlierTry, earlier)
+      XCTAssertEqual(h.session.latestTry, latest)
+      XCTAssertEqual(h.session.checkedTryID, latest.id)
+      XCTAssertFalse(h.session.canCheckWordsInLatestTry)
+      await h.session.startWordCheck()
+      XCTAssertEqual(h.recognizer.requests.count, 2)
+      XCTAssertEqual(h.capturer.events, captureEvents)
+      XCTAssertEqual(h.session.attemptCount, attempts)
+      XCTAssertEqual(h.session.completedWords, 0)
+      XCTAssertTrue(h.player.playedURLs.isEmpty)
+      XCTAssertTrue(history.entries.isEmpty)
+      XCTAssertEqual(try h.capturer.urls.map { try Data(contentsOf: $0) }, bytes)
+      let ended = await h.session.end()
+      XCTAssertTrue(ended)
+      XCTAssertTrue(h.files.protectedURLs.isEmpty)
+    }
+  }
+
+  func testTimedOutRetryCapabilityDispatchForOrdinaryWordProviders() async throws {
+    for allows in [false, true] {
+      for status in [LocalWordRecognitionStatus.timedOut, .unavailable, .cancelled] {
+        let h = try LocalWordSessionHarness(allowsTimedOutRetry: allows)
+        defer { h.removeGeneratedFixture() }
+        let provider: any LocalWordRecognizing = h.provider
+        XCTAssertEqual(provider.allowsTimedOutRetry, allows)
+        await h.record()
+        let first = Task { await h.session.startWordCheck() }
+        let original = try await timeoutRequest(first, recognizer: h.recognizer, index: 0)
+        h.recognizer.resolve(index: 0, status: status)
+        await first.value
+        let permitted = status != .timedOut || allows
+        XCTAssertEqual(h.session.canCheckWordsInLatestTry, permitted)
+        XCTAssertEqual(h.recognizer.requests.count, 1)
+        if permitted {
+          let retry = Task { await h.session.startWordCheck() }
+          let next = try await timeoutRequest(retry, recognizer: h.recognizer, index: 1)
+          XCTAssertEqual(next.tryID, original.tryID)
+          XCTAssertEqual(next.fileURL, original.fileURL)
+          XCTAssertNotEqual(next.operationID, original.operationID)
+          h.recognizer.resolve(index: 1, status: .matched)
+          await retry.value
+        } else {
+          await h.session.startWordCheck()
+          XCTAssertEqual(h.recognizer.requests.count, 1)
+        }
+        let ended = await h.session.end()
+        XCTAssertTrue(ended)
+      }
+    }
+  }
+
+  func testGuidedTimedOutRetryCapabilityDispatchKeepsExistingTechnicalRetries() async throws {
+    for allows in [false, true] {
+      for status in [LocalWordRecognitionStatus.timedOut, .unavailable, .cancelled] {
+        let h = try GuidedOwnerHarness(allowsTimedOutRetry: allows)
+        defer { h.removeGeneratedFixture() }
+        XCTAssertEqual(h.provider.allowsTimedOutRetry, allows)
+        let flow = try await readyWordCheckPractice(h)
+        let initial = try XCTUnwrap(flow.ledger?.initialRound)
+        let visit = try XCTUnwrap(flow.ledger?.activePracticeVisit)
+        await h.recordValidPractice()
+        let first = Task { await flow.checkCurrentWord() }
+        let original = try await timeoutRequest(first, recognizer: h.recognizer, index: 1)
+        h.recognizer.resolve(index: 1, status: status)
+        await first.value
+        let permitted = status != .timedOut || allows
+        XCTAssertEqual(h.session.canCheckWordsInLatestTry, permitted)
+        XCTAssertEqual(flow.playerPresentation.canCheckWords, permitted)
+        XCTAssertEqual(h.recognizer.requests.count, 2)
+        if permitted {
+          let retry = Task { await flow.checkCurrentWord() }
+          let next = try await timeoutRequest(retry, recognizer: h.recognizer, index: 2)
+          XCTAssertEqual(next.tryID, original.tryID)
+          XCTAssertEqual(next.fileURL, original.fileURL)
+          XCTAssertNotEqual(next.operationID, original.operationID)
+          XCTAssertEqual(h.session.guidedMediaVisit, .practice(visit))
+          await h.session.startWordCheck()
+          XCTAssertEqual(h.recognizer.requests.count, 3)
+          h.recognizer.resolve(index: 2, status: .matched)
+          await retry.value
+        } else {
+          await flow.checkCurrentWord()
+          await h.session.startWordCheck()
+          XCTAssertEqual(h.recognizer.requests.count, 2)
+        }
+        XCTAssertEqual(flow.ledger?.initialRound, initial)
+        XCTAssertEqual(flow.ledger?.activePracticeVisit, visit)
+        XCTAssertTrue(h.history.entries.isEmpty)
+        assertGuidedTrue(await flow.close())
+      }
+    }
+  }
+
+  func testGuidedRecheckTimeoutRemainsFrozenAndCannotRetrySameVisit() async throws {
+    let h = try GuidedOwnerHarness()
+    defer { h.removeGeneratedFixture() }
+    let flow = try await readyWordCheckPractice(h)
+    let initial = try XCTUnwrap(flow.ledger?.initialRound)
+    await flow.skipVisit()
+    await flow.startRecheck()
+    await h.record()
+    let checking = Task { await flow.checkCurrentWord() }
+    let request = try await timeoutRequest(checking, recognizer: h.recognizer, index: 1)
+    h.recognizer.resolve(index: 1, status: .timedOut)
+    await checking.value
+    let frozen = try XCTUnwrap(flow.ledger?.recheckRound?.rows.first)
+    XCTAssertEqual(frozen.state, .finished(.timedOut))
+    XCTAssertEqual(frozen.firstSubmission?.operationID, request.operationID)
+    XCTAssertEqual(frozen.firstSubmission?.tryID, request.tryID)
+    XCTAssertFalse(h.session.canCheckWordsInLatestTry)
+    XCTAssertFalse(flow.playerPresentation.canCheckWords)
+    await flow.checkCurrentWord()
+    await h.session.startWordCheck()
+    XCTAssertEqual(h.recognizer.requests.count, 2)
+    XCTAssertEqual(flow.ledger?.recheckRound?.rows.first, frozen)
+    XCTAssertEqual(flow.ledger?.initialRound, initial)
+    XCTAssertTrue(flow.playerPresentation.canContinue)
+    await flow.advanceVisit()
+    XCTAssertEqual(flow.ledger?.recheckRound?.rows.first, frozen)
+    XCTAssertEqual(flow.ledger?.initialRound, initial)
+    XCTAssertTrue(h.history.entries.isEmpty)
+    assertGuidedTrue(await flow.close())
+  }
+
+  func testTimedOutReceiptRequiresExactRequestAndConfirmedCleanupBeforeRetry() async throws {
+    for mismatch in ["operation", "try", "file", "word", "cleanup"] {
+      let h = try LocalWordSessionHarness()
+      defer { h.removeGeneratedFixture() }
+      await h.record()
+      let checking = Task { await h.session.startWordCheck() }
+      let request = try await timeoutRequest(checking, recognizer: h.recognizer, index: 0)
+      let receipt = LocalWordRecognitionRequest(
+        operationID: mismatch == "operation" ? UUID() : request.operationID,
+        tryID: mismatch == "try" ? UUID() : request.tryID,
+        fileURL: mismatch == "file" ? request.fileURL.appendingPathExtension("wrong") : request.fileURL,
+        expectedWord: mismatch == "word" ? "pig" : request.expectedWord)
+      h.recognizer.resolve(index: 0, status: .timedOut,
+        cleanupConfirmed: mismatch != "cleanup", receiptRequest: receipt)
+      await checking.value
+      XCTAssertEqual(h.session.wordCheckState, .cleanupBlocked, mismatch)
+      XCTAssertTrue(h.session.cleanupBlocked)
+      XCTAssertFalse(h.session.canCheckWordsInLatestTry)
+      XCTAssertFalse(h.files.canRemove(request.fileURL, owner: h.capturer.ownerIDs[0]))
+      await h.session.startWordCheck()
+      let ended = await h.session.end()
+      XCTAssertFalse(ended)
+      XCTAssertTrue(h.capturer.discardedIndices.isEmpty)
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+      h.recognizer.releaseGeneratedBorrows()
+      await h.session.retryCleanup()
+      await h.session.startWordCheck()
+      XCTAssertEqual(h.session.wordCheckState, .cleanupBlocked)
+      XCTAssertEqual(h.recognizer.requests.count, 1)
+      XCTAssertTrue(h.capturer.discardedIndices.isEmpty)
+      XCTAssertTrue(FileManager.default.fileExists(atPath: request.fileURL.path))
+    }
+  }
+
+  func testTimedOutRetryCloseOrBackgroundWaitsForExactCleanupAndSuppressesLateResult() async throws {
+    for departure in ["close", "background", "interruption"] {
+      let h = try LocalWordSessionHarness()
+      defer { h.removeGeneratedFixture() }
+      await h.record()
+      let first = Task { await h.session.startWordCheck() }
+      _ = try await timeoutRequest(first, recognizer: h.recognizer, index: 0)
+      h.recognizer.resolve(index: 0, status: .timedOut)
+      await first.value
+      let retry = Task { await h.session.startWordCheck() }
+      let request = try await timeoutRequest(retry, recognizer: h.recognizer, index: 1)
+      var returned = false
+      let leaving = Task {
+        if departure == "close" { _ = await h.session.end() }
+        else if departure == "background" { h.session.appDidEnterBackground(); await settle(h.session) }
+        else { h.session.audioWasInterrupted(); await settle(h.session) }
+        returned = true
+      }
+      await h.recognizer.waitForCancellation(index: 0)
+      XCTAssertFalse(returned)
+      XCTAssertEqual(h.recognizer.cancellations, [request.operationID])
+      XCTAssertFalse(h.files.canRemove(request.fileURL, owner: h.capturer.ownerIDs[0]))
+      XCTAssertTrue(h.capturer.discardedIndices.isEmpty)
+      await h.session.startWordCheck()
+      XCTAssertEqual(h.recognizer.requests.count, 2)
+      h.recognizer.resolve(index: 1, status: .matched)
+      await retry.value
+      await leaving.value
+      XCTAssertTrue(returned)
+      XCTAssertEqual(h.session.wordCheckState, .idle)
+      XCTAssertNil(h.session.checkedTryID)
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      XCTAssertFalse(FileManager.default.fileExists(atPath: request.fileURL.path))
+      XCTAssertTrue(h.files.protectedURLs.isEmpty)
+      XCTAssertTrue(h.player.playedURLs.isEmpty)
+      XCTAssertEqual(h.session.completedWords, 0)
+      let ended = await h.session.end()
+      XCTAssertTrue(ended)
+    }
+  }
+
+  func testGuidedTimedOutRetryDepartureSuppressesResultForSuccessor() async throws {
+    for departure in ["next", "close", "background"] {
+      let h = try GuidedOwnerHarness()
+      defer { h.removeGeneratedFixture() }
+      let flow = try await readyWordCheckPractice(h)
+      let initial = try XCTUnwrap(flow.ledger?.initialRound)
+      let visit = try XCTUnwrap(flow.ledger?.activePracticeVisit)
+      let entry = try h.entry(visit.entryID)
+      await h.recordValidPractice()
+      let first = Task { await flow.checkCurrentWord() }
+      _ = try await timeoutRequest(first, recognizer: h.recognizer, index: 1)
+      h.recognizer.resolve(index: 1, status: .timedOut)
+      await first.value
+      let retry = Task { await flow.checkCurrentWord() }
+      let request = try await timeoutRequest(retry, recognizer: h.recognizer, index: 2)
+      let captures = h.capturer.urls.count
+      await h.session.recordAnotherTry()
+      XCTAssertEqual(h.capturer.urls.count, captures)
+      let prepared = await h.session.prepareGuidedVisit(entry: entry, visit: .practice(.init(
+        workflowID: visit.workflowID, practiceID: visit.practiceID, visitID: UUID(), entryID: visit.entryID)))
+      XCTAssertFalse(prepared)
+      var returned = false
+      let leaving = Task {
+        if departure == "next" { await flow.advanceVisit() }
+        else if departure == "close" { _ = await flow.close() }
+        else { flow.background(); await settle(h.session) }
+        returned = true
+      }
+      await h.recognizer.waitForCancellation(index: 0)
+      XCTAssertFalse(returned)
+      XCTAssertEqual(h.recognizer.cancellations, [request.operationID])
+      XCTAssertTrue(h.files.protectedURLs.contains(request.fileURL))
+      XCTAssertEqual(flow.ledger?.activePracticeVisit, visit)
+      XCTAssertTrue(h.history.entries.isEmpty)
+      h.recognizer.resolve(index: 2, status: .matched)
+      await retry.value
+      await leaving.value
+      XCTAssertTrue(returned)
+      XCTAssertEqual(h.session.wordCheckState, .idle)
+      XCTAssertNil(h.session.checkedTryID)
+      XCTAssertNil(h.session.wordObservation(for: request.tryID))
+      XCTAssertEqual(flow.ledger?.initialRound, initial)
+      XCTAssertTrue(h.files.protectedURLs.isEmpty)
+      if departure == "next" {
+        XCTAssertEqual(h.history.entries.map(\.id), [visit.visitID])
+        let history = h.history.entries
+        await flow.startRecheck()
+        XCTAssertTrue(flow.ledger?.recheckRound?.rows.allSatisfy { $0.firstSubmission == nil } == true)
+        XCTAssertNil(h.session.latestTry)
+        XCTAssertEqual(h.session.wordCheckState, .idle)
+        XCTAssertEqual(h.recognizer.requests.count, 3)
+        XCTAssertEqual(h.history.entries, history)
+      } else {
+        XCTAssertTrue(h.history.entries.isEmpty)
+      }
+      assertGuidedTrue(await flow.close())
+    }
+  }
+
+  /// A failed wait stops late admission, drains controlled receipts and joins its task.
+  private func timeoutRequest(
+    _ task: Task<Void, Never>, recognizer: DirectControlledWordRecognizer, index: Int
+  ) async throws -> LocalWordRecognitionRequest {
+    do { return try await recognizer.waitForRequest(index: index) }
+    catch {
+      recognizer.stopAndDrainGeneratedChecks()
+      await task.value
+      throw error
+    }
   }
 }
