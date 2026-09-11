@@ -323,7 +323,7 @@
         && processor.result == nil
       XCTAssertTrue(heldWhileCancelling)
       await checkTask.value
-      guard let result = processor.result, case .processedUnverified = result else {
+      guard let result = processor.result, case .processedResearch = result else {
         XCTFail("The real request did not finish model processing after cancellation.")
         throw LiveFailure.pipelineIncomplete
       }
