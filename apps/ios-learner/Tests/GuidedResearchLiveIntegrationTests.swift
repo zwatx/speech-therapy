@@ -143,6 +143,8 @@
         ? LocalGuidedGeneratedRecognizer(files: files, holdsResult: false)
         : BundledLocalWordRecognizerFactory.make(ownership: files)
       let processor = ObservedRealProcessor()
+      processor.expectedRecording = { capture.stoppedRecordings.last }
+      processor.files = files
       let model = GuidedResearchModelRecognizer(
         wordRecognizer: wordRecognizer,
         processor: processor, ownership: files)
