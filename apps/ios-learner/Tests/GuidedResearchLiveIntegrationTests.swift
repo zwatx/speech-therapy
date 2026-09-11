@@ -368,10 +368,15 @@
     private final class ObservedRealProcessor: ResearchAssessmentProcessing {
       private(set) var callCount = 0
       private(set) var result: ResearchAssessmentOutcome?
+      var expectedRecording: (() -> CapturedRecording?)?
+      var files: ProcessAudioFileOwnership?
       func process(
         attemptId: UUID, recording: CapturedRecording, entry: PracticeLibraryEntry, ageYears: Int
       ) async throws -> ResearchAssessmentOutcome {
         callCount += 1
+        XCTAssertEqual(recording, try XCTUnwrap(expectedRecording?()))
+        let owner = try XCTUnwrap(recording.cleanupOwnerID)
+        XCTAssertFalse(files?.canRemove(recording.url, owner: owner) ?? true)
         let outcome = try await ResearchAssessmentClient().process(
           attemptId: attemptId, recording: recording, entry: entry, ageYears: ageYears)
         result = outcome
