@@ -108,7 +108,8 @@
         let age: Int
       }
       var calls: [Call] = []
-      var result: ResearchAssessmentOutcome = .processedUnverified(milliseconds: 12)
+      var result: ResearchAssessmentOutcome?
+      var transform: ((ResearchAssessmentResult) -> ResearchAssessmentResult)?
       var error: Error?
       var hold = false
       var started: (() -> Void)?
