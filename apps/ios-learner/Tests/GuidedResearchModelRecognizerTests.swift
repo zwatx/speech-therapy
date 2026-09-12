@@ -25,6 +25,45 @@
 
   @MainActor
   final class GuidedResearchModelRecognizerTests: XCTestCase {
+    func testTimeoutRetryCapabilityIsAlwaysExcludedByActualResearchComposition() {
+      for innerAllowsRetry in [false, true] {
+        let word = WordDouble()
+        let inner: any LocalWordRecognizing = innerAllowsRetry
+          ? word : TimeoutRetryExcludedWordDouble(base: word)
+        XCTAssertEqual(inner.allowsTimedOutRetry, innerAllowsRetry)
+        let model = ModelDouble()
+        let files = ProcessAudioFileOwnership()
+        let availability = GuidedResearchModelAvailability()
+        let adapter = GuidedResearchModelRecognizer(wordRecognizer: inner, processor: model,
+          ownership: files, availability: availability)
+        let provider: any LocalWordRecognizing = adapter
+        XCTAssertFalse(provider.allowsTimedOutRetry)
+        for enabled in [false, true, false] {
+          XCTAssertTrue(adapter.configure(ageYears: enabled ? 9 : nil, enabled: enabled))
+          XCTAssertFalse(provider.allowsTimedOutRetry)
+        }
+        availability.pauseForUnknownCleanup()
+        XCTAssertFalse(provider.allowsTimedOutRetry)
+        XCTAssertTrue(word.requests.isEmpty)
+        XCTAssertTrue(word.cancelled.isEmpty)
+        XCTAssertTrue(model.calls.isEmpty)
+        XCTAssertEqual(model.readinessCalls, 0)
+        XCTAssertEqual(adapter.processingState, .idle)
+        XCTAssertTrue(adapter.observations.isEmpty)
+        XCTAssertTrue(files.protectedURLs.isEmpty)
+      }
+    }
+
+    private final class TimeoutRetryExcludedWordDouble: LocalWordRecognizing {
+      let base: WordDouble
+      var allowsTimedOutRetry: Bool { false }
+      init(base: WordDouble) { self.base = base }
+      func check(request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt {
+        await base.check(request: request)
+      }
+      func cancel(operationID: UUID) { base.cancel(operationID: operationID) }
+    }
+
     private final class WordDouble: LocalWordRecognizing {
       var status: LocalWordRecognitionStatus = .matched
       var cleanupConfirmed = true
