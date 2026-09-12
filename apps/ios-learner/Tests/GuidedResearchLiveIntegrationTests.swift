@@ -448,6 +448,7 @@
         let recording = try core.stop()
         createdURLs.append(recording.url)
         summaries.append(recording.summary)
+        stoppedRecordings.append(recording)
         return recording
       }
       func cancel() throws { try core.cancel() }
@@ -468,6 +469,7 @@
       let averagePower: Float
       var active: URL?
       var createdURLs: [URL] = []
+      private(set) var stoppedRecordings: [CapturedRecording] = []
       init(
         bytes: Data, duration: Double, averagePower: Float, hardware: AudioHardwareOwnership,
         files: ProcessAudioFileOwnership
