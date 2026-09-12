@@ -499,9 +499,11 @@
         guard let url = active else { throw AudioCaptureError.couldNotReadRecording }
         let owner = try ownership.stop(url)
         active = nil
-        return .init(
+        let recording = CapturedRecording(
           url: url, summary: .init(duration: duration, averagePower: averagePower),
           cleanupOwnerID: owner)
+        stoppedRecordings.append(recording)
+        return recording
       }
       func cancel() throws {
         if let url = active {
