@@ -6,6 +6,24 @@
   @testable import CadenceLearner
 
   @MainActor
+  enum ResearchAssessmentFixtures {
+    static func result(attemptId: UUID, recording: CapturedRecording,
+      entry: PracticeLibraryEntry, ageYears: Int, milliseconds: Double = 12)
+      throws -> ResearchAssessmentResult
+    {
+      let context = try ResearchAssessmentClient.context(attemptId: attemptId,
+        audio: Data(contentsOf: recording.url), entry: entry, ageYears: ageYears)
+      let prompt = try ResearchAssessmentClient.prompt(for: entry)
+      return .init(context: context,
+        model: .init(id: "ages-6-12-research-mixture", manifestSha256: ResearchAssessmentClient.manifest),
+        targets: prompt.targets.enumerated().map { index, target in .init(id: target.id, wordIndex: target.wordIndex,
+          phoneIndex: target.phoneIndex, targetPhone: target.targetPhone,
+          subjectiveCorpusRatingProbabilities: index.isMultiple(of: 2) ? [0.1, 0.2, 0.7] : [0.7, 0.2, 0.1]) },
+        timingMilliseconds: .init(total: milliseconds, inference: milliseconds))
+    }
+  }
+
+  @MainActor
   final class GuidedResearchModelRecognizerTests: XCTestCase {
     private final class WordDouble: LocalWordRecognizing {
       var status: LocalWordRecognitionStatus = .matched
