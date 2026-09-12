@@ -413,6 +413,7 @@
 
     private protocol CaptureProbe: AudioCapturing {
       var createdURLs: [URL] { get }
+      var stoppedRecordings: [CapturedRecording] { get }
     }
 
     /// Instrumentation only: delegates permission, driver, summary and cleanup unchanged.
@@ -420,6 +421,7 @@
       private let core: SystemAudioCapturer
       private(set) var permissionGranted = false
       private(set) var createdURLs: [URL] = []
+      private(set) var stoppedRecordings: [CapturedRecording] = []
       private(set) var summaries: [CaptureSummary] = []
       private(set) var inputPortTypes: [[String]] = []
       private(set) var outputPortTypes: [[String]] = []
