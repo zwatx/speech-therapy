@@ -149,7 +149,10 @@
         }
         cancellationSeen = Task.isCancelled
         if let error { throw error }
-        return result
+        if let result { return result }
+        let research = try ResearchAssessmentFixtures.result(attemptId: attemptId,
+          recording: recording, entry: entry, ageYears: ageYears)
+        return .processedResearch(transform?(research) ?? research)
       }
       func release() {
         continuation?.resume()
