@@ -267,15 +267,15 @@
     func testCanonicalEntryAndExactWordAreRequiredAndZHIsUnsupported() async {
       let word = WordDouble()
       let model = ModelDouble()
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 8, enabled: true)
       let altered = PracticeLibraryEntry(
         soundID: entry.soundID, position: entry.position,
         prompt: .init(id: entry.id, word: "ball", systemImage: "wrong"))
-      XCTAssertFalse(recognizer.prepare(entry: altered))
+      XCTAssertFalse(self.prepare(recognizer, entry: altered))
       let missing = request()
-      _ = await recognizer.check(request: missing)
+      _ = await self.check(recognizer, request: missing)
       XCTAssertEqual(recognizer.observations[missing.operationID]?.outcome, .notRun(.missingEntry))
       XCTAssertTrue(recognizer.prepare(entry: entry))
       let wrong = request(word: "BALL")
