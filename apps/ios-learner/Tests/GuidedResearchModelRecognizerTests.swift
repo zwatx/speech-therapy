@@ -277,14 +277,14 @@
       let missing = request()
       _ = await self.check(recognizer, request: missing)
       XCTAssertEqual(recognizer.observations[missing.operationID]?.outcome, .notRun(.missingEntry))
-      XCTAssertTrue(recognizer.prepare(entry: entry))
+      XCTAssertTrue(self.prepare(recognizer, entry: entry))
       let wrong = request(word: "BALL")
-      _ = await recognizer.check(request: wrong)
+      _ = await self.check(recognizer, request: wrong)
       XCTAssertEqual(recognizer.observations[wrong.operationID]?.outcome, .notRun(.wrongEntry))
       let zh = PracticeLibrary.entries(soundID: "zh").first!
-      XCTAssertTrue(recognizer.prepare(entry: zh))
+      XCTAssertTrue(self.prepare(recognizer, entry: zh))
       let unsupported = request(word: zh.prompt.word)
-      _ = await recognizer.check(request: unsupported)
+      _ = await self.check(recognizer, request: unsupported)
       XCTAssertEqual(
         recognizer.observations[unsupported.operationID]?.outcome, .notRun(.unsupportedPrompt))
       XCTAssertTrue(model.calls.isEmpty)
