@@ -384,8 +384,8 @@
       word.started = { started.fulfill() }
       let input = request()
       let owner = UUID()
-      ownership.retain(input.fileURL, owner: owner)
-      let task = Task { await recognizer.check(request: input) }
+      retainFixture(input.fileURL, owner: owner, ownership: ownership)
+      let task = Task { await self.check(recognizer, request: input) }
       let wordStarted = await XCTWaiter.fulfillment(of: [started], timeout: 2)
       XCTAssertEqual(wordStarted, .completed)
       XCTAssertFalse(recognizer.configure(ageYears: 10, enabled: false))
