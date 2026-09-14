@@ -357,6 +357,10 @@
         XCTAssertEqual(model.calls.last?.age, 9)
         XCTAssertEqual(recognizer.observations[input.operationID]?.request, input)
         XCTAssertEqual(recognizer.observations[input.operationID]?.entryID, entry.id)
+        let retained = try XCTUnwrap(recognizer.observations[input.operationID]?.researchResult)
+        XCTAssertEqual(retained.context.operationID, input.operationID)
+        XCTAssertEqual(retained.context.ageYears, 9)
+        XCTAssertEqual(retained.targets.first?.subjectiveCorpusRatingProbabilities, [0.1, 0.2, 0.7])
         XCTAssertEqual(
           recognizer.observations[input.operationID]?.outcome,
           .processedUnverified(milliseconds: 12))
