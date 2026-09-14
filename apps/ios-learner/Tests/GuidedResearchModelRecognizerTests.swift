@@ -299,12 +299,12 @@
         let word = WordDouble()
         let model = ModelDouble()
         word.status = status
-        let recognizer = GuidedResearchModelRecognizer(
+        let recognizer = makeRecognizer(
           wordRecognizer: word, processor: model, availability: GuidedResearchModelAvailability())
         recognizer.configure(ageYears: 8, enabled: true)
-        recognizer.prepare(entry: entry)
+        self.prepare(recognizer, entry: entry)
         let input = request()
-        let result = await recognizer.check(request: input)
+        let result = await self.check(recognizer, request: input)
         XCTAssertEqual(result.request, input)
         XCTAssertEqual(result.status, status)
         XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .notRun(reason))
