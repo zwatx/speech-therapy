@@ -375,11 +375,11 @@
       let model = ModelDouble()
       let ownership = ProcessAudioFileOwnership()
       word.hold = true
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, ownership: ownership,
         availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 8, enabled: true)
-      recognizer.prepare(entry: entry)
+      self.prepare(recognizer, entry: entry)
       let started = expectation(description: "word started")
       word.started = { started.fulfill() }
       let input = request()
