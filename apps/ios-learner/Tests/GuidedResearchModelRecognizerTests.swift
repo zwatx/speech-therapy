@@ -319,12 +319,12 @@
         let model = ModelDouble()
         word.siblingReceipt = sibling
         word.cleanupConfirmed = sibling
-        let recognizer = GuidedResearchModelRecognizer(
+        let recognizer = makeRecognizer(
           wordRecognizer: word, processor: model, availability: GuidedResearchModelAvailability())
         recognizer.configure(ageYears: 8, enabled: true)
-        recognizer.prepare(entry: entry)
+        self.prepare(recognizer, entry: entry)
         let input = request()
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertEqual(receipt.request, input)
         XCTAssertFalse(receipt.cleanupConfirmed)
         XCTAssertEqual(
