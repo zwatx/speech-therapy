@@ -341,14 +341,14 @@
       let word = WordDouble()
       let model = ModelDouble()
       let ownership = ProcessAudioFileOwnership()
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, ownership: ownership,
         availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 9, enabled: true)
-      recognizer.prepare(entry: entry)
+      self.prepare(recognizer, entry: entry)
       for _ in 0..<2 {
         let input = request(url: url)
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertEqual(receipt.request, input)
         XCTAssertEqual(receipt.status, .matched)
         XCTAssertEqual(model.calls.last?.operationID, input.operationID)
