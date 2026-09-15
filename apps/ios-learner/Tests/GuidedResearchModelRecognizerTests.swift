@@ -439,6 +439,7 @@
       XCTAssertEqual(receipt.status, .cancelled)
       XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .cancelled)
       XCTAssertFalse(model.cancellationSeen)
+      XCTAssertNil(recognizer.observations[input.operationID]?.researchResult)
       XCTAssertTrue(ownership.canRemove(url, owner: owner))
       XCTAssertEqual(recognizer.processingState, .idle)
       // A same-take retry has a new operation; current display must use that
@@ -447,7 +448,7 @@
       let retry = LocalWordRecognitionRequest(
         operationID: UUID(), tryID: input.tryID, fileURL: input.fileURL,
         expectedWord: input.expectedWord)
-      let retried = await recognizer.check(request: retry)
+      let retried = await self.check(recognizer, request: retry)
       XCTAssertEqual(retried.status, .matched)
       XCTAssertEqual(recognizer.latestObservationOperationID, retry.operationID)
       XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .cancelled)
