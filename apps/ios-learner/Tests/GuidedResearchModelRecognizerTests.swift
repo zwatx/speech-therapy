@@ -416,17 +416,17 @@
       let ownership = ProcessAudioFileOwnership()
       word.ownership = ownership
       model.hold = true
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, ownership: ownership,
         availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 8, enabled: true)
-      recognizer.prepare(entry: entry)
+      self.prepare(recognizer, entry: entry)
       let started = expectation(description: "model started")
       model.started = { started.fulfill() }
       let input = request(url: url)
       let owner = UUID()
-      ownership.retain(url, owner: owner)
-      let task = Task { await recognizer.check(request: input) }
+      retainFixture(url, owner: owner, ownership: ownership)
+      let task = Task { await self.check(recognizer, request: input) }
       let modelStarted = await XCTWaiter.fulfillment(of: [started], timeout: 2)
       XCTAssertEqual(modelStarted, .completed)
       // Exercise caller cancellation, in addition to the explicit coordinator route.
