@@ -476,7 +476,7 @@
       recognizer.configure(ageYears: nil, enabled: false)
       recognizer.configure(ageYears: 8, enabled: true)
       let second = request(url: url)
-      let secondReceipt = await recognizer.check(request: second)
+      let secondReceipt = await self.check(recognizer, request: second)
       XCTAssertEqual(secondReceipt.status, .matched)
       XCTAssertEqual(word.requests.count, 2)
       XCTAssertEqual(model.calls.count, 1)
