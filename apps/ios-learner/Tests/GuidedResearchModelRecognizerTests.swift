@@ -462,12 +462,12 @@
       let word = WordDouble()
       let model = ModelDouble()
       model.error = ResearchAssessmentError.timeout
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 8, enabled: true)
-      recognizer.prepare(entry: entry)
+      self.prepare(recognizer, entry: entry)
       let first = request(url: url)
-      let receipt = await recognizer.check(request: first)
+      let receipt = await self.check(recognizer, request: first)
       XCTAssertEqual(receipt.status, .matched)
       XCTAssertTrue(receipt.cleanupConfirmed)
       XCTAssertTrue(recognizer.modelCallsPaused)
