@@ -506,10 +506,10 @@
       defer { try? FileManager.default.removeItem(at: url) }
       let word = WordDouble()
       let model = ModelDouble()
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model, availability: GuidedResearchModelAvailability())
       recognizer.configure(ageYears: 8, enabled: true)
-      recognizer.prepare(entry: entry)
+      self.prepare(recognizer, entry: entry)
       let input = request(url: url)
       let subscription = recognizer.$observations.sink { observations in
         if let outcome = observations[input.operationID]?.outcome,
@@ -518,9 +518,10 @@
           recognizer.cancel(operationID: input.operationID)
         }
       }
-      let receipt = await recognizer.check(request: input)
+      let receipt = await self.check(recognizer, request: input)
       XCTAssertEqual(receipt.status, .cancelled)
       XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .cancelled)
+      XCTAssertNil(recognizer.observations[input.operationID]?.researchResult)
       withExtendedLifetime(subscription) {}
     }
 
