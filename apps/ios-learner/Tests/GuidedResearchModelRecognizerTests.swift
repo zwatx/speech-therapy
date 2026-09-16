@@ -567,9 +567,9 @@
       XCTAssertFalse(availability.modelCallsPaused)
       XCTAssertEqual(
         recognizer.observations[input.operationID]?.outcome, .unavailable(.busy))
-      model.result = .processedUnverified(milliseconds: 12)
+      model.result = nil
       let second = request(url: url)
-      _ = await recognizer.check(request: second)
+      _ = await self.check(recognizer, request: second)
       XCTAssertEqual(model.calls.count, 2)
       XCTAssertEqual(
         recognizer.observations[second.operationID]?.outcome, .processedUnverified(milliseconds: 12)
