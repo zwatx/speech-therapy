@@ -576,10 +576,10 @@
       )
     }
 
-    func testNonfiniteAndNegativeProcessedTimingPauseEndpoint() async throws {
+    func testLegacyTimingOnlyResultsNeverAdmitResearchScores() async throws {
       let url = try generatedWAV()
       defer { try? FileManager.default.removeItem(at: url) }
-      for milliseconds in [Double.nan, .infinity, -.infinity, -1] {
+      for milliseconds in [Double.nan, .infinity, -.infinity, -1, 12] {
         let word = WordDouble()
         let model = ModelDouble()
         let availability = GuidedResearchModelAvailability()
