@@ -584,12 +584,12 @@
         let model = ModelDouble()
         let availability = GuidedResearchModelAvailability()
         model.result = .processedUnverified(milliseconds: milliseconds)
-        let recognizer = GuidedResearchModelRecognizer(
+        let recognizer = makeRecognizer(
           wordRecognizer: word, processor: model, availability: availability)
         recognizer.configure(ageYears: 8, enabled: true)
-        recognizer.prepare(entry: entry)
+        self.prepare(recognizer, entry: entry)
         let input = request(url: url)
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertEqual(receipt, .init(request: input, status: .matched, cleanupConfirmed: true))
         XCTAssertTrue(availability.modelCallsPaused)
         XCTAssertEqual(
