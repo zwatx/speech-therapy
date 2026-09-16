@@ -597,6 +597,77 @@
       }
     }
 
+    func testRepeatedTargetDistributionsRetainedAndMalformedTypedTargetsRejected() async throws {
+      let repeated = try XCTUnwrap(PracticeLibrary.entries().first { $0.id == "n-middle-banana" })
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      for variant in ["valid", "missing", "reordered", "negative", "aboveOne", "nonfinite", "nonfiniteTiming"] {
+        let model = ModelDouble()
+        model.transform = { value in
+          var targets = value.targets
+          if variant == "missing" { targets.removeLast() }
+          if variant == "reordered" { targets.reverse() }
+          if ["negative", "aboveOne", "nonfinite"].contains(variant) {
+            let first = targets[0]
+            let probabilities: [Double] = variant == "negative" ? [-0.1, 0.2, 0.9]
+              : variant == "aboveOne" ? [1.1, 0, 0] : [.nan, 0.2, 0.8]
+            targets[0] = .init(id: first.id, wordIndex: first.wordIndex, phoneIndex: first.phoneIndex,
+              targetPhone: first.targetPhone, subjectiveCorpusRatingProbabilities: probabilities)
+          }
+          return .init(context: value.context, model: value.model, targets: targets,
+            timingMilliseconds: variant == "nonfiniteTiming" ? .init(total: .nan, inference: 0) : value.timingMilliseconds)
+        }
+        let recognizer = makeRecognizer(wordRecognizer: WordDouble(), processor: model,
+          availability: GuidedResearchModelAvailability())
+        recognizer.configure(ageYears: 8, enabled: true)
+        self.prepare(recognizer, entry: repeated)
+        let input = request(word: repeated.prompt.word, url: url)
+        let receipt = await self.check(recognizer, request: input)
+        XCTAssertEqual(receipt.status, .matched)
+        let observation = try XCTUnwrap(recognizer.observations[input.operationID])
+        if variant == "valid" {
+          let result = try XCTUnwrap(observation.researchResult)
+          XCTAssertEqual(result.targets.map(\.subjectiveCorpusRatingProbabilities), [[0.1, 0.2, 0.7], [0.7, 0.2, 0.1]])
+          XCTAssertEqual(result.targets.map(\.id), try ResearchAssessmentClient.prompt(for: repeated).targets.map(\.id))
+        } else {
+          XCTAssertNil(observation.researchResult, variant)
+          XCTAssertEqual(observation.outcome, .unavailable(.serverCleanupUnknown), variant)
+          XCTAssertTrue(recognizer.modelCallsPaused, variant)
+        }
+      }
+    }
+
+    func testRejectsTypedResultForWrongTakeAudioPromptRequestAgeEntryOrModel() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      for field in ["operation", "audio", "prompt", "request", "age", "entry", "model"] {
+        let model = ModelDouble()
+        model.transform = { value in
+          let c = value.context
+          return .init(context: .init(
+            operationID: field == "operation" ? UUID() : c.operationID,
+            entryID: field == "entry" ? "another-entry" : c.entryID,
+            ageYears: field == "age" ? 12 : c.ageYears,
+            requestSHA256: field == "request" ? String(repeating: "0", count: 64) : c.requestSHA256,
+            audioSHA256: field == "audio" ? String(repeating: "0", count: 64) : c.audioSHA256,
+            promptSHA256: field == "prompt" ? String(repeating: "0", count: 64) : c.promptSHA256),
+            model: .init(id: value.model.id,
+              manifestSha256: field == "model" ? "wrong-manifest" : value.model.manifestSha256),
+            targets: value.targets, timingMilliseconds: value.timingMilliseconds)
+        }
+        let recognizer = makeRecognizer(wordRecognizer: WordDouble(), processor: model,
+          availability: GuidedResearchModelAvailability())
+        recognizer.configure(ageYears: 8, enabled: true)
+        self.prepare(recognizer, entry: entry)
+        let input = request(url: url)
+        _ = await self.check(recognizer, request: input)
+        XCTAssertEqual(recognizer.observations[input.operationID]?.outcome,
+          .unavailable(.serverCleanupUnknown), field)
+        XCTAssertNil(recognizer.observations[input.operationID]?.researchResult, field)
+        XCTAssertTrue(recognizer.modelCallsPaused, field)
+      }
+    }
+
     func testExactNineCleanupSafeRejectionsKeepDistinctFrozenNotesAndAllowLaterOperations()
       async throws
     {
