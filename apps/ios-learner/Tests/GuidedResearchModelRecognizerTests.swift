@@ -820,11 +820,11 @@
         let word = WordDouble()
         let model = ModelDouble()
         model.error = ResearchAssessmentError.serviceUnavailable
-        let original = GuidedResearchModelRecognizer(
+        let original = makeRecognizer(
           wordRecognizer: word, processor: model, availability: availability)
         original.configure(ageYears: 8, enabled: true)
-        original.prepare(entry: entry)
-        _ = await original.check(request: request(url: url))
+        self.prepare(original, entry: entry)
+        _ = await self.check(original, request: request(url: url))
         XCTAssertTrue(original.modelCallsPaused)
       }
       let nextWord = WordDouble()
