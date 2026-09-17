@@ -829,14 +829,14 @@
       }
       let nextWord = WordDouble()
       let nextModel = ModelDouble()
-      let reconstructed = GuidedResearchModelRecognizer(
+      let reconstructed = makeRecognizer(
         wordRecognizer: nextWord, processor: nextModel, availability: availability)
       XCTAssertTrue(reconstructed.modelCallsPaused)
       reconstructed.configure(ageYears: nil, enabled: false)
       reconstructed.configure(ageYears: 9, enabled: true)
-      reconstructed.prepare(entry: entry)
+      self.prepare(reconstructed, entry: entry)
       let input = request(url: url)
-      let receipt = await reconstructed.check(request: input)
+      let receipt = await self.check(reconstructed, request: input)
       XCTAssertEqual(receipt.status, .matched)
       XCTAssertEqual(nextWord.requests.count, 1)
       XCTAssertTrue(nextModel.calls.isEmpty)
