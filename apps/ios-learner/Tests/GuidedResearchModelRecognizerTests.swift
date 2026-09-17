@@ -786,10 +786,10 @@
         let ownership = ProcessAudioFileOwnership()
         let availability = GuidedResearchModelAvailability()
         model.result = .unavailable(reason: rejection.code)
-        let recognizer = GuidedResearchModelRecognizer(
+        let recognizer = makeRecognizer(
           wordRecognizer: word, processor: model, ownership: ownership, availability: availability)
         recognizer.configure(ageYears: 8, enabled: true)
-        recognizer.prepare(entry: entry)
+        self.prepare(recognizer, entry: entry)
         let input = request(url: url)
         var specificObservationSeen = false
         let subscription = recognizer.$observations.sink { observations in
@@ -798,7 +798,7 @@
             recognizer.cancel(operationID: input.operationID)
           }
         }
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertTrue(specificObservationSeen)
         XCTAssertEqual(receipt, .init(request: input, status: .cancelled, cleanupConfirmed: true))
         XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .cancelled)
