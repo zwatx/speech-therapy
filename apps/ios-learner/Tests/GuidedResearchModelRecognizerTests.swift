@@ -716,15 +716,15 @@
         XCTAssertEqual(model.calls[0].age, 9)
         XCTAssertFalse(availability.modelCallsPaused)
         XCTAssertTrue(ownership.protectedURLs.isEmpty)
-        let repeated = await recognizer.check(request: input)
+        let repeated = await self.check(recognizer, request: input)
         XCTAssertEqual(repeated.status, .unavailable)
         XCTAssertEqual(word.requests.count, 1)
         XCTAssertEqual(model.calls.count, 1)
         XCTAssertEqual(recognizer.observations[input.operationID], first)
 
-        model.result = .processedUnverified(milliseconds: 12)
+        model.result = nil
         let later = request(url: url)
-        let laterReceipt = await recognizer.check(request: later)
+        let laterReceipt = await self.check(recognizer, request: later)
         XCTAssertNotEqual(later.operationID, input.operationID)
         XCTAssertNotEqual(later.tryID, input.tryID)
         XCTAssertEqual(
