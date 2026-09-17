@@ -694,14 +694,14 @@
         let availability = GuidedResearchModelAvailability()
         word.ownership = ownership
         model.result = .unavailable(reason: rejection.code)
-        let recognizer = GuidedResearchModelRecognizer(
+        let recognizer = makeRecognizer(
           wordRecognizer: word, processor: model, ownership: ownership, availability: availability)
         recognizer.configure(ageYears: 9, enabled: true)
-        recognizer.prepare(entry: entry)
+        self.prepare(recognizer, entry: entry)
         XCTAssertTrue(model.calls.isEmpty)
         XCTAssertEqual(model.readinessCalls, 0)
         let input = request(url: url)
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertEqual(receipt, .init(request: input, status: .matched, cleanupConfirmed: true))
         let first = try XCTUnwrap(recognizer.observations[input.operationID])
         XCTAssertEqual(first.request, input)
