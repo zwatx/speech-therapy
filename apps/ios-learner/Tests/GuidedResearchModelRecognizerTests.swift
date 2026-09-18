@@ -936,7 +936,7 @@
           recognizer.cancel(operationID: input.operationID)
         }
       }
-      let receipt = await recognizer.check(request: input)
+      let receipt = await self.check(recognizer, request: input)
       XCTAssertEqual(receipt.status, .cancelled)
       XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .cancelled)
       XCTAssertEqual(model.readinessCalls, 0)
