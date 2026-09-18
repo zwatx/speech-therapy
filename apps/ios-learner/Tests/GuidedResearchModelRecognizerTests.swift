@@ -985,7 +985,7 @@
       let input = request(url: url)
       let started = expectation(description: "readiness waiting for shared pause")
       model.readinessStarted = { started.fulfill() }
-      let task = Task { await recognizer.check(request: input) }
+      let task = Task { await self.check(recognizer, request: input) }
       let reached = await XCTWaiter.fulfillment(of: [started], timeout: 2)
       XCTAssertEqual(reached, .completed)
       availability.pauseForUnknownCleanup()
@@ -997,7 +997,7 @@
       XCTAssertEqual(model.readinessCalls, 1)
       XCTAssertTrue(availability.modelCallsPaused)
       XCTAssertTrue(ownership.protectedURLs.isEmpty)
-      _ = await recognizer.check(request: request(url: url))
+      _ = await self.check(recognizer, request: request(url: url))
       XCTAssertEqual(model.readinessCalls, 1)
       XCTAssertTrue(model.calls.isEmpty)
     }
