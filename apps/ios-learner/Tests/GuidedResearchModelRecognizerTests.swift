@@ -854,7 +854,7 @@
       let recognizer = preparedRecognizer(
         word: word, model: model, ownership: ownership, availability: availability)
       let input = request(url: url)
-      let receipt = await recognizer.check(request: input)
+      let receipt = await self.check(recognizer, request: input)
       let first = try XCTUnwrap(recognizer.observations[input.operationID])
       XCTAssertEqual(receipt, .init(request: input, status: .matched, cleanupConfirmed: true))
       XCTAssertEqual(first.request, input)
@@ -870,7 +870,7 @@
       XCTAssertTrue(ownership.protectedURLs.isEmpty)
       model.ready = true
       let later = request(url: url)
-      let laterReceipt = await recognizer.check(request: later)
+      let laterReceipt = await self.check(recognizer, request: later)
       XCTAssertEqual(laterReceipt, .init(request: later, status: .matched, cleanupConfirmed: true))
       XCTAssertEqual(model.readinessCalls, 2)
       XCTAssertEqual(model.calls.count, 1)
