@@ -1022,7 +1022,7 @@
             }
           }
         }
-        let receipt = await recognizer.check(request: input)
+        let receipt = await self.check(recognizer, request: input)
         XCTAssertEqual(receipt.status, cancel ? .cancelled : .matched)
         XCTAssertEqual(
           recognizer.observations[input.operationID]?.outcome,
