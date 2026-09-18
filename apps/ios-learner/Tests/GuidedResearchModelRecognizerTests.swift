@@ -894,10 +894,10 @@
         word: word, model: model, ownership: ownership, availability: availability)
       let input = request(url: url)
       let owner = UUID()
-      ownership.retain(url, owner: owner)
+      retainFixture(url, owner: owner, ownership: ownership)
       let started = expectation(description: "readiness started")
       model.readinessStarted = { started.fulfill() }
-      let task = Task { await recognizer.check(request: input) }
+      let task = Task { await self.check(recognizer, request: input) }
       let reached = await XCTWaiter.fulfillment(of: [started], timeout: 2)
       XCTAssertEqual(reached, .completed)
       XCTAssertEqual(recognizer.processingState, .checkingService(operationID: input.operationID))
