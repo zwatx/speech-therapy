@@ -1305,6 +1305,42 @@
       return recognizer
     }
 
+    @discardableResult
+    private func prepare(_ recognizer: GuidedResearchModelRecognizer, entry: PracticeLibraryEntry) -> Bool {
+      let visit = GuidedMediaVisit.review(.init(workflowID: UUID(), roundID: UUID(),
+        visitID: UUID(), entryID: entry.id))
+      let prepared = recognizer.prepare(entry: entry, visit: visit)
+      if prepared {
+        captureFixtures[ObjectIdentifier(recognizer)]?.entry = entry
+        captureFixtures[ObjectIdentifier(recognizer)]?.visit = visit
+      }
+      return prepared
+    }
+
+    private func retainFixture(_ url: URL, owner: UUID, ownership: ProcessAudioFileOwnership) {
+      ownership.retain(url, owner: owner)
+      explicitOwners[ObjectIdentifier(ownership), default: [:]][url] = owner
+    }
+
+    /// Generated producer evidence is explicit; only this fixture releases its own owner.
+    private func check(_ recognizer: GuidedResearchModelRecognizer,
+      request: LocalWordRecognitionRequest) async -> LocalWordRecognitionReceipt
+    {
+      let fixture = captureFixtures[ObjectIdentifier(recognizer)]!
+      let existing = explicitOwners[ObjectIdentifier(fixture.ownership)]?[request.fileURL]
+      let owner = existing ?? UUID()
+      if existing == nil { fixture.ownership.retain(request.fileURL, owner: owner) }
+      defer {
+        if existing == nil, fixture.ownership.canRemove(request.fileURL, owner: owner) {
+          fixture.ownership.didRemove(request.fileURL, owner: owner)
+        }
+      }
+      let recording = CapturedRecording(url: request.fileURL,
+        summary: .init(duration: 0.1, averagePower: -12), cleanupOwnerID: owner)
+      return await recognizer.check(context: .init(request: request, takeID: request.tryID,
+        recording: recording, guidedVisit: fixture.visit, entryID: fixture.entry?.id ?? "missing"))
+    }
+
     private func generatedWAV() throws -> URL {
       var data = Data()
       func text(_ value: String) { data.append(contentsOf: value.utf8) }
