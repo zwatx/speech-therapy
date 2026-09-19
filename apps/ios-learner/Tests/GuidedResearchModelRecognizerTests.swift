@@ -1067,13 +1067,13 @@
       let recognizer = preparedRecognizer(
         word: word, model: model, ownership: ownership, availability: availability)
       let input = request(url: url)
-      let receipt = await recognizer.check(request: input)
+      let receipt = await self.check(recognizer, request: input)
       XCTAssertEqual(receipt.status, .matched)
       XCTAssertEqual(
         recognizer.observations[input.operationID]?.outcome,
         .unavailable(.serverCleanupUnknown))
       XCTAssertTrue(availability.modelCallsPaused)
-      _ = await recognizer.check(request: request(url: url))
+      _ = await self.check(recognizer, request: request(url: url))
       XCTAssertEqual(model.readinessCalls, 1)
       XCTAssertEqual(model.calls.count, 1)
       XCTAssertTrue(ownership.protectedURLs.isEmpty)
