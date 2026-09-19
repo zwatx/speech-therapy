@@ -1043,13 +1043,13 @@
       let recognizer = preparedRecognizer(
         word: word, model: model, ownership: ownership, availability: availability)
       let invalid = request()
-      _ = await recognizer.check(request: invalid)
+      _ = await self.check(recognizer, request: invalid)
       XCTAssertEqual(
         recognizer.observations[invalid.operationID]?.outcome,
         .unavailable(.invalidRecording))
       availability.pauseForUnknownCleanup()
       let paused = request()
-      _ = await recognizer.check(request: paused)
+      _ = await self.check(recognizer, request: paused)
       XCTAssertEqual(recognizer.observations[paused.operationID]?.outcome, .notRun(.paused))
       XCTAssertEqual(model.readinessCalls, 0)
       XCTAssertTrue(model.calls.isEmpty)
