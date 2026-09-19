@@ -1105,7 +1105,203 @@
         wordRecognizer: word, processor: model,
         ownership: ownership, availability: availability)
       XCTAssertTrue(recognizer.configure(ageYears: 9, enabled: true))
-      XCTAssertTrue(recognizer.prepare(entry: entry))
+      XCTAssertTrue(self.prepare(recognizer, entry: entry))
+      return recognizer
+    }
+
+    func testOwnedContextPassesExactSummarySignalAndProducerIdentityToProcessor() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      let files = ProcessAudioFileOwnership()
+      let model = ModelDouble()
+      let recognizer = preparedRecognizer(word: WordDouble(), model: model, ownership: files,
+        availability: GuidedResearchModelAvailability())
+      let input = request(url: url)
+      var signal = PCM16SignalMeasurements.Accumulator()
+      for _ in 0..<1600 { signal.append(120) }
+      let summary = CaptureSummary(duration: 0.1, averagePower: -18,
+        pcm16Signal: try XCTUnwrap(signal.measurements()))
+      let context = ownedContext(recognizer, request: input, summary: summary)
+      let receipt = await recognizer.check(context: context)
+      XCTAssertEqual(receipt.status, .matched)
+      XCTAssertEqual(model.calls.count, 1)
+      XCTAssertEqual(model.calls.first?.recording, context.recording)
+      XCTAssertEqual(model.calls.first?.recording.summary, summary)
+      XCTAssertEqual(model.calls.first?.recording.cleanupOwnerID, context.recording.cleanupOwnerID)
+      XCTAssertEqual(model.calls.first?.operationID, input.operationID)
+      XCTAssertEqual(model.calls.first?.entry.id, context.entryID)
+      XCTAssertTrue(files.canRemove(url, owner: try XCTUnwrap(context.recording.cleanupOwnerID)))
+    }
+
+    func testMissingOwnedContextKeepsWordReceiptButCannotRunResearch() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      let word = WordDouble()
+      let model = ModelDouble()
+      let recognizer = preparedRecognizer(word: word, model: model,
+        ownership: ProcessAudioFileOwnership(), availability: GuidedResearchModelAvailability())
+      let input = request(url: url)
+      let receipt = await recognizer.check(request: input)
+      XCTAssertEqual(receipt.status, .matched)
+      XCTAssertEqual(word.requests, [input])
+      XCTAssertEqual(model.readinessCalls, 0)
+      XCTAssertTrue(model.calls.isEmpty)
+      XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .unavailable(.invalidRecording))
+    }
+
+    func testOwnedContextRejectsWrongTakeURLVisitEntryOwnerAndInvalidSummaryBeforeReadiness() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      for field in ["take", "url", "visit", "entry", "missingOwner", "wrongOwner",
+        "unregisteredOwner", "nonfiniteDuration", "nonfinitePower", "wrongDuration"]
+      {
+        let files = ProcessAudioFileOwnership()
+        let word = WordDouble()
+        let model = ModelDouble()
+        let recognizer = preparedRecognizer(word: word, model: model, ownership: files,
+          availability: GuidedResearchModelAvailability())
+        let input = request(url: url)
+        let original = ownedContext(recognizer, request: input)
+        let recording = CapturedRecording(
+          url: field == "url" ? url.appendingPathExtension("sibling") : url,
+          summary: .init(duration: field == "nonfiniteDuration" ? .nan : field == "wrongDuration" ? 0.2 : 0.1,
+            averagePower: field == "nonfinitePower" ? .nan : -12),
+          cleanupOwnerID: field == "missingOwner" ? nil
+            : ["wrongOwner", "unregisteredOwner"].contains(field) ? UUID() : original.recording.cleanupOwnerID)
+        if field == "unregisteredOwner" {
+          files.didRemove(url, owner: try XCTUnwrap(original.recording.cleanupOwnerID))
+        }
+        let context = LocalWordCapturedContext(request: input,
+          takeID: field == "take" ? UUID() : input.tryID, recording: recording,
+          guidedVisit: field == "visit" ? .review(.init(workflowID: UUID(), roundID: UUID(),
+            visitID: UUID(), entryID: entry.id)) : original.guidedVisit,
+          entryID: field == "entry" ? "wrong-entry" : original.entryID)
+        let receipt = await recognizer.check(context: context)
+        XCTAssertEqual(receipt.status, .matched, field)
+        XCTAssertEqual(word.requests, [input], field)
+        XCTAssertEqual(model.readinessCalls, 0, field)
+        XCTAssertTrue(model.calls.isEmpty, field)
+        XCTAssertEqual(recognizer.observations[input.operationID]?.outcome,
+          .unavailable(.invalidRecording), field)
+      }
+    }
+
+    func testOwnedContextRejectsExistingBorrowOrConflictingProducerBeforeReadiness() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      for conflictingOwner in [false, true] {
+        let files = ProcessAudioFileOwnership()
+        let word = WordDouble()
+        let model = ModelDouble()
+        let recognizer = preparedRecognizer(word: word, model: model, ownership: files,
+          availability: GuidedResearchModelAvailability())
+        let input = request(url: url)
+        let context = ownedContext(recognizer, request: input)
+        let producer = try XCTUnwrap(context.recording.cleanupOwnerID)
+        let competingIdentity = UUID()
+        if conflictingOwner { files.retain(url, owner: competingIdentity) }
+        else { XCTAssertTrue(files.borrow(url, operation: competingIdentity)) }
+        XCTAssertFalse(files.canRemove(url, owner: producer))
+        let receipt = await recognizer.check(context: context)
+        XCTAssertEqual(receipt, .init(request: input, status: .matched, cleanupConfirmed: true))
+        XCTAssertEqual(word.requests, [input])
+        XCTAssertEqual(model.readinessCalls, 0)
+        XCTAssertTrue(model.calls.isEmpty)
+        XCTAssertEqual(recognizer.observations[input.operationID]?.outcome,
+          .unavailable(.invalidRecording))
+        XCTAssertTrue(files.protectedURLs.contains(url))
+        XCTAssertFalse(files.canRemove(url, owner: producer))
+        if conflictingOwner {
+          // Neither conflicting producer may release the other's ownership. The
+          // isolated registry remains protected until this fixture goes out of scope.
+          XCTAssertFalse(files.canRemove(url, owner: competingIdentity))
+          files.didRemove(url, owner: competingIdentity)
+          XCTAssertFalse(files.canRemove(url, owner: producer))
+          XCTAssertTrue(files.protectedURLs.contains(url))
+        } else {
+          // Only the fixture that created this fake consumer acknowledges its finish.
+          files.finishBorrowing(operation: competingIdentity)
+          XCTAssertTrue(files.canRemove(url, owner: producer))
+          files.didRemove(url, owner: producer)
+          XCTAssertTrue(files.protectedURLs.isEmpty)
+        }
+      }
+    }
+
+    func testOwnedContextFromSameWordPreviousVisitCannotEnterSuccessor() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      let files = ProcessAudioFileOwnership()
+      let model = ModelDouble()
+      let recognizer = preparedRecognizer(word: WordDouble(), model: model, ownership: files,
+        availability: GuidedResearchModelAvailability())
+      let input = request(url: url)
+      let context = ownedContext(recognizer, request: input)
+      XCTAssertTrue(prepare(recognizer, entry: entry))
+      let receipt = await recognizer.check(context: context)
+      XCTAssertEqual(receipt.status, .matched)
+      XCTAssertTrue(model.calls.isEmpty)
+      XCTAssertEqual(model.readinessCalls, 0)
+      XCTAssertEqual(recognizer.observations[input.operationID]?.outcome, .unavailable(.invalidRecording))
+    }
+
+    func testWrongWordReceiptOrUnconfirmedCleanupKeepsIndependentOwnedContextBorrow() async throws {
+      let url = try generatedWAV()
+      defer { try? FileManager.default.removeItem(at: url) }
+      for wrongReceipt in [false, true] {
+        let files = ProcessAudioFileOwnership()
+        let word = WordDouble()
+        word.cleanupConfirmed = wrongReceipt
+        word.siblingReceipt = wrongReceipt
+        word.ownership = files
+        let model = ModelDouble()
+        let recognizer = preparedRecognizer(word: word, model: model, ownership: files,
+          availability: GuidedResearchModelAvailability())
+        let context = ownedContext(recognizer, request: request(url: url))
+        let receipt = await recognizer.check(context: context)
+        XCTAssertFalse(receipt.cleanupConfirmed)
+        XCTAssertEqual(word.requests, [context.request])
+        XCTAssertEqual(recognizer.observations[context.request.operationID]?.outcome,
+          .unavailable(wrongReceipt ? .wrongReceipt : .wordCleanupUnconfirmed))
+        // WordDouble has already released its exact consumer borrow. Protection
+        // therefore depends on the wrapper's independent, unconfirmed consumer.
+        XCTAssertFalse(files.canRemove(url, owner: try XCTUnwrap(context.recording.cleanupOwnerID)))
+        XCTAssertTrue(files.protectedURLs.contains(url))
+        files.finishBorrowing(operation: context.request.operationID)
+        XCTAssertFalse(files.canRemove(url, owner: try XCTUnwrap(context.recording.cleanupOwnerID)))
+        XCTAssertTrue(model.calls.isEmpty)
+        XCTAssertEqual(model.readinessCalls, 0)
+      }
+    }
+
+    private func ownedContext(_ recognizer: GuidedResearchModelRecognizer,
+      request: LocalWordRecognitionRequest, summary: CaptureSummary = .init(duration: 0.1, averagePower: -12))
+      -> LocalWordCapturedContext
+    {
+      let fixture = captureFixtures[ObjectIdentifier(recognizer)]!
+      let owner = UUID()
+      fixture.ownership.retain(request.fileURL, owner: owner)
+      return .init(request: request, takeID: request.tryID,
+        recording: .init(url: request.fileURL, summary: summary, cleanupOwnerID: owner),
+        guidedVisit: fixture.visit, entryID: fixture.entry!.id)
+    }
+
+    private struct CaptureFixture {
+      let ownership: ProcessAudioFileOwnership
+      var entry: PracticeLibraryEntry?
+      var visit: GuidedMediaVisit?
+    }
+    private var captureFixtures: [ObjectIdentifier: CaptureFixture] = [:]
+    private var explicitOwners: [ObjectIdentifier: [URL: UUID]] = [:]
+
+    private func makeRecognizer(wordRecognizer: any LocalWordRecognizing,
+      processor: any ResearchAssessmentProcessing,
+      ownership: ProcessAudioFileOwnership = ProcessAudioFileOwnership(),
+      availability: GuidedResearchModelAvailability) -> GuidedResearchModelRecognizer
+    {
+      let recognizer = GuidedResearchModelRecognizer(wordRecognizer: wordRecognizer,
+        processor: processor, ownership: ownership, availability: availability)
+      captureFixtures[ObjectIdentifier(recognizer)] = .init(ownership: ownership)
       return recognizer
     }
 
