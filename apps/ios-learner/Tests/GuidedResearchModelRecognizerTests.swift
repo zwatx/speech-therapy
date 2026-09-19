@@ -1088,7 +1088,7 @@
         word: WordDouble(), model: model, ownership: ownership,
         availability: GuidedResearchModelAvailability())
       let input = request(url: url)
-      let receipt = await recognizer.check(request: input)
+      let receipt = await self.check(recognizer, request: input)
       XCTAssertEqual(receipt.status, .matched)
       XCTAssertEqual(model.calls, 1)
       XCTAssertEqual(
@@ -1101,7 +1101,7 @@
       word: WordDouble, model: any ResearchAssessmentProcessing,
       ownership: ProcessAudioFileOwnership, availability: GuidedResearchModelAvailability
     ) -> GuidedResearchModelRecognizer {
-      let recognizer = GuidedResearchModelRecognizer(
+      let recognizer = makeRecognizer(
         wordRecognizer: word, processor: model,
         ownership: ownership, availability: availability)
       XCTAssertTrue(recognizer.configure(ageYears: 9, enabled: true))
