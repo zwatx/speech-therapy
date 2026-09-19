@@ -6,6 +6,254 @@
   /// Generated protocol/runtime integration only; no sensor or model execution.
   @MainActor
   final class LocalGuidedGeneratedHostTests: XCTestCase {
+    func testGeneratedPracticeTimeoutRetrySeedsThenHoldsExactSameTakeWithoutModelWork()
+      async throws
+    {
+      let r = LocalGuidedGeneratedResources(testCase: .practiceTimeoutRetry, runID: UUID())
+      await r.prepareSeed()
+      guard case .ready = r.seedState else {
+        _ = await r.session.close()
+        XCTFail("Timeout-retry seed must be ready")
+        return
+      }
+      XCTAssertEqual(r.recognizer.requests.count, 5)
+      XCTAssertFalse(r.recognizer.isPending)
+      XCTAssertEqual(r.recognizer.borrowCount, 0)
+      XCTAssertEqual(r.capture.createdURLs.count, 5)
+      XCTAssertEqual(r.capture.retainedCount, 0)
+      XCTAssertEqual(r.modelLine, "Generated model calls: 0")
+      let initial = try XCTUnwrap(r.session.ledger?.initialRound)
+      XCTAssertTrue(initial.rows.allSatisfy { $0.state == .finished(.matched) })
+      XCTAssertTrue(r.session.practiceSelectionIDs.isEmpty)
+      let pig = r.session.setupEntries[1].id
+      r.session.togglePracticeSelection(entryID: pig)
+      await r.session.startPractice()
+      let visit = try XCTUnwrap(r.session.ledger?.activePracticeVisit)
+      await r.session.media.startRecording()
+      r.session.media.stopRecording()
+      let take = try XCTUnwrap(r.session.media.latestTry)
+      let firstTask = Task { await r.session.checkCurrentWord() }
+      guard await waitForTimeoutRetryPending(r.recognizer, count: 6) else {
+        r.session.media.cancelWordCheck()
+        r.recognizer.stopGeneratedChecks()
+        await firstTask.value
+        _ = await r.session.close()
+        XCTFail("Generated first timeout request did not become pending")
+        return
+      }
+      let firstRequest = r.recognizer.requests.last
+      XCTAssertEqual(r.recognizer.requests.count, 6)
+      XCTAssertEqual(r.recognizer.borrowCount, 1)
+      r.recognizer.finish()
+      await firstTask.value
+      let first = try XCTUnwrap(firstRequest)
+      XCTAssertEqual(r.session.media.wordCheckState, .finished(.timedOut))
+      XCTAssertEqual(r.session.media.latestTry?.id, take.id)
+      XCTAssertTrue(r.session.playerPresentation.canCheckWords)
+      XCTAssertEqual(r.recognizer.requests.count, 6) // No automatic retry.
+      let retryTask = Task { await r.session.checkCurrentWord() }
+      guard await waitForTimeoutRetryPending(r.recognizer, count: 7) else {
+        r.session.media.cancelWordCheck()
+        r.recognizer.stopGeneratedChecks()
+        await retryTask.value
+        _ = await r.session.close()
+        XCTFail("Generated retry request did not become pending")
+        return
+      }
+      let retryRequest = r.recognizer.requests.last
+      XCTAssertEqual(r.recognizer.requests.count, 7)
+      XCTAssertFalse(r.session.playerPresentation.canCheckWords)
+      await r.session.checkCurrentWord() // Duplicate while the exact borrow is held.
+      XCTAssertEqual(r.recognizer.requests.count, 7)
+      r.recognizer.finish()
+      await retryTask.value
+      let retry = try XCTUnwrap(retryRequest)
+      XCTAssertEqual(retry.tryID, first.tryID)
+      XCTAssertEqual(retry.fileURL, first.fileURL)
+      XCTAssertEqual(retry.expectedWord, first.expectedWord)
+      XCTAssertNotEqual(retry.operationID, first.operationID)
+      XCTAssertEqual(r.session.ledger?.activePracticeVisit, visit)
+      XCTAssertEqual(r.session.media.wordCheckState, .finished(.matched))
+      XCTAssertEqual(r.session.media.wordObservation(for: take.id), .matched)
+      XCTAssertFalse(r.session.media.canCheckWordsInLatestTry)
+      XCTAssertEqual(r.recognizer.borrowCount, 0)
+      XCTAssertEqual(r.retryBindingLine,
+        "Generated retry binding: same take yes · new operation yes · latest yes")
+      XCTAssertEqual(r.capture.createdURLs.count, 6)
+      XCTAssertEqual(r.capture.permissionRequests, 6)
+      XCTAssertEqual(r.filesLine,
+        "Generated files: made 6, kept 1 · permission requests 6 · playback starts 0")
+      XCTAssertTrue(r.history.entries.isEmpty)
+      XCTAssertEqual(r.session.ledger?.initialRound, initial)
+      await r.session.advanceVisit()
+      XCTAssertEqual(r.history.entries.count, 1)
+      XCTAssertEqual(r.history.entries.first?.id, visit.visitID)
+      await r.session.startRecheck()
+      XCTAssertTrue(r.session.ledger?.recheckRound?.rows.allSatisfy {
+        $0.firstSubmission == nil && ($0.state == .notVisited || $0.state == .ready)
+      } == true)
+      XCTAssertNil(r.session.media.latestTry)
+      XCTAssertEqual(r.session.ledger?.initialRound, initial)
+      XCTAssertEqual(r.recognizer.requests.count, 7)
+      XCTAssertEqual(r.modelLine, "Generated model calls: 0")
+      let closed = await r.session.close()
+      XCTAssertTrue(closed)
+      XCTAssertEqual(r.capture.retainedCount, 0)
+      XCTAssertTrue(r.files.protectedURLs.isEmpty)
+    }
+
+    func testGeneratedRecognizerStopReleasesHeldAndRejectsLateChecksWithoutBorrow() async {
+      let files = ProcessAudioFileOwnership()
+      let url = FileManager.default.temporaryDirectory
+        .appendingPathComponent("generated-timeout-stop-\(UUID())/synthetic.wav")
+      let owner = UUID()
+      files.retain(url, owner: owner) // Metadata only; the fake never opens a file.
+      let recognizer = LocalGuidedGeneratedRecognizer(files: files, holdsResult: true)
+      let request = LocalWordRecognitionRequest(
+        operationID: UUID(), tryID: UUID(), fileURL: url, expectedWord: "pig")
+      let held = Task { await recognizer.check(request: request) }
+      let becamePending = await waitForTimeoutRetryPending(recognizer, count: 1)
+      if becamePending { XCTAssertFalse(files.canRemove(url, owner: owner)) }
+      recognizer.stopGeneratedChecks()
+      let receipt = await held.value
+      XCTAssertTrue(becamePending)
+      XCTAssertEqual(receipt.request, request)
+      XCTAssertEqual(receipt.status, .cancelled)
+      XCTAssertTrue(receipt.cleanupConfirmed)
+      XCTAssertFalse(recognizer.isPending)
+      XCTAssertEqual(recognizer.borrowCount, 0)
+      XCTAssertTrue(files.canRemove(url, owner: owner))
+      let late = LocalWordRecognitionRequest(
+        operationID: UUID(), tryID: request.tryID, fileURL: url, expectedWord: "pig")
+      let lateReceipt = await recognizer.check(request: late)
+      XCTAssertEqual(lateReceipt.request, late)
+      XCTAssertEqual(lateReceipt.status, .cancelled)
+      XCTAssertTrue(lateReceipt.cleanupConfirmed)
+      XCTAssertEqual(recognizer.requests.count, 1)
+      XCTAssertFalse(recognizer.isPending)
+      XCTAssertTrue(files.canRemove(url, owner: owner), "Late call must not borrow the input")
+      files.didRemove(url, owner: owner)
+      XCTAssertTrue(files.protectedURLs.isEmpty)
+    }
+
+    private func waitForTimeoutRetryPending(
+      _ recognizer: LocalGuidedGeneratedRecognizer, count: Int
+    ) async -> Bool {
+      if recognizer.isPending, recognizer.requests.count == count { return true }
+      let pending = XCTestExpectation(description: "Exact generated request \(count) held")
+      let previousChanged = recognizer.changed
+      var fulfilled = false
+      recognizer.changed = {
+        previousChanged?()
+        if recognizer.isPending, recognizer.requests.count == count, !fulfilled {
+          fulfilled = true
+          pending.fulfill()
+        }
+      }
+      defer { recognizer.changed = previousChanged }
+      return await XCTWaiter.fulfillment(of: [pending], timeout: 2) == .completed
+    }
+
+    func testProductionProcessingFailureFreezesGuidedUnavailableWithoutForcingPractice() async throws {
+      let directory = FileManager.default.temporaryDirectory.appendingPathComponent("guided-processing-\(UUID())", isDirectory: true)
+      let history = PracticeParticipationStore(fileURL: directory.appendingPathComponent("history.json"))
+      let files = ProcessAudioFileOwnership()
+      let hardware = AudioHardwareOwnership()
+      let capture = LocalGuidedGeneratedCapture(hardware: hardware, files: files)
+      let player = ResearchAcknowledgedPlaybackUITestFixture(completion: .explicitStop, ownership: hardware, fileOwnership: files)
+      var playbackStarts = Set<UUID>()
+      let playbackObservation = player.statePublisher.sink { state in
+        MainActor.assumeIsolated {
+          if case .playing(let operation) = state { playbackStarts.insert(operation.id) }
+        }
+      }
+      defer { playbackObservation.cancel() }
+      let recovery = ProcessPracticeMirrorRecovery()
+      let mirror = DirectPracticeMirror(permission: ContinuationMirrorPermission(),
+        runtime: PracticeMirrorRuntime(recovery: recovery, presentation: PracticeMirrorPresentation(),
+          factory: { _ in ContinuationMirrorDriver() }), recovery: recovery)
+      let requests = GuidedProcessingRequestLog()
+      let recognizer = CoreMLLocalWordRecognizer(ownership: files, deadlineNanoseconds: 15_000_000_000,
+        fixtureWorker: { request, stop in
+          requests.append(request)
+          return WhisperCoreMLWorker.processingCompletion(stop: stop, evict: {}) {
+            _ = try WhisperCoreMLWorker.maximum(logits: [], stop: stop, isAllowed: { _ in true })
+            return .init(status: .matched, cleanupConfirmed: true, retainedHandle: nil)
+          }
+        })
+      let media = DirectPracticeSession(capturer: capture, player: player, mirror: mirror,
+        history: history, managedForGuided: true, wordRecognizer: recognizer,
+        cleanupHardwareOwnership: hardware, cleanupFileOwnership: files)
+      let flow = LocalGuidedReviewSession(history: history, media: media)
+      await flow.startInitialReview()
+      let firstVisit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
+      await media.startRecording()
+      media.stopRecording()
+      await flow.checkCurrentWord()
+      XCTAssertEqual(media.wordCheckState, .finished(.unavailable))
+      XCTAssertNil(media.currentWordGuess)
+      let frozenRow = try XCTUnwrap(flow.ledger?.initialRound.rows.first)
+      XCTAssertEqual(frozenRow.state, .finished(.unavailable))
+      XCTAssertEqual(frozenRow.firstSubmission?.visit, firstVisit)
+      XCTAssertEqual(frozenRow.firstSubmission?.operationID, requests.values.first?.operationID)
+      XCTAssertEqual(frozenRow.firstSubmission?.tryID, media.latestTry?.id)
+      XCTAssertFalse(media.canCheckWordsInLatestTry)
+      XCTAssertFalse(media.canRecordAnotherTry)
+      await flow.checkCurrentWord()
+      await media.recordAnotherTry()
+      XCTAssertEqual(requests.values.count, 1)
+      XCTAssertEqual(capture.createdURLs.count, 1)
+      XCTAssertEqual(capture.permissionRequests, 1)
+      XCTAssertEqual(flow.ledger?.initialRound.rows.first, frozenRow)
+      XCTAssertTrue(history.entries.isEmpty)
+      await flow.advanceVisit()
+      await flow.finishStageNow()
+      XCTAssertEqual(flow.ledger?.initialRound.rows.first, frozenRow)
+      XCTAssertEqual(capture.retainedCount, 0)
+      XCTAssertEqual(requests.values.count, 1)
+      XCTAssertTrue(history.entries.isEmpty)
+      flow.togglePracticeSelection(entryID: firstVisit.entryID)
+      await flow.startPractice()
+      let practiceVisit = try XCTUnwrap(flow.ledger?.activePracticeVisit)
+      XCTAssertNil(media.currentWordGuess)
+      XCTAssertEqual(requests.values.count, 1)
+      XCTAssertEqual(capture.createdURLs.count, 1)
+      await media.startRecording()
+      media.stopRecording()
+      XCTAssertEqual(requests.values.count, 1)
+      await flow.advanceVisit()
+      XCTAssertEqual(history.entries.count, 1)
+      XCTAssertEqual(history.entries.first?.wordCount, 1)
+      XCTAssertEqual(history.entries.first?.soundID, "b")
+      XCTAssertEqual(history.entries.first?.id, practiceVisit.visitID)
+      await flow.startRecheck()
+      let recheckVisit = try XCTUnwrap(flow.ledger?.activeReviewVisit)
+      XCTAssertNotEqual(recheckVisit.visitID, firstVisit.visitID)
+      await media.startRecording()
+      media.stopRecording()
+      await flow.checkCurrentWord()
+      XCTAssertEqual(media.wordCheckState, .finished(.unavailable))
+      XCTAssertFalse(media.canCheckWordsInLatestTry)
+      XCTAssertEqual(requests.values.count, 2)
+      XCTAssertNotEqual(requests.values.first?.tryID, requests.values.last?.tryID)
+      XCTAssertEqual(flow.ledger?.recheckRound?.rows.first?.state, .finished(.unavailable))
+      XCTAssertEqual(flow.ledger?.recheckRound?.rows.first?.firstSubmission?.visit, recheckVisit)
+      XCTAssertEqual(flow.ledger?.recheckRound?.rows.first?.firstSubmission?.operationID, requests.values.last?.operationID)
+      XCTAssertEqual(flow.ledger?.recheckRound?.rows.first?.firstSubmission?.tryID, media.latestTry?.id)
+      XCTAssertEqual(flow.ledger?.initialRound.rows.first, frozenRow)
+      XCTAssertEqual(history.entries.count, 1)
+      let closed = await flow.close()
+      XCTAssertTrue(closed)
+      XCTAssertEqual(capture.retainedCount, 0)
+      XCTAssertEqual(capture.createdURLs.count, 3)
+      XCTAssertEqual(capture.permissionRequests, 3)
+      XCTAssertTrue(playbackStarts.isEmpty)
+      XCTAssertTrue(files.protectedURLs.isEmpty)
+      XCTAssertTrue(files.pendingCleanupOwners.isEmpty)
+      XCTAssertNil(hardware.currentLease)
+      XCTAssertNil(recovery.owner)
+      if FileManager.default.fileExists(atPath: directory.path) { try FileManager.default.removeItem(at: directory) }
+    }
     func testInitialCheckStatusUsesFeedbackNoteAndFrozenContextRemainsInPracticeAndRecheck()
       async throws
     {
