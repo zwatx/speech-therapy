@@ -393,6 +393,59 @@
       XCTAssertTrue(closed)
     }
 
+    func testCombinedRetakeChecksOnlyReplacementInFirstReviewAndFreshRecheck() async throws {
+      let r = LocalGuidedGeneratedResources(testCase: .retake, runID: UUID())
+      await r.prepareSeed()
+      await r.session.startInitialReview()
+      var frozenInitial: LocalGuidedReviewRound?
+      for round in 0..<2 {
+        let visit = try XCTUnwrap(r.session.ledger?.activeReviewVisit)
+        XCTAssertTrue(r.session.playerPresentation.canRecordAndCheck)
+        await r.session.playerPresentation.recordAndCheck()
+        r.session.media.stopRecording()
+        let rejected = try XCTUnwrap(r.session.media.latestTry)
+        if case .retry = rejected.assessment {} else { XCTFail("Expected short capture") }
+        XCTAssertEqual(r.recognizer.requests.count, round)
+        XCTAssertEqual(r.session.ledger?.activeRound?.rows.first?.state, .ready)
+        XCTAssertFalse(r.session.media.canStartRecordingAndCheckWord)
+        XCTAssertTrue(r.session.playerPresentation.canRecordAndCheck)
+        await r.session.playerPresentation.recordAndCheck()
+        XCTAssertEqual(r.session.media.phase, .recording)
+        XCTAssertEqual(r.recognizer.requests.count, round)
+        r.session.media.stopRecording()
+        await waitForFinishedCheck(r.session.media)
+        let latest = try XCTUnwrap(r.session.media.latestTry)
+        let request = try XCTUnwrap(r.recognizer.requests.last)
+        XCTAssertNotEqual(latest.id, rejected.id)
+        XCTAssertEqual(request.tryID, latest.id)
+        XCTAssertEqual(request.fileURL, r.capture.returnedURLs.last)
+        XCTAssertEqual(r.recognizer.requests.count, round + 1)
+        XCTAssertEqual(r.session.ledger?.activeRound?.rows.first?.state, .finished(.matched))
+        XCTAssertEqual(r.session.ledger?.activeRound?.rows.first?.firstSubmission?.visit, visit)
+        XCTAssertFalse(r.session.playerPresentation.showsRecordAndCheck)
+        XCTAssertFalse(r.session.playerPresentation.canRecordAndCheck)
+        await r.session.playerPresentation.recordAndCheck()
+        XCTAssertEqual(r.capture.createdURLs.count, (round + 1) * 2)
+        XCTAssertTrue(r.history.entries.isEmpty)
+        await r.session.finishStageNow()
+        if round == 0 {
+          frozenInitial = r.session.ledger?.initialRound
+          r.session.togglePracticeSelection(entryID: visit.entryID)
+          await r.session.startPractice()
+          XCTAssertFalse(r.session.playerPresentation.showsRecordAndCheck)
+          await r.session.finishStageNow()
+          await r.session.startRecheck()
+        }
+        XCTAssertEqual(r.session.ledger?.initialRound, frozenInitial)
+      }
+      XCTAssertEqual(r.session.ledger?.stage, .completed)
+      let closed = await r.session.close()
+      XCTAssertTrue(closed)
+      XCTAssertEqual(r.capture.retainedCount, 0)
+      XCTAssertTrue(r.files.protectedURLs.isEmpty)
+      XCTAssertTrue(r.history.entries.isEmpty)
+    }
+
     func testRecordOnlyKeepsFirstSubmissionOpenForChosenLatestTry() async throws {
       let r = LocalGuidedGeneratedResources(testCase: .setup, runID: UUID())
       await r.prepareSeed()
