@@ -538,7 +538,8 @@
         attemptId: UUID, recording: CapturedRecording, entry: PracticeLibraryEntry, ageYears: Int
       ) async throws -> ResearchAssessmentOutcome {
         calls += 1
-        return .processedUnverified(milliseconds: 1)
+        return .processedResearch(try ResearchAssessmentFixtures.result(attemptId: attemptId,
+          recording: recording, entry: entry, ageYears: ageYears, milliseconds: 1))
       }
     }
 
