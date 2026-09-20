@@ -49,6 +49,19 @@
           "Research model processed this take. Sound accuracy remains unverified.")
       }
       let selected = first.rows[1].entry
+      let firstLedger = try XCTUnwrap(r.session.ledger)
+      let firstDetails = try XCTUnwrap(r.session.researchDetails(
+        workflowID: firstLedger.workflowID, entryID: selected.id))
+      let firstSnapshot = try available(firstDetails.initial)
+      XCTAssertEqual(firstSnapshot.identity, first.rows[1].firstSubmission)
+      XCTAssertEqual(firstSnapshot.result,
+        r.model.observations[firstSnapshot.identity.operationID]?.researchResult)
+      assertUnavailable(firstDetails.recheck)
+      XCTAssertNil(r.session.researchDetails(workflowID: UUID(), entryID: selected.id))
+      XCTAssertNil(r.session.researchDetails(workflowID: firstLedger.workflowID, entryID: "foreign-entry"))
+      XCTAssertEqual(r.processor.calls.count, 5)
+      XCTAssertEqual(r.capture.retainedCount, 0)
+      XCTAssertTrue(r.history.entries.isEmpty)
       r.session.togglePracticeSelection(entryID: selected.id)
       await r.session.startPractice()
       await r.session.media.startRecording()
