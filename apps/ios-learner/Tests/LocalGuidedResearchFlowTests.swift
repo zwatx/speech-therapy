@@ -93,6 +93,33 @@
       XCTAssertEqual(r.capture.retainedCount, 0)
       XCTAssertTrue(r.files.protectedURLs.isEmpty)
       XCTAssertEqual(r.history.entries.count, 1)  // No model output enters history.
+      let permissions = r.capture.permissionRequests
+      for pair in ledger.pairedRows {
+        let details = try XCTUnwrap(r.session.researchDetails(
+          workflowID: ledger.workflowID, entryID: pair.entry.id))
+        let initial = try available(details.initial), recheck = try available(details.recheck)
+        XCTAssertEqual(initial.identity, pair.initial.firstSubmission)
+        XCTAssertEqual(recheck.identity, pair.recheck.firstSubmission)
+        XCTAssertEqual(initial.result.targets,
+          r.model.observations[initial.identity.operationID]?.researchResult?.targets)
+        XCTAssertEqual(recheck.result.targets,
+          r.model.observations[recheck.identity.operationID]?.researchResult?.targets)
+        XCTAssertFalse(details.contractsDiffer)
+      }
+      XCTAssertEqual(r.processor.calls.count, 10)
+      XCTAssertEqual(r.capture.permissionRequests, permissions)
+      XCTAssertEqual(r.history.entries.count, 1)
+      await r.session.repeatReview()
+      XCTAssertEqual(r.session.ledger?.workflowID, ledger.workflowID)
+      XCTAssertNotEqual(r.session.ledger?.initialRound.id, ledger.initialRound.id)
+      XCTAssertNil(r.session.researchDetails(workflowID: ledger.workflowID, entryID: selected.id))
+      await r.session.finishStageNow()
+      let repeated = try XCTUnwrap(r.session.researchDetails(
+        workflowID: ledger.workflowID, entryID: selected.id))
+      assertUnavailable(repeated.initial)
+      assertUnavailable(repeated.recheck)
+      XCTAssertEqual(r.processor.calls.count, 10)
+      XCTAssertEqual(r.history.entries.count, 1)
       let closed = await r.session.close()
       XCTAssertTrue(closed)
     }
