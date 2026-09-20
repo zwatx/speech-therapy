@@ -1,4 +1,5 @@
 #if DEBUG && targetEnvironment(simulator)
+  import Combine
   import Foundation
   import XCTest
   @testable import CadenceLearner
