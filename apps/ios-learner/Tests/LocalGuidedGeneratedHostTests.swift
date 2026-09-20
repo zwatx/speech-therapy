@@ -913,3 +913,16 @@
     }
   }
 #endif
+
+#if DEBUG && targetEnvironment(simulator)
+private final class GuidedProcessingRequestLog: @unchecked Sendable {
+  private let lock = NSLock()
+  private var requests: [LocalWordRecognitionRequest] = []
+  func append(_ request: LocalWordRecognitionRequest) {
+    lock.lock(); defer { lock.unlock() }; requests.append(request)
+  }
+  var values: [LocalWordRecognitionRequest] {
+    lock.lock(); defer { lock.unlock() }; return requests
+  }
+}
+#endif
