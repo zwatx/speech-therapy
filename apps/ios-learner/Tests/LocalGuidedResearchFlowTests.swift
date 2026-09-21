@@ -565,10 +565,12 @@
         let entry: PracticeLibraryEntry
         let age: Int
         let url: URL
+        let recording: CapturedRecording
       }
       var calls: [Call] = []
       var fail = false
-      var result: ResearchAssessmentOutcome = .processedUnverified(milliseconds: 1)
+      var files: ProcessAudioFileOwnership?
+      var result: ResearchAssessmentOutcome?
       var ready = true
       var readinessCalls = 0
       func checkReadiness() async -> Bool {
