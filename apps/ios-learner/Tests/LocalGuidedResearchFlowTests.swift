@@ -308,6 +308,236 @@
       XCTAssertTrue(closed)
     }
 
+    func testDetailsKeepRepeatedTargetOrderAndExactFixtureProbabilities() throws {
+      let fixture = try DetailsFixture()
+      let snapshot = try available(fixture.resolve())
+      XCTAssertEqual(snapshot.result, fixture.result)
+      XCTAssertEqual(snapshot.result.targets.map(\.phoneIndex),
+        try ResearchAssessmentClient.prompt(for: fixture.entry).targets.map(\.phoneIndex))
+      XCTAssertEqual(snapshot.result.targets.map(\.subjectiveCorpusRatingProbabilities),
+        [[0.1, 0.2, 0.7], [0.7, 0.2, 0.1]])
+    }
+
+    func testDetailsUnavailableThroughCoordinatorForLegacyAndMissingResultWithoutExtraWork() async throws {
+      for outcome in [ResearchAssessmentOutcome.processedUnverified(milliseconds: 1),
+        .unavailable(reason: "silence")]
+      {
+        let r = Resources()
+        r.processor.result = outcome
+        XCTAssertTrue(r.session.configureResearchModel(enabled: true, ageYears: 9))
+        await r.session.startInitialReview()
+        try await captureAndCheck(r)
+        await r.session.finishStageNow()
+        let ledger = try XCTUnwrap(r.session.ledger), entry = ledger.entries[0]
+        let details = try XCTUnwrap(r.session.researchDetails(
+          workflowID: ledger.workflowID, entryID: entry.id))
+        assertUnavailable(details.initial)
+        assertUnavailable(details.recheck)
+        XCTAssertEqual(r.processor.calls.count, 1)
+        XCTAssertEqual(r.capture.retainedCount, 0)
+        XCTAssertTrue(r.history.entries.isEmpty)
+        XCTAssertEqual(ledger.initialRound.rows[0].state, .finished(.matched))
+        let closed = await r.session.close()
+        XCTAssertTrue(closed)
+      }
+    }
+
+    func testDetailsRemainAbsentWhenResearchIsDisabled() async throws {
+      let r = Resources()
+      await r.session.startInitialReview()
+      await r.session.finishStageNow()
+      let ledger = try XCTUnwrap(r.session.ledger)
+      XCTAssertNil(r.session.researchDetails(workflowID: ledger.workflowID, entryID: ledger.entries[0].id))
+      XCTAssertTrue(r.processor.calls.isEmpty)
+      XCTAssertTrue(r.history.entries.isEmpty)
+      let closed = await r.session.close()
+      XCTAssertTrue(closed)
+    }
+
+    func testDifferingPresentationContractsAreExplicitlyNotComparable() throws {
+      let f = try DetailsFixture(), first = try available(f.resolve()), c = f.result.context
+      let different = ResearchAssessmentResult(context: .init(operationID: UUID(),
+        entryID: c.entryID, ageYears: 10, requestSHA256: c.requestSHA256,
+        audioSHA256: c.audioSHA256, promptSHA256: c.promptSHA256), model: f.result.model,
+        targets: f.result.targets, timingMilliseconds: f.result.timingMilliseconds)
+      // Defensive presentation contract only: the frozen-age coordinator cannot admit this pair.
+      let details = GuidedResearchDetailsPresentation(
+        id: .init(workflowID: f.identity.visit.workflowID, entryID: f.entry.id), word: f.entry.prompt.word,
+        initial: .available(first), recheck: .available(.init(identity: f.identity, result: different)))
+      XCTAssertTrue(details.contractsDiffer)
+    }
+
+    func testDetailsRejectForeignObservationKeysOperationTakeEntryAndWord() throws {
+      let f = try DetailsFixture()
+      assertUnavailable(f.resolve(observations: [UUID(): f.observation]))
+      let requests: [LocalWordRecognitionRequest] = [
+        .init(operationID: UUID(), tryID: f.identity.tryID, fileURL: f.request.fileURL,
+          expectedWord: f.entry.prompt.word),
+        .init(operationID: f.identity.operationID, tryID: UUID(), fileURL: f.request.fileURL,
+          expectedWord: f.entry.prompt.word),
+        .init(operationID: f.identity.operationID, tryID: f.identity.tryID, fileURL: f.request.fileURL,
+          expectedWord: "another word"),
+      ]
+      for request in requests {
+        assertUnavailable(f.resolve(observations: [f.identity.operationID:
+          .init(request: request, entryID: f.entry.id, outcome: f.observation.outcome,
+            researchResult: f.result)]))
+      }
+      assertUnavailable(f.resolve(observations: [f.identity.operationID:
+        .init(request: f.request, entryID: "foreign-entry", outcome: f.observation.outcome,
+          researchResult: f.result)]))
+    }
+
+    func testDetailsRejectForeignWorkflowRoundVisitAndUnsettledRow() throws {
+      let f = try DetailsFixture()
+      assertUnavailable(f.resolve(workflowID: UUID()))
+      assertUnavailable(f.resolve(roundID: UUID()))
+      let foreignVisit = LocalGuidedReviewVisit(workflowID: f.identity.visit.workflowID,
+        roundID: f.identity.visit.roundID, visitID: UUID(), entryID: f.entry.id)
+      assertUnavailable(f.resolve(row: .init(entry: f.entry, visit: foreignVisit,
+        firstSubmission: f.identity, state: .finished(.matched))))
+      for state in [LocalGuidedReviewRowState.cleanupBlocked, .pending, .finished(.cancelled)] {
+        assertUnavailable(f.resolve(row: .init(entry: f.entry, visit: f.identity.visit,
+          firstSubmission: f.identity, state: state)))
+      }
+    }
+
+    func testDetailsNeverTurnLegacyMissingCancelledOrCleanupFailureIntoValues() throws {
+      let f = try DetailsFixture()
+      for outcome in [
+        GuidedResearchModelOutcome.processedUnverified(milliseconds: 1), .cancelled,
+        .unavailable(.serverCleanupUnknown), .unavailable(.localCleanupUnconfirmed),
+        .unavailable(.wordCleanupUnconfirmed), .notRun(.paused),
+      ] {
+        let payload = outcome == .processedUnverified(milliseconds: 1) ? nil : f.result
+        assertUnavailable(f.resolve(observations: [f.identity.operationID:
+          .init(request: f.request, entryID: f.entry.id, outcome: outcome, researchResult: payload)]))
+      }
+      assertUnavailable(f.resolve(observations: [:]))
+    }
+
+    func testDetailsRecheckResultContextModelAndTargetGeometry() throws {
+      let f = try DetailsFixture(), c = f.result.context
+      let contexts: [ResearchAssessmentResult.Context] = [
+        .init(operationID: UUID(), entryID: c.entryID, ageYears: c.ageYears,
+          requestSHA256: c.requestSHA256, audioSHA256: c.audioSHA256, promptSHA256: c.promptSHA256),
+        .init(operationID: c.operationID, entryID: "foreign-entry", ageYears: c.ageYears,
+          requestSHA256: c.requestSHA256, audioSHA256: c.audioSHA256, promptSHA256: c.promptSHA256),
+        .init(operationID: c.operationID, entryID: c.entryID, ageYears: 10,
+          requestSHA256: c.requestSHA256, audioSHA256: c.audioSHA256, promptSHA256: c.promptSHA256),
+      ]
+      var invalid = contexts.map { ResearchAssessmentResult(context: $0, model: f.result.model,
+        targets: f.result.targets, timingMilliseconds: f.result.timingMilliseconds) }
+      invalid.append(.init(context: c, model: .init(id: f.result.model.id, manifestSha256: "foreign"),
+        targets: f.result.targets, timingMilliseconds: f.result.timingMilliseconds))
+      invalid.append(.init(context: c, model: f.result.model, targets: Array(f.result.targets.reversed()),
+        timingMilliseconds: f.result.timingMilliseconds))
+      for result in invalid {
+        assertUnavailable(f.resolve(observations: [f.identity.operationID:
+          .init(request: f.request, entryID: f.entry.id, outcome: f.observation.outcome,
+            researchResult: result)]))
+      }
+    }
+
+    private func available(_ side: GuidedResearchDetailsPresentation.Side,
+      file: StaticString = #filePath, line: UInt = #line)
+      throws -> GuidedResearchDetailsPresentation.Snapshot
+    {
+      guard case .available(let snapshot) = side else {
+        XCTFail("Expected bound fixture distribution, got \(side)", file: file, line: line)
+        throw ResearchAssessmentError.invalidResponse
+      }
+      return snapshot
+    }
+
+    private func assertUnavailable(_ side: GuidedResearchDetailsPresentation.Side,
+      file: StaticString = #filePath, line: UInt = #line)
+    {
+      guard case .unavailable(let reason) = side else {
+        return XCTFail("Unexpected research distribution", file: file, line: line)
+      }
+      XCTAssertFalse(reason.isEmpty, file: file, line: line)
+    }
+
+    @MainActor
+    private struct DetailsFixture {
+      let entry: PracticeLibraryEntry
+      let identity: LocalGuidedCheckIdentity
+      let request: LocalWordRecognitionRequest
+      let result: ResearchAssessmentResult
+      var observation: GuidedResearchModelObservation {
+        .init(request: request, entryID: entry.id, outcome: .processedUnverified(milliseconds: 1),
+          researchResult: result)
+      }
+      init() throws {
+        entry = try XCTUnwrap(PracticeLibrary.entries().first { $0.id == "n-middle-banana" })
+        identity = .init(visit: .init(workflowID: UUID(), roundID: UUID(), visitID: UUID(),
+          entryID: entry.id), operationID: UUID(), tryID: UUID())
+        // This URL deliberately has no file: presentation must never reopen audio.
+        request = .init(operationID: identity.operationID, tryID: identity.tryID,
+          fileURL: URL(fileURLWithPath: "/unopened-generated-details-fixture.wav"),
+          expectedWord: entry.prompt.word)
+        let context = try ResearchAssessmentClient.context(attemptId: identity.operationID,
+          audio: Data([1, 2, 3]), entry: entry, ageYears: 9)
+        let prompt = try ResearchAssessmentClient.prompt(for: entry)
+        result = .init(context: context,
+          model: .init(id: "ages-6-12-research-mixture", manifestSha256: ResearchAssessmentClient.manifest),
+          targets: prompt.targets.enumerated().map { index, target in
+            .init(id: target.id, wordIndex: target.wordIndex, phoneIndex: target.phoneIndex,
+              targetPhone: target.targetPhone,
+              subjectiveCorpusRatingProbabilities: index == 0 ? [0.1, 0.2, 0.7] : [0.7, 0.2, 0.1])
+          }, timingMilliseconds: .init(total: 1, inference: 1))
+      }
+      func resolve(row: LocalGuidedReviewRow? = nil, workflowID: UUID? = nil, roundID: UUID? = nil,
+        observations: [UUID: GuidedResearchModelObservation]? = nil)
+        -> GuidedResearchDetailsPresentation.Side
+      {
+        .resolve(row: row ?? .init(entry: entry, visit: identity.visit, firstSubmission: identity,
+          state: .finished(.matched)), workflowID: workflowID ?? identity.visit.workflowID,
+          roundID: roundID ?? identity.visit.roundID, entry: entry, ageYears: 9,
+          observations: observations ?? [identity.operationID: observation])
+      }
+    }
+
+    func testSynchronousModelHandoffCloseOrBackgroundStartsNoProcessorAndCleansOwnedTake() async throws {
+      for close in [true, false] {
+        let r = Resources()
+        XCTAssertTrue(r.session.configureResearchModel(enabled: true, ageYears: 9))
+        await r.session.startInitialReview()
+        await r.session.media.startRecording()
+        r.session.media.stopRecording()
+        let take = try XCTUnwrap(r.session.media.latestTry)
+        var revoked = false
+        let subscription = r.model.$processingState.sink { state in
+          MainActor.assumeIsolated {
+            if case .processingModel = state, !revoked {
+              revoked = true
+              if close { r.session.media.viewDidDisappear() }
+              else { r.session.media.appDidEnterBackground() }
+            }
+          }
+        }
+        await r.session.checkCurrentWord()
+        let deadline = ContinuousClock.now.advanced(by: .seconds(2))
+        while (!r.session.media.tries.isEmpty || r.session.media.isTransitioning),
+          ContinuousClock.now < deadline { await Task.yield() }
+        XCTAssertTrue(revoked)
+        XCTAssertEqual(r.processor.readinessCalls, 1)
+        XCTAssertTrue(r.processor.calls.isEmpty)
+        XCTAssertEqual(r.capture.permissionRequests, 1)
+        XCTAssertEqual(r.capture.returnedURLs.count, 1)
+        XCTAssertTrue(r.session.media.tries.isEmpty)
+        XCTAssertTrue(r.files.protectedURLs.isEmpty)
+        XCTAssertFalse(r.model.observations.values.contains {
+          $0.request.tryID == take.id && $0.researchResult != nil
+        })
+        XCTAssertTrue(r.history.entries.isEmpty)
+        subscription.cancel()
+        let closed = await r.session.close()
+        XCTAssertTrue(closed)
+      }
+    }
+
     private func captureAndCheck(_ r: Resources) async throws {
       let modelCallsBeforeRecording = r.processor.calls.count
       let readinessBeforeRecording = r.processor.readinessCalls
