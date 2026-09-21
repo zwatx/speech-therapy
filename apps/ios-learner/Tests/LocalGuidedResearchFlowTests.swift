@@ -544,7 +544,7 @@
       await r.session.media.startRecording()
       XCTAssertEqual(r.session.media.phase, .recording)
       r.session.media.stopRecording()
-      _ = try XCTUnwrap(r.session.media.latestTry)
+      let take = try XCTUnwrap(r.session.media.latestTry)
       XCTAssertEqual(r.processor.calls.count, modelCallsBeforeRecording)
       XCTAssertEqual(r.processor.readinessCalls, readinessBeforeRecording)
       await r.session.checkCurrentWord()
