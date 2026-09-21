@@ -549,6 +549,14 @@
       XCTAssertEqual(r.processor.readinessCalls, readinessBeforeRecording)
       await r.session.checkCurrentWord()
       XCTAssertEqual(r.session.media.wordCheckState, .finished(.matched))
+      if r.processor.calls.count == modelCallsBeforeRecording + 1 {
+        let call = try XCTUnwrap(r.processor.calls.last)
+        XCTAssertEqual(call.recording.summary, take.summary)
+        XCTAssertEqual(call.recording.url, r.capture.returnedURLs.last)
+        XCTAssertEqual(call.recording.summary.averagePower, -12)
+        XCTAssertTrue(r.files.canRemove(call.recording.url,
+          owner: try XCTUnwrap(call.recording.cleanupOwnerID)))
+      }
     }
 
     private final class Processor: ResearchAssessmentReadinessChecking {
