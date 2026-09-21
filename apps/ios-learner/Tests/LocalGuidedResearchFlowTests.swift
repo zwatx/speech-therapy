@@ -581,7 +581,12 @@
         attemptId: UUID, recording: CapturedRecording, entry: PracticeLibraryEntry, ageYears: Int
       ) async throws -> ResearchAssessmentOutcome {
         XCTAssertTrue(FileManager.default.fileExists(atPath: recording.url.path))
-        calls.append(.init(id: attemptId, entry: entry, age: ageYears, url: recording.url))
+        let owner = try XCTUnwrap(recording.cleanupOwnerID)
+        XCTAssertTrue(recording.summary.duration.isFinite)
+        XCTAssertTrue(recording.summary.averagePower.isFinite)
+        XCTAssertFalse(files?.canRemove(recording.url, owner: owner) ?? true)
+        calls.append(.init(id: attemptId, entry: entry, age: ageYears, url: recording.url,
+          recording: recording))
         if fail { throw ResearchAssessmentError.serviceUnavailable }
         return result
       }
