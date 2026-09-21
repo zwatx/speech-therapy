@@ -122,6 +122,7 @@
       XCTAssertEqual(r.history.entries.count, 1)
       let closed = await r.session.close()
       XCTAssertTrue(closed)
+      XCTAssertNil(r.session.researchDetails(workflowID: ledger.workflowID, entryID: selected.id))
     }
 
     func testModelFailureDoesNotChangeWordResultChoosePracticeOrStopLocalRecheck() async throws {
