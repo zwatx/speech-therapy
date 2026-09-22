@@ -139,4 +139,74 @@ final class LocalWordRecognitionPresentationTests: XCTestCase {
     XCTAssertNil(LocalWordGuess(completedText: "two words", expectedWord: "ball"))
   }
 
+  func testRetainedCopyExcludesOperationalOutcomesAndKeepsSoundLimits() throws {
+    for status in [LocalWordRecognitionStatus.matched, .notMatched, .uncertain] {
+      let copy = try XCTUnwrap(
+        LocalWordRecognitionPresentation.retainedObservation(status, word: "bread"))
+      XCTAssertTrue(copy.contains("“bread”"))
+      XCTAssertTrue(copy.contains("sounds aren’t assessed") || copy.contains("No sound error"))
+    }
+    for status in [LocalWordRecognitionStatus.timedOut, .unavailable, .cancelled] {
+      XCTAssertNil(LocalWordRecognitionPresentation.retainedObservation(status, word: "bread"))
+    }
+    XCTAssertEqual(LocalWordRecognitionPresentation.noRetainedObservation,
+      "No word-check result for this try.")
+  }
+
+  func testCurrentGuessNamesLatestWhenTwoTriesExist() throws {
+    let guess = try XCTUnwrap(LocalWordGuess(completedText: "wall", expectedWord: "ball"))
+    XCTAssertEqual(LocalWordRecognitionPresentation.wordGuess(guess, hasEarlierTry: true),
+      "Word guess for the latest try: “wall”. This may be wrong; individual sounds aren’t assessed.")
+  }
+
+  func testPracticeDecisionOnlySupportsNoMatchAndUncertainOutcomes() {
+    let current = UUID()
+    for status in statuses {
+      let decision = LocalWordRecognitionPresentation.practiceDecision(
+        status, observedTryID: current, checkedTryID: current, latestTryID: current,
+        isSelectedPractice: true, canContinue: true, canRecordAnotherTry: true)
+      switch status {
+      case .notMatched, .uncertain:
+        XCTAssertEqual(decision,
+          "A word match isn’t required. You can move on or record another try.")
+      case .matched, .timedOut, .unavailable, .cancelled:
+        XCTAssertNil(decision)
+      }
+    }
+  }
+
+  func testPracticeDecisionRequiresSelectedPracticeAndBothAvailableActions() {
+    let current = UUID()
+    for status in [LocalWordRecognitionStatus.notMatched, .uncertain] {
+      for selected in [false, true] {
+        for canContinue in [false, true] {
+          for canRecord in [false, true] {
+            let decision = LocalWordRecognitionPresentation.practiceDecision(
+              status, observedTryID: current, checkedTryID: current, latestTryID: current,
+              isSelectedPractice: selected, canContinue: canContinue,
+              canRecordAnotherTry: canRecord)
+            XCTAssertEqual(decision != nil, selected && canContinue && canRecord)
+          }
+        }
+      }
+    }
+  }
+
+  func testPracticeDecisionRequiresObservationAndCheckForTheExactLatestTry() {
+    let latest = UUID()
+    let earlier = UUID()
+    let takeIDs: [(UUID?, UUID?, UUID?)] = [
+      (nil, nil, nil), (nil, latest, latest), (latest, nil, latest), (latest, latest, nil),
+      (earlier, latest, latest), (latest, earlier, latest), (earlier, earlier, latest),
+      (latest, latest, earlier), (latest, earlier, earlier), (earlier, latest, earlier),
+    ]
+    for status in [LocalWordRecognitionStatus.notMatched, .uncertain] {
+      for (observed, checked, current) in takeIDs {
+        XCTAssertNil(LocalWordRecognitionPresentation.practiceDecision(
+          status, observedTryID: observed, checkedTryID: checked, latestTryID: current,
+          isSelectedPractice: true, canContinue: true, canRecordAnotherTry: true))
+      }
+    }
+  }
+
 }
