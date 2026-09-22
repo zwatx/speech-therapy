@@ -7,6 +7,66 @@ final class LocalWordRecognitionPresentationTests: XCTestCase {
     .matched, .notMatched, .uncertain, .timedOut, .unavailable, .cancelled,
   ]
 
+  func testTechnicalRetryActionRequiresCurrentTakeAndAdmission() {
+    let current = UUID()
+    let otherTakes: [(UUID?, UUID?)] = [(nil, current), (current, nil), (current, UUID())]
+    for status in [LocalWordRecognitionStatus.timedOut, .unavailable, .cancelled] {
+      for hasEarlierTry in [false, true] {
+        XCTAssertEqual(LocalWordRecognitionPresentation.retryActionLabel(status,
+          checkedTryID: current, latestTryID: current, hasEarlierTry: hasEarlierTry, canCheck: true),
+          hasEarlierTry ? "Try word check again on latest try" : "Try word check again")
+        for (checked, latest) in otherTakes {
+          XCTAssertNil(LocalWordRecognitionPresentation.retryActionLabel(status,
+            checkedTryID: checked, latestTryID: latest, hasEarlierTry: hasEarlierTry, canCheck: true))
+        }
+        XCTAssertNil(LocalWordRecognitionPresentation.retryActionLabel(status,
+          checkedTryID: current, latestTryID: current, hasEarlierTry: hasEarlierTry, canCheck: false))
+      }
+    }
+  }
+
+  func testSettledWordOutcomesNeverOfferTechnicalRetry() {
+    let current = UUID()
+    for status in [LocalWordRecognitionStatus.matched, .notMatched, .uncertain] {
+      for hasEarlierTry in [false, true] {
+        XCTAssertNil(LocalWordRecognitionPresentation.retryActionLabel(status,
+          checkedTryID: current, latestTryID: current, hasEarlierTry: hasEarlierTry, canCheck: true))
+      }
+    }
+  }
+
+  func testCheckActionLabelPreservesCustomPrecedenceAndRejectsUnsettledRetryCopy() {
+    let current = UUID()
+    let custom = "Check word and run research model"
+    for state in [LocalWordCheckState.idle, .checking, .cancelling, .cleanupBlocked,
+                  .finished(.timedOut), .finished(.unavailable), .finished(.cancelled)] {
+      XCTAssertEqual(LocalWordRecognitionPresentation.checkActionLabel(customLabel: custom,
+        state: state, checkedTryID: current, latestTryID: current,
+        hasEarlierTry: false, canCheck: true), custom)
+      XCTAssertEqual(LocalWordRecognitionPresentation.checkActionLabel(customLabel: custom,
+        state: state, checkedTryID: nil, latestTryID: UUID(),
+        hasEarlierTry: true, canCheck: false), custom)
+    }
+    for state in [LocalWordCheckState.idle, .checking, .cancelling, .cleanupBlocked] {
+      for earlier in [false, true] {
+        XCTAssertEqual(LocalWordRecognitionPresentation.checkActionLabel(customLabel: nil,
+          state: state, checkedTryID: current, latestTryID: current,
+          hasEarlierTry: earlier, canCheck: true),
+          earlier ? "Check words in latest try" : "Check words in this try")
+      }
+    }
+    XCTAssertEqual(LocalWordRecognitionPresentation.checkActionLabel(customLabel: nil,
+      state: .finished(.timedOut), checkedTryID: current, latestTryID: current,
+      hasEarlierTry: true, canCheck: true), "Try word check again on latest try")
+    let excluded: [(UUID?, UUID?, Bool)] = [(nil, current, true), (current, UUID(), true),
+                                          (current, current, false)]
+    for (checked, latest, admitted) in excluded {
+      XCTAssertEqual(LocalWordRecognitionPresentation.checkActionLabel(customLabel: nil,
+        state: .finished(.timedOut), checkedTryID: checked, latestTryID: latest,
+        hasEarlierTry: false, canCheck: admitted), "Check words in this try")
+    }
+  }
+
   func testEveryObservationRequiresTheSameKeptTake() {
     let checked = UUID()
     let replacement = UUID()
