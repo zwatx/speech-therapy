@@ -414,6 +414,99 @@ final class LocalGuidedReviewLedgerTests: XCTestCase {
     XCTAssertNil(ledger.beginReviewVisit(visitID: UUID()))
   }
 
+  func testPairedRowsJoinReorderedPracticeByCanonicalIDAndKeepPartialRecheckIndependent() throws {
+    var ledger = try LocalGuidedReviewLedger(entryIDs: starters)
+    _ = try completeInitial(&ledger)
+    let initial = ledger.initialRound
+    XCTAssertTrue(ledger.pairedRows.isEmpty)
+    let practiceID = UUID()
+    XCTAssertTrue(ledger.beginPractice(
+      entryIDs: [starters[4], starters[1], starters[3]], practiceID: practiceID))
+    let saved = try XCTUnwrap(ledger.beginPracticeVisit(visitID: UUID()))
+    XCTAssertTrue(ledger.finishPracticeVisit(
+      saved, disposition: .finished, freshTryID: UUID(), cleanupConfirmed: true))
+    XCTAssertTrue(ledger.leavePracticeVisit(saved, cleanupConfirmed: true))
+    let unsaved = try XCTUnwrap(ledger.beginPracticeVisit(visitID: UUID()))
+    XCTAssertTrue(ledger.finishPracticeVisit(
+      unsaved, disposition: .saveUnconfirmed, freshTryID: UUID(), cleanupConfirmed: true))
+    XCTAssertTrue(ledger.leavePracticeVisit(unsaved, cleanupConfirmed: true))
+    let skipped = try XCTUnwrap(ledger.beginPracticeVisit(visitID: UUID()))
+    XCTAssertTrue(ledger.finishPracticeNow(
+      practiceID: practiceID, visitID: skipped.visitID, cleanupConfirmed: true))
+    let practice = ledger.practiceRows
+    let recheckID = UUID()
+    XCTAssertTrue(ledger.beginRecheck(roundID: recheckID))
+    let first = try settleCurrent(&ledger, status: .notMatched)
+    XCTAssertTrue(ledger.leaveReviewVisit(first.visit, cleanupConfirmed: true))
+    let second = try XCTUnwrap(ledger.beginReviewVisit(visitID: UUID()))
+    XCTAssertTrue(ledger.finishReviewNow(
+      roundID: recheckID, visitID: second.visitID, cleanupConfirmed: true))
+    let recheck = try XCTUnwrap(ledger.recheckRound)
+    let rows = ledger.pairedRows
+    XCTAssertEqual(rows.map { $0.entry.id }, starters)
+    XCTAssertEqual(rows.map(\.initial), initial.rows)
+    XCTAssertEqual(rows.map(\.recheck), recheck.rows)
+    XCTAssertNil(rows[0].practice)
+    XCTAssertEqual(rows[1].practice, practice[1])
+    XCTAssertNil(rows[2].practice)
+    XCTAssertEqual(rows[3].practice, practice[2])
+    XCTAssertEqual(rows[4].practice, practice[0])
+    XCTAssertEqual(rows[1].practice?.state, .finished(.saveUnconfirmed))
+    XCTAssertEqual(rows[3].practice?.state, .finished(.skipped))
+    XCTAssertEqual(rows[4].practice?.state, .finished(.finished))
+    XCTAssertEqual(rows.map { $0.recheck.state }, [
+      .finished(.notMatched), .finished(.skipped), .finished(.unreached),
+      .finished(.unreached), .finished(.unreached),
+    ])
+    // Projection is read-only, and a late save cannot rewrite the completed context.
+    XCTAssertFalse(ledger.acknowledgePracticeSaved(unsaved, completionID: unsaved.visitID))
+    XCTAssertEqual(ledger.pairedRows, rows)
+    XCTAssertEqual(ledger.initialRound, initial)
+    XCTAssertEqual(ledger.recheckRound, recheck)
+    XCTAssertEqual(ledger.practiceRows, practice)
+  }
+
+  func testPairedRowsKeepAcknowledgedSaveAndUnreachedPracticeDistinctFromUnselected() throws {
+    var ledger = try LocalGuidedReviewLedger(entryIDs: starters)
+    _ = try completeInitial(&ledger)
+    let initial = ledger.initialRound
+    let practiceID = UUID()
+    XCTAssertTrue(ledger.beginPractice(
+      entryIDs: [starters[3], starters[0]], practiceID: practiceID))
+    let visit = try XCTUnwrap(ledger.beginPracticeVisit(visitID: UUID()))
+    let freshTryID = UUID()
+    XCTAssertTrue(ledger.finishPracticeVisit(
+      visit, disposition: .saveUnconfirmed, freshTryID: freshTryID, cleanupConfirmed: true))
+    let beforeAcknowledgement = ledger.practiceRows[0]
+    XCTAssertTrue(ledger.acknowledgePracticeSaved(visit, completionID: visit.visitID))
+    XCTAssertEqual(ledger.practiceRows[0].entry, beforeAcknowledgement.entry)
+    XCTAssertEqual(ledger.practiceRows[0].visit, beforeAcknowledgement.visit)
+    XCTAssertEqual(ledger.practiceRows[0].freshTryID, freshTryID)
+    XCTAssertEqual(ledger.practiceRows[0].state, .finished(.finished))
+    XCTAssertEqual(ledger.initialRound, initial)
+    XCTAssertTrue(ledger.leavePracticeVisit(visit, cleanupConfirmed: true))
+    XCTAssertTrue(ledger.finishPracticeNow(
+      practiceID: practiceID, visitID: nil, cleanupConfirmed: true))
+    let practice = ledger.practiceRows
+    XCTAssertTrue(ledger.beginRecheck(roundID: UUID()))
+    let recheck = try XCTUnwrap(ledger.recheckRound)
+    let rows = ledger.pairedRows
+    XCTAssertEqual(rows.map { $0.entry.id }, starters)
+    XCTAssertEqual(rows[0].practice, practice[1])
+    XCTAssertEqual(rows[0].practice?.state, .finished(.unreached))
+    XCTAssertNil(rows[0].practice?.visit)
+    XCTAssertNil(rows[0].practice?.freshTryID)
+    XCTAssertEqual(rows[3].practice, practice[0])
+    XCTAssertEqual(rows[3].practice?.state, .finished(.finished))
+    XCTAssertEqual(rows[3].practice?.freshTryID, freshTryID)
+    for index in [1, 2, 4] { XCTAssertNil(rows[index].practice) }
+    XCTAssertEqual(rows.map(\.initial), initial.rows)
+    XCTAssertEqual(rows.map(\.recheck), recheck.rows)
+    XCTAssertEqual(ledger.initialRound, initial)
+    XCTAssertEqual(ledger.recheckRound, recheck)
+    XCTAssertEqual(ledger.practiceRows, practice)
+  }
+
   private func completeInitial(_ ledger: inout LocalGuidedReviewLedger) throws
     -> [LocalGuidedCheckIdentity]
   {
