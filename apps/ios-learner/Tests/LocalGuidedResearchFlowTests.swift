@@ -588,7 +588,9 @@
         calls.append(.init(id: attemptId, entry: entry, age: ageYears, url: recording.url,
           recording: recording))
         if fail { throw ResearchAssessmentError.serviceUnavailable }
-        return result
+        if let result { return result }
+        return .processedResearch(try ResearchAssessmentFixtures.result(attemptId: attemptId,
+          recording: recording, entry: entry, ageYears: ageYears, milliseconds: 1))
       }
     }
 
@@ -607,6 +609,7 @@
         history = PracticeParticipationStore(
           fileURL: directory.appendingPathComponent("history.json"))
         capture = LocalGuidedGeneratedCapture(hardware: hardware, files: files)
+        processor.files = files
         let word = LocalGuidedGeneratedRecognizer(files: files, holdsResult: false)
         model = GuidedResearchModelRecognizer(
           wordRecognizer: word, processor: processor, ownership: files,
