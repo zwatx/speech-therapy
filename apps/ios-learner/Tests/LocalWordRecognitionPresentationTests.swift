@@ -134,7 +134,7 @@ final class LocalWordRecognitionPresentationTests: XCTestCase {
     XCTAssertNil(LocalWordRecognitionPresentation.wordGuess(nil))
     let guess = try XCTUnwrap(LocalWordGuess(completedText: "WALL", expectedWord: "ball"))
     XCTAssertEqual(LocalWordRecognitionPresentation.wordGuess(guess),
-      "Word guess: “wall”. This may be wrong; individual sounds aren’t assessed.")
+      "Word guess for this try: “wall”. This may be wrong; individual sounds aren’t assessed.")
     XCTAssertNil(LocalWordGuess(completedText: "ball", expectedWord: "ball"))
     XCTAssertNil(LocalWordGuess(completedText: "two words", expectedWord: "ball"))
   }
