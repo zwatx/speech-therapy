@@ -45,6 +45,15 @@
       XCTAssertEqual(result, .unavailable(reason: "silence"))
     }
 
+    func testCancelledRequestCannotReturnResearchScores() async throws {
+      let task = Task { try await execute() }
+      task.cancel()
+      do {
+        _ = try await task.value
+        XCTFail("Cancelled request returned a result")
+      } catch { XCTAssertTrue(error is CancellationError) }
+    }
+
     func testRejectsUnsafeEligibilityClaimsAndPromptMatch() async throws {
       for field in ["learnerFeedbackEligible", "clinicalUseEligible", "productionUseEligible"] {
         await rejected { $0[field] = true }
