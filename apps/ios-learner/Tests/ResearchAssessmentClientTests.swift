@@ -26,7 +26,13 @@
     func testProcessedResponseRetainsValidatedUnverifiedTargets() async throws {
       let callerId = UUID(uuidString: "00000000-0000-4000-8000-000000000123")!
       let result = try await execute(attemptId: callerId)
-      XCTAssertEqual(result, .processedUnverified(milliseconds: 9000))
+      guard case .processedResearch(let research) = result else { return XCTFail("Missing validated scores") }
+      XCTAssertEqual(research.context.operationID, callerId)
+      XCTAssertEqual(research.context.entryID, entry.id)
+      XCTAssertEqual(research.model.manifestSha256, ResearchAssessmentClient.manifest)
+      XCTAssertEqual(research.timingMilliseconds.total, 9000)
+      XCTAssertEqual(research.targets.map(\.subjectiveCorpusRatingProbabilities),
+        Array(repeating: [0.1, 0.2, 0.7], count: research.targets.count))
     }
 
     func testUnavailableResponseIsBoundToThisRecording() async throws {
