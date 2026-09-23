@@ -23,7 +23,7 @@
       XCTAssertEqual(ResearchAssessmentLabView.entries.count, 15)
     }
 
-    func testProcessedResponseExposesOnlyUnverifiedOutcome() async throws {
+    func testProcessedResponseRetainsValidatedUnverifiedTargets() async throws {
       let callerId = UUID(uuidString: "00000000-0000-4000-8000-000000000123")!
       let result = try await execute(attemptId: callerId)
       XCTAssertEqual(result, .processedUnverified(milliseconds: 9000))
