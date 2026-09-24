@@ -47,6 +47,50 @@ final class WhisperRuntimeOwnerTests: XCTestCase {
         .init(status: success ? .matched : .unavailable, cleanupConfirmed: true, retainedHandle: nil)
     }
 
+    func testProcessingFailureEvictsOnOwnerWhileNormalAbstentionKeepsPair() async {
+        let trace = RuntimeTrace(), owner = WhisperRuntimeOwner<RuntimePairFixture>()
+        let stop = WhisperOperationStop()
+        let abstention = await Task.detached {
+            owner.perform { slot in
+                WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { slot.evict() }) {
+                    let pair = try slot.admittedPair(identity: "admitted-A") { RuntimePairFixture(trace) }
+                    pair.use("abstain")
+                    return WhisperCoreMLWorker.completedRecognition(
+                        text: "two words", expectedWord: "sample", stop: stop)
+                }
+            }
+        }.value
+        XCTAssertEqual(abstention.status, .uncertain)
+        XCTAssertEqual(trace.events, ["worker:load", "worker:abstain"])
+        let failure = await Task.detached {
+            owner.perform { slot in
+                WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { slot.evict() }) {
+                    let pair = try slot.admittedPair(identity: "admitted-A") { RuntimePairFixture(trace) }
+                    pair.use("fails")
+                    _ = try WhisperCoreMLWorker.maximum(logits: [], stop: stop, isAllowed: { _ in true })
+                    return Self.completion(true)
+                }
+            }
+        }.value
+        XCTAssertEqual(failure.status, .unavailable)
+        XCTAssertTrue(failure.cleanupConfirmed)
+        XCTAssertNil(failure.wordGuess)
+        XCTAssertEqual(trace.events, ["worker:load", "worker:abstain", "worker:fails", "worker:dispose"])
+        let next = await Task.detached {
+            owner.perform { slot in
+                WhisperCoreMLWorker.processingCompletion(stop: stop, evict: { slot.evict() }) {
+                    let pair = try slot.admittedPair(identity: "admitted-A") { RuntimePairFixture(trace) }
+                    pair.use("next")
+                    return Self.completion(true)
+                }
+            }
+        }.value
+        XCTAssertEqual(next.status, .matched)
+        await owner.close()
+        XCTAssertEqual(trace.events, ["worker:load", "worker:abstain", "worker:fails", "worker:dispose",
+                                      "worker:load", "worker:next", "worker:dispose"])
+    }
+
     func testSequentialRequestsReuseOnePairAndIdleEvictionForcesFreshLoad() async {
         let trace = RuntimeTrace(), owner = WhisperRuntimeOwner<RuntimePairFixture>()
         XCTAssertTrue(trace.events.isEmpty, "Creating a provider must remain lazy")
