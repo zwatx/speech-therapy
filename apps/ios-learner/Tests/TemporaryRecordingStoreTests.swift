@@ -4,6 +4,31 @@ import XCTest
 @testable import CadenceLearner
 
 final class TemporaryRecordingStoreTests: XCTestCase {
+  func testSymlinkedDirectoryKeepsAbsoluteRecordingIdentityAcrossCreationAndRemoval() throws {
+    let root = FileManager.default.temporaryDirectory
+      .appendingPathComponent("cadence-store-alias-\(UUID())", isDirectory: true)
+    let target = root.appendingPathComponent("target", isDirectory: true)
+    let alias = root.appendingPathComponent("alias", isDirectory: true)
+    try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    try FileManager.default.createSymbolicLink(at: alias, withDestinationURL: target)
+    // Foundation can also supply a directory relative to a file URL base.
+    let relativeAlias = try XCTUnwrap(URL(string: "alias/", relativeTo: root))
+    let store = TemporaryRecordingStore(directory: relativeAlias)
+    XCTAssertNil(store.directory.baseURL)
+    XCTAssertEqual(store.directory.path, target.resolvingSymlinksInPath().standardizedFileURL.path)
+    let file = store.makeRecordingURL().standardizedFileURL
+    XCTAssertNil(file.baseURL)
+    let identityBeforeCreation = file
+    try Data([1, 2, 3]).write(to: file)
+    XCTAssertEqual(file.standardizedFileURL, identityBeforeCreation)
+    XCTAssertEqual(file.resolvingSymlinksInPath(), identityBeforeCreation)
+    try store.removeRecordingIfPresent(at: file)
+    XCTAssertEqual(file.standardizedFileURL, identityBeforeCreation)
+    XCTAssertFalse(FileManager.default.fileExists(atPath: file.path))
+    XCTAssertNoThrow(try store.removeRecordingIfPresent(at: file))
+  }
+
   func testRemovesOnlyCadenceTemporaryRecordings() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("cadence-store-test-\(UUID().uuidString)")
