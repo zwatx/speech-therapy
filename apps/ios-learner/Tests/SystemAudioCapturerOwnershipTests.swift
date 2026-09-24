@@ -6,6 +6,42 @@ import XCTest
 
 @MainActor
 final class SystemAudioCapturerOwnershipTests: XCTestCase {
+  /// Physical-device probe: production file ownership/removal and AVAudioFile parsing,
+  /// with generated PCM and an inert driver. Never opens the microphone or scans old takes.
+  func testSyntheticRecordingUsesRealTemporaryFilesystemThroughStopAndDiscard() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("capture-device-probe-\(UUID())", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let files = ProcessAudioFileOwnership()
+    let hardware = AudioHardwareOwnership()
+    let driver = ControlledCaptureDriver()
+    let capturer = SystemAudioCapturer(
+      recordingStore: TemporaryRecordingStore(directory: directory),
+      fileOwnership: files, hardwareOwnership: hardware, driverFactory: { driver })
+
+    XCTAssertEqual(capturer.startupAvailability, .available)
+    try capturer.start { _ in XCTFail("The inert driver must not finish asynchronously") }
+    let take = try capturer.stop()
+    let owner = try XCTUnwrap(take.cleanupOwnerID)
+    XCTAssertNil(take.url.baseURL, "Recording ownership must use an absolute URL")
+    XCTAssertEqual(take.url, take.url.absoluteURL)
+    XCTAssertEqual(take.url, take.url.standardizedFileURL,
+      "Creating the file must not change its producer ownership key")
+    XCTAssertNil(hardware.currentLease)
+    XCTAssertTrue(FileManager.default.fileExists(atPath: take.url.path))
+    XCTAssertTrue(files.protectedURLs.contains(take.url))
+    try capturer.discard(take)
+    XCTAssertFalse(FileManager.default.fileExists(atPath: take.url.path))
+    XCTAssertEqual(capturer.completedFileCleanup(operationID: owner)?.result, .released)
+    XCTAssertEqual(capturer.cleanupState, .idle)
+    XCTAssertTrue(files.protectedURLs.isEmpty)
+    try capturer.start { _ in XCTFail("The inert driver must not finish asynchronously") }
+    try capturer.cancel()
+    XCTAssertTrue(try FileManager.default.contentsOfDirectory(atPath: directory.path).isEmpty)
+    XCTAssertNil(hardware.currentLease)
+  }
+
   func testRecordingPowerReadsOnlyFiniteCurrentLevels() throws {
     let fixture = try Fixture()
     defer { fixture.dispose() }
