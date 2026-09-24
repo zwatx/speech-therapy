@@ -35,11 +35,11 @@
           attemptId: UUID(), recording: recording,
           entry: try XCTUnwrap(PracticeLibrary.entries().first { $0.id == "b-beginning-baby" }),
           ageYears: 6)
-        guard case .processedUnverified(let milliseconds) = outcome else {
+        guard case .processedResearch(let result) = outcome else {
           return XCTFail(
             "The available local model must process this engineering input: \(outcome)")
         }
-        XCTAssertTrue(milliseconds.isFinite && milliseconds > 0)
+        XCTAssertTrue(result.timingMilliseconds.total.isFinite && result.timingMilliseconds.total > 0)
         try FileManager.default.removeItem(at: file)  // Fresh unique-root synthetic file; no capture owner.
         XCTAssertTrue(try FileManager.default.contentsOfDirectory(atPath: root.path).isEmpty)
       } catch ResearchAssessmentError.serviceUnavailable {
