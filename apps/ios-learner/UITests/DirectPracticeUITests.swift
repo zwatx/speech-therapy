@@ -7,6 +7,7 @@ final class DirectPracticeUITests: XCTestCase {
     app.launch()
     XCTAssertTrue(app.buttons["cadence.start"].waitForExistence(timeout: 5))
     XCTAssertFalse(app.staticTexts["Connect this device"].exists)
+    waitForPracticeSystemBannerToClear()
     keepScreenshot("home", app: app)
     // Rows scrolled beneath the floating system tab bar are partly covered by its glass;
     // the audit reads that overlap as low contrast. Every other finding still fails.
@@ -19,6 +20,7 @@ final class DirectPracticeUITests: XCTestCase {
     app.buttons["cadence.start"].tap()
     XCTAssertTrue(app.buttons["cadence.record"].waitForExistence(timeout: 3))
     XCTAssertEqual(app.staticTexts["cadence.word"].label, "ball")
+    waitForPracticeSystemBannerToClear()
     keepScreenshot("prompt", app: app)
     try app.performAccessibilityAudit()
     app.buttons["cadence.close"].tap()
