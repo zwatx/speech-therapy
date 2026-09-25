@@ -704,6 +704,71 @@ extension DirectTryUITests {
     release.tap()
   }
 
+  func testCompactRetainedWordChecksStayWithTheirRecordings() {
+    retainedWordChecksJourney("wordCheckCompare")
+  }
+
+  func testLargestTextRetainedWordChecksStayWithTheirRecordings() {
+    retainedWordChecksJourney("wordCheckCompareAX")
+  }
+
+  private func retainedWordChecksJourney(_ testCase: String) {
+    let app = launch(testCase)
+    let latest = app.staticTexts["cadence.word-check-result"]
+    let earlier = app.staticTexts["cadence.word-check-earlier-result"]
+    let empty = app.staticTexts["cadence.word-check-empty"]
+    let matched = "“ball” matched in this try. Individual sounds aren’t assessed."
+    let uncertain = "No clear match for “ball” in this try. Individual sounds aren’t assessed."
+    recordTake(another: false, app)
+    waitLabel(empty, "No word-check result for this try.")
+    activate("cadence.word-check", app)
+    expectWordCheck(requests: 1, file: 1, latest: true, cancellations: 0, pending: true, app)
+    releaseGeneratedWordCheck(app)
+    waitLabel(latest, matched)
+    recordTake(another: true, app)
+    waitGone(latest)
+    waitLabel(earlier, matched)
+    waitLabel(empty, "No word-check result for this try.")
+    expectWordCheck(requests: 1, file: 1, latest: false, cancellations: 0, pending: false, app)
+    activate("cadence.word-check", app)
+    expectWordCheck(requests: 2, file: 2, latest: true, cancellations: 0, pending: true, app)
+    XCTAssertFalse(earlier.exists, "Historical copy is suppressed while another check borrows audio")
+    releaseGeneratedWordCheck(app)
+    waitLabel(earlier, matched)
+    waitLabel(latest, uncertain)
+    for (id, file) in [("cadence.replay-earlier", 1), ("cadence.replay", 2)] {
+      activate(id, app)
+      expectPlayback(file, app)
+      activate(id, app)
+      expectPlayback(nil, app)
+    }
+    expectWordCheck(requests: 2, file: 2, latest: true, cancellations: 0, pending: false, app)
+    for (id, label) in [("cadence.word-check-earlier-result", matched),
+                        ("cadence.word-check-result", uncertain)] {
+      let result = app.staticTexts[id]
+      waitLabel(result, label)
+      scrollTo(result, app)
+      XCTAssertTrue(result.isHittable)
+      XCTAssertGreaterThan(result.frame.width, 0)
+      let captureName = testCase + "-" + id
+      let shot = XCTAttachment(screenshot: app.screenshot())
+      shot.name = captureName
+      shot.lifetime = .keepAlways
+      add(shot)
+      let tree = XCTAttachment(string: app.debugDescription)
+      tree.name = captureName + "-accessibility"
+      tree.lifetime = .keepAlways
+      add(tree)
+    }
+    recordTake(another: true, app)
+    waitGone(latest)
+    waitLabel(earlier, uncertain)
+    waitLabel(empty, "No word-check result for this try.")
+    expectFiles(made: 3, kept: 2, requests: 3, starts: 2, app)
+    expectWordCheck(requests: 2, file: 2, latest: false, cancellations: 0, pending: false, app)
+    close(app, closedFiles: (made: 3, kept: 0, requests: 3, starts: 2))
+  }
+
   private func wordCheckLatestJourney(_ testCase: String) {
     let app = launch(testCase)
     expectWordCheck(requests: 0, file: nil, latest: false, cancellations: 0, pending: false, app)
