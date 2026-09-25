@@ -592,6 +592,21 @@ extension DirectTryUITests {
       focus.frame.maxY, min(viewport.maxY, app.windows.firstMatch.frame.maxY), file: file,
       line: line)
     XCTAssertFalse(app.buttons[listeningFocusID].exists, file: file, line: line)
+    let firstReplay = app.buttons["cadence.replay-earlier"].exists
+      ? app.buttons["cadence.replay-earlier"] : app.buttons["cadence.replay"]
+    XCTAssertTrue(firstReplay.exists, file: file, line: line)
+    // Read both frames after the same scroll; oversized combined content need not all fit.
+    let focusFrame = focus.frame
+    let replayFrame = firstReplay.frame
+    XCTAssertLessThanOrEqual(focusFrame.maxY, replayFrame.minY, file: file, line: line)
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = "listening-focus-before-replay-" + expected
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
+    let ax = XCTAttachment(string: focus.label)
+    ax.name = "listening-focus-AX-" + expected
+    ax.lifetime = .keepAlways
+    add(ax)
   }
 
   private func listeningFocusTwoTryJourney(_ testCase: String) {
