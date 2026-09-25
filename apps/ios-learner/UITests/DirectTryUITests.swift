@@ -4,6 +4,126 @@ import XCTest
 /// output; playback markers report the generated file requested, never audibility.
 @MainActor
 final class DirectTryUITests: XCTestCase {
+  func testCompactTimedOutCheckRetriesSameSingleTake() {
+    timeoutRetryJourney("wordCheckTimeout", twoTakes: false)
+  }
+  func testLargestTextTimedOutCheckRetriesSameSingleTake() {
+    timeoutRetryJourney("wordCheckTimeoutAX", twoTakes: false)
+  }
+  func testCompactTimedOutCheckRetriesLatestOfTwoTakes() {
+    timeoutRetryJourney("wordCheckTimeout", twoTakes: true)
+  }
+  func testLargestTextTimedOutCheckRetriesLatestOfTwoTakes() {
+    timeoutRetryJourney("wordCheckTimeoutAX", twoTakes: true)
+  }
+
+  private func timeoutRetryJourney(_ testCase: String, twoTakes: Bool) {
+    let app = launch(testCase)
+    executionTimeAllowance = 240
+    let count = twoTakes ? 2 : 1
+    let tag = "generated-timeout-" + testCase + (twoTakes ? "-two" : "-one")
+    registerGeneratedTimeoutEvidence(tag, app)
+    recordTake(another: false, app)
+    if twoTakes { recordTake(another: true, app) }
+    expectFiles(made: count, kept: count, requests: count, starts: 0, app)
+    expectWordCheck(requests: 0, file: nil, latest: false, cancellations: 0, pending: false, app)
+    activate("cadence.word-check", app)
+    expectWordCheck(requests: 1, file: count, latest: true, cancellations: 0, pending: true, app)
+    releaseGeneratedWordCheck(app)
+    let result = app.staticTexts["cadence.word-check-result"]
+    waitLabel(result, "Word check took too long. Your recording is still here.")
+    captureGeneratedTimeoutText(result, id: "cadence.word-check-result", name: tag + "-timeout", app)
+    let retry = app.buttons["cadence.word-check"]
+    waitLabel(retry, twoTakes ? "Try word check again on latest try" : "Try word check again")
+    revealGeneratedTimeoutControl(retry, id: "cadence.word-check", app)
+    captureGeneratedTimeoutState(tag + "-retry-action", app)
+    expectWordCheck(requests: 1, file: count, latest: true, cancellations: 0, pending: false, app)
+    expectFiles(made: count, kept: count, requests: count, starts: 0, app)
+    waitLabel(app.staticTexts["cadence.generated-history"], "Generated history: 0 entries")
+    retry.tap()
+    expectWordCheck(requests: 2, file: count, latest: true, cancellations: 0, pending: true, app)
+    waitLabel(app.staticTexts["cadence.generated-retry-binding"],
+      "Generated retry binding: same take yes · new operation yes")
+    XCTAssertFalse(app.buttons["cadence.word-check"].exists, "No duplicate check action while pending")
+    XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
+    XCTAssertFalse(app.buttons["cadence.replay"].isEnabled)
+    let pending = app.staticTexts["cadence.word-check-status"]
+    waitLabel(pending, "Checking words in this try on this device…")
+    captureGeneratedTimeoutText(pending, id: "cadence.word-check-status", name: tag + "-pending", app)
+    expectWordCheck(requests: 2, file: count, latest: true, cancellations: 0, pending: true, app)
+    expectFiles(made: count, kept: count, requests: count, starts: 0, app)
+    releaseGeneratedWordCheck(app)
+    waitLabel(result, "“ball” matched in this try. Individual sounds aren’t assessed.")
+    captureGeneratedTimeoutText(result, id: "cadence.word-check-result", name: tag + "-matched", app)
+    XCTAssertFalse(app.buttons["cadence.word-check"].isEnabled)
+    if twoTakes {
+      XCTAssertFalse(app.staticTexts["cadence.word-check-earlier-result"].exists)
+      waitLabel(app.staticTexts["cadence.word-check-earlier-empty"], "No word-check result for this try.")
+    }
+    expectWordCheck(requests: 2, file: count, latest: true, cancellations: 0, pending: false, app)
+    expectFiles(made: count, kept: count, requests: count, starts: 0, app)
+    waitLabel(app.staticTexts["cadence.generated-history"], "Generated history: 0 entries")
+    close(app, closedFiles: (made: count, kept: 0, requests: count, starts: 0))
+  }
+
+  func testCompactSkippedRoundMakesNoMediaOrParticipation() {
+    skipJourney("skip", recordMiddle: false)
+  }
+
+  func testLargestTextSkippedRoundMakesNoMediaOrParticipation() {
+    skipJourney("skipAX", recordMiddle: false)
+  }
+
+  func testCompactMixedSkippedRoundCountsOnlyCompletedRecording() {
+    skipJourney("skip", recordMiddle: true)
+  }
+
+  func testLargestTextMixedSkippedRoundCountsOnlyCompletedRecording() {
+    skipJourney("skipAX", recordMiddle: true)
+  }
+
+  private func skipJourney(_ testCase: String, recordMiddle: Bool) {
+    let app = launch(testCase)
+    activate("cadence.skip-word", app)
+    waitLabel(app.staticTexts["cadence.word"], "boat")
+    expectFiles(made: 0, kept: 0, requests: 0, starts: 0, app)
+    waitLabel(app.staticTexts["cadence.generated-history"], "Generated history: 0 entries")
+    if recordMiddle {
+      recordTake(another: false, app)
+      XCTAssertFalse(app.buttons["cadence.skip-word"].exists)
+      activate("cadence.continue", app)
+    } else {
+      activate("cadence.skip-word", app)
+    }
+    waitLabel(app.staticTexts["cadence.word"], "bee")
+    expectFiles(made: recordMiddle ? 1 : 0, kept: 0,
+                requests: recordMiddle ? 1 : 0, starts: 0, app)
+    waitLabel(app.staticTexts["cadence.generated-history"], "Generated history: 0 entries")
+    activate("cadence.skip-word", app)
+    let completion = app.staticTexts["cadence.complete"]
+    waitLabel(completion, recordMiddle
+      ? "You practiced 1 word. Skipped 2 words. Come back whenever you’re ready."
+      : "You skipped all 3 words. Nothing was added to recent practice.")
+    waitLabel(app.staticTexts["cadence.generated-history"], recordMiddle
+      ? "Generated history: 1 entry, b, 1 word" : "Generated history: 0 entries")
+    XCTAssertFalse(app.buttons["cadence.history-retry"].exists)
+    XCTAssertFalse(app.staticTexts["cadence.history-saved"].exists)
+    XCTAssertFalse(app.buttons["cadence.skip-word"].exists)
+    scrollTo(completion, app)
+    XCTAssertTrue(completion.isHittable)
+    let name = recordMiddle ? "skip-mixed-completion" : "skip-all-completion"
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = name
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = name + "-accessibility"
+    tree.lifetime = .keepAlways
+    add(tree)
+    close(app, closedFiles: (recordMiddle ? 1 : 0, 0, recordMiddle ? 1 : 0, 0))
+    app.terminate()
+  }
+
   func testCompactTwoTriesSwitchExactGeneratedFilesThenCloseRemovesBoth() {
     comparisonAndCloseJourney("twoTry")
   }
