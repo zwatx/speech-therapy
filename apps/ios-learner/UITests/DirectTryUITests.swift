@@ -944,11 +944,13 @@ extension DirectTryUITests {
     expectWordCheck(requests: 0, file: nil, latest: false, cancellations: 0, pending: false, app)
     activate("cadence.word-check", app)
     expectWordCheck(requests: 1, file: 1, latest: true, cancellations: 0, pending: true, app)
+    XCTAssertFalse(app.staticTexts[listeningFocusID].exists)
     activate("cadence.word-check-cancel", app)
     waitLabel(
       app.staticTexts["cadence.word-check-status"],
       "Cancelling word check. Waiting for the recognizer to finish cleanup…")
     expectWordCheck(requests: 1, file: 1, latest: true, cancellations: 1, pending: true, app)
+    XCTAssertFalse(app.staticTexts[listeningFocusID].exists)
     XCTAssertFalse(app.buttons["cadence.replay"].isEnabled)
     XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
     XCTAssertFalse(app.buttons["cadence.continue"].isEnabled)
@@ -956,6 +958,7 @@ extension DirectTryUITests {
     activate("cadence.close", app)
     XCTAssertFalse(app.staticTexts["cadence.generated-direct-closed"].exists)
     XCTAssertTrue(app.staticTexts["cadence.close-note"].waitForExistence(timeout: 5))
+    XCTAssertFalse(app.staticTexts[listeningFocusID].exists)
     expectWordCheck(requests: 1, file: 1, latest: true, cancellations: 1, pending: true, app)
     expectFiles(made: 1, kept: 1, requests: 1, starts: 0, app)
     XCTAssertFalse(app.staticTexts["cadence.word-check-result"].exists)
