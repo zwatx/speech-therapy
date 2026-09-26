@@ -868,8 +868,11 @@ extension DirectTryUITests {
     screenshot.name = testCase.hasSuffix("AX") ? "word-guess-largest" : "word-guess-compact"
     screenshot.lifetime = .keepAlways
     add(screenshot)
+    expectListeningFocus(
+      "Play the earlier try, then the latest. Listen for /b/ at the start of “ball”.", app)
     activate("cadence.replay", app)
     expectPlayback(2, app)
+    XCTAssertTrue(app.staticTexts[listeningFocusID].exists)
     activate("cadence.replay", app)
     expectPlayback(nil, app)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: false, app)
