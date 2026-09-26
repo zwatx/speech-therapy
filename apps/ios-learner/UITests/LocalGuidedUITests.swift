@@ -4,6 +4,300 @@ import XCTest
 /// cases do not establish a single full user journey or real recognition/accessibility.
 @MainActor
 final class LocalGuidedUITests: XCTestCase {
+  func testCompactSelectedPracticeTimedOutCheckRetriesSameTake() {
+    practiceTimeoutRetryJourney("practiceTimeoutRetry")
+  }
+  func testLargestTextSelectedPracticeTimedOutCheckRetriesSameTake() {
+    practiceTimeoutRetryJourney("practiceTimeoutRetryAX")
+  }
+
+  private func practiceTimeoutRetryJourney(_ testCase: String) {
+    let app = launch(testCase)
+    executionTimeAllowance = 300
+    let tag = "generated-" + testCase
+    registerGeneratedTimeoutEvidence(tag, app)
+    files(made: 5, kept: 0, app)
+    checks(count: 5, app)
+    history([], app)
+    activate("cadence.guided.select." + entryIDs[1], app)
+    activate("cadence.guided.practice.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "pig")
+    let frozen = "First review: Word matched. Word checks cannot identify which sound was made."
+    waitLabel(app.staticTexts["cadence.guided.first-observation"], frozen)
+    record(app)
+    files(made: 6, kept: 1, app)
+    checks(count: 5, app)
+    activate("cadence.word-check", app)
+    checks(count: 6, pending: 1, app)
+    releaseTimeoutPracticeReceipt(app)
+    let result = app.staticTexts["cadence.word-check-result"]
+    waitLabel(result, "Word check took too long. Your recording is still here.")
+    captureGeneratedTimeoutText(result, id: "cadence.word-check-result", name: tag + "-timeout", app)
+    let retry = app.buttons["cadence.word-check"]
+    waitLabel(retry, "Try word check again")
+    revealGeneratedTimeoutControl(retry, id: "cadence.word-check", app)
+    captureGeneratedTimeoutState(tag + "-retry-action", app)
+    checks(count: 6, app)
+    files(made: 6, kept: 1, app)
+    history([], app)
+    retry.tap()
+    checks(count: 7, pending: 1, app)
+    waitLabel(app.staticTexts["cadence.generated-guided.retry-binding"],
+      "Generated retry binding: same take yes · new operation yes · latest yes")
+    XCTAssertFalse(app.buttons["cadence.word-check"].exists)
+    XCTAssertFalse(app.buttons["cadence.guided.continue"].isEnabled)
+    XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
+    XCTAssertFalse(app.buttons["cadence.replay"].isEnabled)
+    let pending = app.staticTexts["cadence.word-check-status"]
+    waitLabel(pending, "Checking words in this try on this device…")
+    captureGeneratedTimeoutText(pending, id: "cadence.word-check-status", name: tag + "-pending", app)
+    checks(count: 7, pending: 1, app)
+    files(made: 6, kept: 1, app)
+    releaseTimeoutPracticeReceipt(app)
+    waitLabel(result, "“pig” matched in this try. Individual sounds aren’t assessed.")
+    captureGeneratedTimeoutText(result, id: "cadence.word-check-result", name: tag + "-matched", app)
+    XCTAssertFalse(app.buttons["cadence.word-check"].isEnabled)
+    waitLabel(app.staticTexts["cadence.guided.first-observation"], frozen)
+    files(made: 6, kept: 1, app)
+    checks(count: 7, app)
+    history([], app)
+    activate("cadence.guided.continue", app)
+    history(["p:1"], app)
+    waitLabel(app.staticTexts["cadence.generated-guided.receipts"], "Generated practice receipts: 1 exact")
+    activate("cadence.guided.recheck.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "ball")
+    waitLabel(app.staticTexts["cadence.guided.visit-heading"], "Recheck · 1 of 5")
+    XCTAssertFalse(app.staticTexts["cadence.word-check-result"].exists)
+    XCTAssertFalse(app.buttons["cadence.replay"].exists)
+    checks(count: 7, app)
+    files(made: 6, kept: 0, app)
+    captureGeneratedTimeoutState(tag + "-fresh-recheck", app)
+    close(made: 6, rows: ["p:1"], app)
+  }
+
+  private func releaseTimeoutPracticeReceipt(_ app: XCUIApplication) {
+    let release = app.buttons["cadence.generated-guided.release"]
+    XCTAssertTrue(release.waitForExistence(timeout: 5))
+    XCTAssertTrue(release.isEnabled && release.isHittable)
+    XCTAssertGreaterThanOrEqual((release.frame.width * 1_000_000).rounded() / 1_000_000, 44)
+    XCTAssertGreaterThanOrEqual((release.frame.height * 1_000_000).rounded() / 1_000_000, 44)
+    release.tap()
+  }
+
+  func testCompactResearchDetailsAndCompletePracticeSummary() {
+    researchDetailsJourney("researchDetails")
+  }
+
+  func testLargestTextResearchDetailsAndCompletePracticeSummary() {
+    researchDetailsJourney("researchDetailsAX")
+  }
+
+  private func researchDetailsJourney(_ testCase: String) {
+    let app = launch(testCase)
+    executionTimeAllowance = 480
+    let ball = entryIDs[0], pig = entryIDs[1]
+    func modelCalls(_ count: Int) {
+      waitLabel(app.staticTexts["cadence.generated-guided.model-calls"], "Generated model calls: \(count)")
+    }
+    func open(_ entry: String) {
+      activate("cadence.guided.research-details." + entry, app)
+      XCTAssertTrue(app.staticTexts["guided-research-details-title"].waitForExistence(timeout: 5))
+      XCTAssertTrue(app.buttons["guided-research-details-close"].isHittable)
+    }
+    func line(_ id: String, contains value: String, capture: String) {
+      let element = app.staticTexts[id]
+      XCTAssertTrue(element.waitForExistence(timeout: 5))
+      XCTAssertTrue(element.label.contains(value), element.label)
+      scrollTo(element, app, targetTag: "researchLine")
+      XCTAssertTrue(element.isHittable)
+      capturePracticeTour(testCase + "-" + capture, app)
+      attach(app, testCase + "-" + capture)
+    }
+    files(made: 5, kept: 0, app)
+    checks(count: 5, app)
+    modelCalls(5)
+    history([], app)
+    open(ball)
+    line("guided-research-details-disclaimer", contains: "Not validated pronunciation feedback",
+      capture: "boundary")
+    let disclaimerHeight = app.staticTexts["guided-research-details-disclaimer"].frame.height
+    if testCase.hasSuffix("AX") {
+      XCTAssertGreaterThan(disclaimerHeight, 120, "The modal must render the requested largest text size.")
+    } else {
+      XCTAssertLessThan(disclaimerHeight, 100)
+    }
+    for (rating, value) in ["0.200000", "0.300000", "0.500000"].enumerated() {
+      line("guided-research-details-first-review-target-\(ball)-0-rating-\(rating)",
+        contains: value, capture: "first-rating-\(rating)")
+    }
+    line("guided-research-details-recheck-unavailable", contains: "No recheck result yet",
+      capture: "not-yet-rechecked")
+    activate("guided-research-details-close", app)
+    modelCalls(5)
+    checks(count: 5, app)
+    files(made: 5, kept: 0, app)
+    history([], app)
+    activate("cadence.guided.select." + ball, app)
+    activate("cadence.guided.practice.start", app)
+    record(app)
+    activate("cadence.guided.continue", app)
+    history(["b:1"], app)
+    activate("cadence.guided.recheck.start", app)
+    record(app)
+    activate("cadence.word-check", app)
+    checks(count: 6, app)
+    modelCalls(6)
+    activate("cadence.guided.continue", app)
+    activate("cadence.guided.finish-stage", app)
+    let pair = app.staticTexts["cadence.guided.paired." + ball]
+    XCTAssertTrue(pair.waitForExistence(timeout: 5))
+    XCTAssertTrue(pair.label.contains("Practice: Participation saved"))
+    let unselected = app.staticTexts["cadence.guided.paired." + pig]
+    XCTAssertTrue(unselected.label.contains("Practice: Not selected"))
+    open(ball)
+    for (rating, value) in ["0.500000", "0.250000", "0.250000"].enumerated() {
+      line("guided-research-details-recheck-target-\(ball)-0-rating-\(rating)",
+        contains: value, capture: "recheck-rating-\(rating)")
+    }
+    activate("guided-research-details-close", app)
+    open(pig)
+    line("guided-research-details-recheck-unavailable", contains: "No eligible completed word check",
+      capture: "unreached-recheck")
+    activate("guided-research-details-close", app)
+    modelCalls(6)
+    files(made: 7, kept: 0, app)
+    checks(count: 6, app)
+    history(["b:1"], app)
+    activate("cadence.guided.repeat", app)
+    XCTAssertFalse(app.staticTexts["guided-research-details-title"].exists)
+    activate("cadence.guided.finish-stage", app)
+    open(ball)
+    line("guided-research-details-first-review-unavailable", contains: "No eligible completed word check",
+      capture: "fresh-round-no-old-result")
+    XCTAssertFalse(app.staticTexts["guided-research-details-first-review-target-\(ball)-0-rating-0"].exists)
+    activate("guided-research-details-close", app)
+    modelCalls(6)
+    checks(count: 6, app)
+    close(made: 7, rows: ["b:1"], app)
+  }
+
+  func testCompactMatchedShortPracticeTakeExplainsRequiredRecordingRecovery() {
+    practiceQualityRecoveryJourney("practiceQuality")
+  }
+
+  func testLargestTextMatchedShortPracticeTakeExplainsRequiredRecordingRecovery() {
+    practiceQualityRecoveryJourney("practiceQualityAX")
+  }
+
+  private func practiceQualityRecoveryJourney(_ testCase: String) {
+    let app = launch(testCase)
+    executionTimeAllowance = 300
+    files(made: 5, kept: 0, app)
+    checks(count: 5, app)
+    history([], app)
+    activate("cadence.guided.select." + entryIDs[0], app)
+    activate("cadence.guided.practice.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "ball")
+    let requirement = app.descendants(matching: .any)
+      .matching(identifier: "cadence.guided.recording-requirement").firstMatch
+    XCTAssertFalse(requirement.exists)
+    XCTAssertFalse(app.buttons["cadence.record-and-check"].exists)
+    record(app)
+    files(made: 6, kept: 1, app)
+    checks(count: 5, app)
+    XCTAssertTrue(requirement.waitForExistence(timeout: 5))
+    XCTAssertTrue(requirement.label.contains("Record another try to finish this word"))
+    XCTAssertTrue(requirement.label.contains(
+      "Tap Record, say the word at your own pace, then tap Stop. You can also skip this word."))
+    XCTAssertFalse(app.buttons["cadence.guided.continue"].isEnabled)
+    activate("cadence.word-check", app)
+    checks(count: 6, app)
+    waitLabel(app.staticTexts["cadence.word-check-result"],
+      "“ball” matched in this try. Individual sounds aren’t assessed.")
+    XCTAssertTrue(requirement.exists)
+    XCTAssertFalse(app.buttons["cadence.guided.continue"].isEnabled)
+    XCTAssertEqual(app.staticTexts.matching(
+      NSPredicate(format: "label BEGINSWITH %@", "Recording tip for next time:")).count, 0)
+    scrollTo(requirement, app, targetTag: "practiceRecordingRequirement")
+    XCTAssertTrue(requirement.isHittable)
+    attach(app, testCase + "-matched-recording-requirement")
+    let retake = app.buttons["cadence.record-another"]
+    XCTAssertLessThanOrEqual(requirement.frame.maxY, retake.frame.minY)
+    scrollTo(retake, app, targetTag: "recordAnother")
+    XCTAssertTrue(retake.isHittable)
+    XCTAssertTrue(retake.isEnabled)
+    attach(app, testCase + "-required-retake-action")
+    activate("cadence.record-another", app)
+    XCTAssertFalse(requirement.exists)
+    activate("cadence.stop", app)
+    files(made: 7, kept: 2, app)
+    checks(count: 6, app)
+    XCTAssertFalse(requirement.exists, "The earlier short take must not govern the acceptable latest take.")
+    XCTAssertFalse(app.staticTexts["cadence.word-check-result"].exists)
+    XCTAssertTrue(app.buttons["cadence.guided.continue"].isEnabled)
+    history([], app)
+    activate("cadence.guided.continue", app)
+    XCTAssertTrue(app.buttons["cadence.guided.recheck.start"].waitForExistence(timeout: 5))
+    files(made: 7, kept: 0, app)
+    checks(count: 6, app)
+    history(["b:1"], app)
+    waitLabel(app.staticTexts["cadence.generated-guided.receipts"], "Generated practice receipts: 1 exact")
+    close(made: 7, rows: ["b:1"], app)
+  }
+
+  func testCompactRejectedCaptureOffersExplicitCombinedRetake() {
+    combinedRetakeJourney("retake")
+  }
+
+  func testLargestTextRejectedCaptureOffersExplicitCombinedRetake() {
+    combinedRetakeJourney("retakeAX")
+  }
+
+  private func combinedRetakeJourney(_ testCase: String) {
+    let app = launch(testCase)
+    executionTimeAllowance = 300
+    activate("cadence.guided.start", app)
+    for round in 0..<2 {
+      waitLabel(app.staticTexts["cadence.word"], "ball")
+      activate("cadence.record-and-check", app)
+      activate("cadence.stop", app)
+      files(made: round * 2 + 1, kept: 1, app)
+      checks(count: round, app)
+      XCTAssertFalse(app.buttons["cadence.guided.continue"].isEnabled)
+      let combined = app.buttons["cadence.record-and-check-another"]
+      waitLabel(combined, "Record and check another try")
+      scrollTo(combined, app, targetTag: "combinedRetake")
+      XCTAssertTrue(combined.isHittable)
+      XCTAssertTrue(combined.isEnabled)
+      XCTAssertTrue(app.buttons["cadence.record-another"].isEnabled)
+      attach(app, testCase + "-rejected-" + String(round))
+      activate("cadence.record-and-check-another", app)
+      checks(count: round, app)
+      activate("cadence.stop", app)
+      checks(count: round + 1, app)
+      files(made: (round + 1) * 2, kept: 2, app)
+      let result = app.staticTexts["cadence.word-check-result"]
+      waitLabel(result, "“ball” matched in this try. Individual sounds aren’t assessed.")
+      XCTAssertFalse(combined.exists)
+      XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
+      XCTAssertTrue(app.buttons["cadence.guided.continue"].isEnabled)
+      history([], app)
+      activate("cadence.guided.continue", app)
+      waitLabel(app.staticTexts["cadence.word"], "pig")
+      files(made: (round + 1) * 2, kept: 0, app)
+      activate("cadence.guided.finish-stage", app)
+      if round == 0 {
+        activate("cadence.guided.select." + entryIDs[0], app)
+        activate("cadence.guided.practice.start", app)
+        XCTAssertFalse(app.buttons["cadence.record-and-check"].exists)
+        activate("cadence.guided.finish-stage", app)
+        activate("cadence.guided.recheck.start", app)
+      }
+    }
+    checks(count: 2, app)
+    close(made: 4, rows: [], app, button: "cadence.guided.done")
+  }
+
   func testCompactFinalWordButtonsOpenNamedStages() {
     continuationJourney(largest: false)
   }
