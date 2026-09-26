@@ -780,6 +780,7 @@ extension DirectTryUITests {
     XCTAssertFalse(app.staticTexts["cadence.word-check-result"].exists)
     activate("cadence.word-check", app)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: true, app)
+    XCTAssertFalse(app.staticTexts[listeningFocusID].exists)
     waitLabel(
       app.staticTexts["cadence.word-check-status"], "Checking words in this try on this device…")
     XCTAssertFalse(app.buttons["cadence.replay"].isEnabled)
@@ -797,9 +798,12 @@ extension DirectTryUITests {
     scrollTo(result, app)
     XCTAssertTrue(result.isHittable)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: false, app)
+    expectListeningFocus(
+      "Play the earlier try, then the latest. Listen for /b/ at the start of “ball”.", app)
     captureReview(testCase, app)
     activate("cadence.replay", app)
     expectPlayback(2, app)
+    XCTAssertTrue(app.staticTexts[listeningFocusID].exists)
     activate("cadence.replay", app)
     expectPlayback(nil, app)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: false, app)
