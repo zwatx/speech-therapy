@@ -970,3 +970,236 @@ extension DirectTryUITests {
     app.terminate()
   }
 }
+
+extension DirectTryUITests {
+  @objc func testCompactSelectedSoundGuideTeachesWithoutStartingMedia() {
+    selectedSoundGuideJourney("skip")
+  }
+
+  @objc func testLargestTextSelectedSoundGuideTeachesWithoutStartingMedia() {
+    selectedSoundGuideJourney("skipAX")
+  }
+
+  private func selectedSoundGuideJourney(_ testCase: String) {
+    let app = launch(testCase)
+    let toggle = app.buttons["cadence.sound-guide.toggle"]
+    waitLabel(toggle, "About this sound")
+    XCTAssertFalse(app.staticTexts["cadence.sound-guide.title"].exists)
+    activate("cadence.sound-guide.toggle", app)
+    expectSelectedSoundGuide("ball", testCase, app)
+    expectFiles(made: 0, kept: 0, requests: 0, starts: 0, app)
+    expectPlayback(nil, app)
+    activate("cadence.sound-guide.toggle", app)
+    waitGone(app.staticTexts["cadence.sound-guide.title"])
+    activate("cadence.sound-guide.toggle", app)
+    waitLabel(app.staticTexts["cadence.sound-guide.title"], "B at the start of “ball”")
+    expectFiles(made: 0, kept: 0, requests: 0, starts: 0, app)
+    activate("cadence.record", app)
+    XCTAssertTrue(existsOrWait(app.buttons["cadence.stop"]))
+    waitLabel(app.staticTexts["cadence.sound-guide.title"], "B at the start of “ball”")
+    activate("cadence.stop", app)
+    XCTAssertTrue(existsOrWait(app.buttons["cadence.replay"]))
+    waitLabel(app.staticTexts["cadence.sound-guide.detail"],
+      "Bring your lips together, then open them as you say “ball”. Use your usual voice.")
+    XCTAssertFalse(app.staticTexts["cadence.word-check-status"].exists)
+    XCTAssertFalse(app.staticTexts["cadence.word-check-result"].exists)
+    expectFiles(made: 1, kept: 1, requests: 1, starts: 0, app)
+    expectPlayback(nil, app)
+    activate("cadence.continue", app)
+    waitLabel(app.staticTexts["cadence.word"], "boat")
+    XCTAssertFalse(app.staticTexts["cadence.sound-guide.title"].exists)
+    activate("cadence.sound-guide.toggle", app)
+    expectSelectedSoundGuide("boat", testCase, app)
+    expectFiles(made: 1, kept: 0, requests: 1, starts: 0, app)
+    expectPlayback(nil, app)
+    close(app, closedFiles: (made: 1, kept: 0, requests: 1, starts: 0))
+  }
+
+  private func expectSelectedSoundGuide(
+    _ word: String, _ testCase: String, _ app: XCUIApplication
+  ) {
+    let text: [(String, String)] = [
+      ("title", "B at the start of “\(word)”"),
+      ("detail", "Bring your lips together, then open them as you say “\(word)”. Use your usual voice."),
+      ("closed-caption", "1. Lips together"),
+      ("open-caption", "2. Lips open"),
+    ]
+    for (suffix, expected) in text {
+      let element = app.staticTexts["cadence.sound-guide." + suffix]
+      XCTAssertTrue(existsOrWait(element))
+      waitLabel(element, expected)
+      scrollTo(element, app)
+      XCTAssertTrue(element.isHittable, suffix)
+      let screenshot = XCTAttachment(screenshot: app.screenshot())
+      screenshot.name = "sound-guide-\(testCase)-\(word)-\(suffix)"
+      screenshot.lifetime = .keepAlways
+      add(screenshot)
+      let accessibility = XCTAttachment(string: element.label)
+      accessibility.name = "sound-guide-AX-\(testCase)-\(word)-\(suffix)"
+      accessibility.lifetime = .keepAlways
+      add(accessibility)
+    }
+  }
+}
+
+/// Evidence helpers shared by the two explicitly generated timeout-retry suites.
+/// Fixed fixture controls are outside the measured product reading viewport.
+@MainActor
+extension XCTestCase {
+  func registerGeneratedTimeoutEvidence(_ name: String, _ app: XCUIApplication) {
+    addTeardownBlock { @MainActor [weak self] () throws -> Void in
+      guard let self else { return }
+      if app.state == .runningForeground {
+        self.captureGeneratedTimeoutState(name + "-final-state", app)
+      }
+      app.terminate()
+    }
+  }
+
+  func captureGeneratedTimeoutState(_ name: String, _ app: XCUIApplication) {
+    let image = XCTAttachment(screenshot: app.screenshot())
+    image.name = name
+    image.lifetime = .keepAlways
+    add(image)
+    let tree = XCTAttachment(string: app.debugDescription)
+    tree.name = name + "-accessibility"
+    tree.lifetime = .keepAlways
+    add(tree)
+  }
+
+  func revealGeneratedTimeoutControl(_ target: XCUIElement, id: String, _ app: XCUIApplication) {
+    revealGeneratedTimeout(target, id: id, allowOversized: false, app)
+    XCTAssertTrue(target.exists, id)
+    XCTAssertTrue(target.isEnabled && target.isHittable, id)
+    let frame = target.frame, visible = generatedTimeoutViewport(app)
+    // Normalize only sub-micro-point subtraction noise, as activate already does.
+    XCTAssertGreaterThanOrEqual((frame.width * 1_000_000).rounded() / 1_000_000, 44, id)
+    XCTAssertGreaterThanOrEqual((frame.height * 1_000_000).rounded() / 1_000_000, 44, id)
+    XCTAssertGreaterThanOrEqual(frame.minX, visible.minX, id)
+    XCTAssertLessThanOrEqual(frame.maxX, visible.maxX, id)
+    XCTAssertGreaterThanOrEqual(frame.minY, visible.minY, id)
+    XCTAssertLessThanOrEqual(frame.maxY, visible.maxY, id)
+    timeoutGeometry(id + "-control", ["control": timeoutRect(frame), "viewport": timeoutRect(visible)])
+  }
+
+  func captureGeneratedTimeoutText(
+    _ target: XCUIElement, id: String, name: String, _ app: XCUIApplication
+  ) {
+    revealGeneratedTimeout(target, id: id, allowOversized: true, app)
+    captureGeneratedTimeoutState(name, app)
+    for segment in 0..<8 {
+      guard target.exists else { XCTFail("Missing generated paragraph: \(id)"); return }
+      let frame = target.frame, visible = generatedTimeoutViewport(app)
+      assertGeneratedTimeoutTextFrame(frame, viewport: visible, id: id)
+      timeoutGeometry(name + "-segment-\(segment)", [
+        "text": timeoutRect(frame), "viewport": timeoutRect(visible),
+      ])
+      if frame.maxY <= visible.maxY { return }
+      let travel = min(max(frame.maxY - visible.maxY + 4, 24), visible.height * 0.55)
+      panGeneratedTimeout(travel: travel, down: false, target: frame, app)
+      let after = target.frame
+      let movement = frame.minY - after.minY
+      let afterViewport = generatedTimeoutViewport(app)
+      captureGeneratedTimeoutState(name + "-segment-\(segment + 1)", app)
+      timeoutGeometry(name + "-movement-\(segment)", [
+        "before": timeoutRect(frame), "after": timeoutRect(after), "movement": movement,
+        "viewportAfter": timeoutRect(afterViewport),
+      ])
+      assertGeneratedTimeoutTextFrame(after, viewport: afterViewport, id: id)
+      XCTAssertGreaterThan(movement, 1, id)
+      XCTAssertLessThanOrEqual(movement, visible.height - 8, "Captures must overlap: \(id)")
+      if after.maxY <= afterViewport.maxY { return }
+    }
+    XCTFail("Generated paragraph end not captured in eight moves: \(id)")
+  }
+
+  private func assertGeneratedTimeoutTextFrame(_ frame: CGRect, viewport: CGRect, id: String) {
+    XCTAssertFalse(frame.isEmpty, id)
+    XCTAssertTrue([frame.minX, frame.minY, frame.width, frame.height, frame.maxX, frame.maxY]
+      .allSatisfy(\.isFinite), "Full raw paragraph rectangle must be finite: \(id)")
+    XCTAssertGreaterThanOrEqual(frame.minX, viewport.minX, id)
+    XCTAssertLessThanOrEqual(frame.maxX, viewport.maxX, id)
+  }
+
+  private func generatedTimeoutViewport(_ app: XCUIApplication) -> CGRect {
+    let scroll = app.scrollViews.firstMatch
+    let window = app.windows.firstMatch.frame
+    let frame = scroll.frame.intersection(window)
+    var top = frame.minY
+    for id in ["cadence.generated-release-word-check", "cadence.generated-guided.release",
+               "cadence.guided.close"] {
+      let fixed = app.buttons[id]
+      if fixed.exists { top = max(top, fixed.frame.maxY) }
+    }
+    return CGRect(x: frame.minX, y: top + 8, width: frame.width,
+                  height: max(0, frame.maxY - top - 16))
+  }
+
+  private func revealGeneratedTimeout(
+    _ target: XCUIElement, id: String, allowOversized: Bool, _ app: XCUIApplication
+  ) {
+    var previous: CGRect?, previousTravel: CGFloat = 0, previousDown: Bool?
+    for _ in 0..<24 {
+      guard target.exists else { XCTFail("Missing generated target: \(id)"); return }
+      let frame = target.frame, visible = generatedTimeoutViewport(app)
+      guard !frame.isEmpty, frame.minY.isFinite, frame.maxY.isFinite, visible.height > 0
+      else { XCTFail("Invalid generated target geometry: \(id)"); return }
+      let oversized = frame.height > visible.height
+      guard !oversized || allowOversized else { XCTFail("Control exceeds viewport: \(id)"); return }
+      if frame.minY >= visible.minY,
+        oversized ? frame.minY <= visible.minY + visible.height * 0.2 : frame.maxY <= visible.maxY,
+        target.isHittable { return }
+      let desired = oversized ? visible.minY : visible.minY + (visible.height - frame.height) / 2
+      let down = frame.minY < desired, distance = abs(frame.minY - desired)
+      var travel = oversized ? min(max(distance, visible.height * 0.2), visible.height * 0.6)
+        : min(distance, visible.height * 0.6)
+      if !oversized, distance > 0, distance <= 24, let previous,
+        previousTravel > 0, previousDown == down, previous.size == frame.size {
+        let movement = (frame.minY - previous.minY) * (down ? 1 : -1)
+        if movement >= 0, movement <= previousTravel {
+          travel = min(distance + min(previousTravel - movement, 24), visible.height * 0.6)
+        }
+      }
+      guard travel > 0 else { continue }
+      previous = frame; previousTravel = travel; previousDown = down
+      panGeneratedTimeout(travel: travel, down: down, target: frame, app)
+    }
+    XCTFail("Generated target did not enter viewport: \(id)")
+  }
+
+  private func panGeneratedTimeout(
+    travel: CGFloat, down: Bool, target: CGRect, _ app: XCUIApplication
+  ) {
+    let scroll = app.scrollViews.firstMatch, visible = generatedTimeoutViewport(app)
+    let frames = (scroll.buttons.allElementsBoundByIndex.map(\.frame) + [target]).filter {
+      !$0.isEmpty && $0.maxX > visible.minX && $0.minX < visible.maxX
+    }
+    guard frames.allSatisfy({ $0.minX.isFinite && $0.maxX.isFinite }),
+      let leading = frames.map(\.minX).min(), let trailing = frames.map(\.maxX).max()
+    else { XCTFail("Invalid generated gutter geometry"); return }
+    let x: CGFloat
+    if leading - visible.minX >= 16 { x = (leading + visible.minX) / 2 }
+    else if visible.maxX - trailing >= 16 { x = (trailing + visible.maxX) / 2 }
+    else { XCTFail("No observed blank generated scroll gutter"); return }
+    let origin = scroll.coordinate(withNormalizedOffset: .zero)
+    let start = origin.withOffset(CGVector(dx: x - scroll.frame.minX,
+      dy: visible.midY + (down ? -travel / 2 : travel / 2) - scroll.frame.minY))
+    let finish = origin.withOffset(CGVector(dx: x - scroll.frame.minX,
+      dy: visible.midY + (down ? travel / 2 : -travel / 2) - scroll.frame.minY))
+    start.press(forDuration: 0.01, thenDragTo: finish,
+                withVelocity: .slow, thenHoldForDuration: 0.2)
+  }
+
+  private func timeoutRect(_ frame: CGRect) -> [CGFloat] {
+    [frame.minX, frame.minY, frame.width, frame.height]
+  }
+
+  private func timeoutGeometry(_ name: String, _ value: [String: Any]) {
+    guard let data = try? JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+    else { XCTFail("Could not encode generated geometry: \(name)"); return }
+    let attachment = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
+    attachment.name = name
+    attachment.lifetime = .keepAlways
+    add(attachment)
+  }
+}
