@@ -857,10 +857,11 @@ extension DirectTryUITests {
     activate("cadence.word-check", app)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: true, app)
     XCTAssertFalse(guess.exists)
+    XCTAssertFalse(app.staticTexts[listeningFocusID].exists)
     releaseGeneratedWordCheck(app)
     waitLabel(app.staticTexts["cadence.word-check-result"],
       "No match for “ball” in this try. No sound error is identified.")
-    waitLabel(guess, "Word guess: “wall”. This may be wrong; individual sounds aren’t assessed.")
+    waitLabel(guess, "Word guess for the latest try: “wall”. This may be wrong; individual sounds aren’t assessed.")
     scrollTo(guess, app)
     XCTAssertTrue(guess.isHittable)
     let screenshot = XCTAttachment(screenshot: app.screenshot())
