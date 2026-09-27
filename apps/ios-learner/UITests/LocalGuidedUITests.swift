@@ -615,11 +615,15 @@ final class LocalGuidedUITests: XCTestCase {
       "-CadenceLocalGuidedMode", "-CadenceLocalGuidedUITestCase", testCase,
       "-CadenceControlledUIRunID", UUID().uuidString.lowercased(),
     ]
+    if testCase == "researchDetails" || testCase == "researchDetailsAX" {
+      app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+    }
     app.launch()
     XCTAssertTrue(app.staticTexts["cadence.generated-guided.banner"].waitForExistence(timeout: 5))
     let base = testCase.hasSuffix("AX") ? String(testCase.dropLast(2)) : testCase
     let seed =
-      base == "practice"
+      base == "practice" || base == "practiceQuality" || base == "researchDetails"
+        || base == "practiceTimeoutRetry"
       ? "Generated stage: five settled first checks; no choices preselected"
       : base == "recheck"
         ? "Generated stage: five settled first checks; one fresh pig practice saved"
