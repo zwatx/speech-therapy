@@ -1129,7 +1129,7 @@ private final class GuidedScrollTrace {
   private static let cases: Set<String> = [
     "setup", "setupAX", "practice", "practiceAX", "recheck", "recheckAX",
     "heldFinish", "heldFinishAX", "heldClose", "heldCloseAX",
-    "timeout", "timeoutAX",
+    "timeout", "timeoutAX", "wordGuess", "wordGuessAX",
   ]
   static func targetTag(_ id: String) -> String {
     let fixed = [
@@ -1140,6 +1140,7 @@ private final class GuidedScrollTrace {
       "cadence.guided.done": "done", "cadence.guided.close": "close",
       "cadence.generated-guided.release": "release", "cadence.record": "record",
       "cadence.stop": "stop", "cadence.replay": "replay",
+      "cadence.record-another": "recordAnother",
     ]
     if let tag = fixed[id] { return tag }
     let ids = [
@@ -1156,7 +1157,7 @@ private final class GuidedScrollTrace {
     "done", "close", "release", "record", "stop", "select0", "select1", "select2", "select3",
     "select4",
     "paired0", "paired1", "paired2", "paired3", "paired4",
-    "replay", "timeoutResult", "firstObservation",
+    "replay", "timeoutResult", "firstObservation", "currentGuess", "recordAnother", "listeningFocus",
   ]
   func reset(caseTag: String) {
     self.caseTag = Self.cases.contains(caseTag) ? caseTag : nil
