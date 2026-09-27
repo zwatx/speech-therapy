@@ -985,7 +985,8 @@ final class LocalGuidedUITests: XCTestCase {
 
   private func scrollTo(_ target: XCUIElement, _ app: XCUIApplication, targetTag: String) {
     let operation = trace.begin(kind: "scroll", targetTag: targetTag)
-    let scroll = app.scrollViews.firstMatch
+    let detailsScroll = app.scrollViews["guided-research-details-scroll"]
+    let scroll = detailsScroll.exists ? detailsScroll : app.scrollViews.firstMatch
     // The generated host's inset and viewport stay fixed during this one scroll action.
     // Read their bounds once; the target's frame and hittability remain fresh on every drag.
     let viewport = scroll.frame
