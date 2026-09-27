@@ -968,6 +968,8 @@ final class LocalGuidedUITests: XCTestCase {
   }
 
   private func bannerBottom(_ app: XCUIApplication) -> CGFloat {
+    let detailsClose = app.buttons["guided-research-details-close"]
+    if detailsClose.exists { return detailsClose.frame.maxY }
     let release = app.buttons["cadence.generated-guided.release"]
     var bottom = app.staticTexts["cadence.generated-guided.banner"].frame.maxY
     for id in bannerIDs where app.staticTexts[id].exists {
