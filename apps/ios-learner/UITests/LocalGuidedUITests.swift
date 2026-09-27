@@ -951,7 +951,8 @@ final class LocalGuidedUITests: XCTestCase {
     let operation = trace.begin(kind: "activate", targetTag: GuidedScrollTrace.targetTag(id))
     let button = app.buttons[id]
     XCTAssertTrue(button.exists || button.waitForExistence(timeout: 5), id)
-    if id == "cadence.generated-guided.release" || id == "cadence.guided.close" {
+    if id == "cadence.generated-guided.release" || id == "cadence.guided.close"
+      || id == "guided-research-details-close" {
       XCTAssertTrue(button.isHittable, id)
     } else {
       scrollTo(button, app, targetTag: GuidedScrollTrace.targetTag(id))
