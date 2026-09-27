@@ -431,6 +431,162 @@ final class LocalGuidedUITests: XCTestCase {
     timeoutJourney("timeoutAX")
   }
 
+  func testCompactCurrentTryWordGuessClearsOnPracticeReplacementAndKeepsFrozenReview() {
+    wordGuessJourney("wordGuess")
+  }
+  func testLargestTextCurrentTryWordGuessClearsOnPracticeReplacementAndKeepsFrozenReview() {
+    wordGuessJourney("wordGuessAX")
+  }
+
+  private func wordGuessJourney(_ testCase: String) {
+    let app = launch(testCase)
+    executionTimeAllowance = 300
+    let guess = app.staticTexts["cadence.word-check-guess"]
+    let focus = app.staticTexts["cadence.listening-focus"]
+    let first = app.staticTexts["cadence.guided.first-observation"]
+    let frozen = "First review: No word match. Word checks cannot identify which sound was made."
+    func assertGuess(_ word: String, _ tag: String, latest: Bool = false) {
+      let take = latest ? "the latest try" : "this try"
+      waitLabel(guess,
+        "Word guess for \(take): “\(word)”. This may be wrong; individual sounds aren’t assessed.")
+      waitLabel(app.staticTexts["cadence.word-check-result"],
+        "No match for “ball” in this try. No sound error is identified.")
+      scrollTo(guess, app, targetTag: "currentGuess")
+      XCTAssertTrue(guess.isHittable)
+      attach(app, testCase + "-" + tag)
+      let ax = XCTAttachment(string: guess.label)
+      ax.name = testCase + "-" + tag + "-AX-label"
+      ax.lifetime = .keepAlways
+      add(ax)
+      let expectedFocus = word == "fall"
+        ? "Play the earlier try, then the latest. Listen for /b/ at the start of “ball”."
+        : "Play your try. Listen for /b/ at the start of “ball”."
+      waitLabel(focus, expectedFocus)
+      scrollTo(focus, app, targetTag: "listeningFocus")
+      let viewport = app.scrollViews.firstMatch.frame
+      XCTAssertTrue(focus.isHittable)
+      let focusFrame = focus.frame
+      XCTAssertGreaterThanOrEqual(focusFrame.minY, max(viewport.minY, bannerBottom(app)))
+      XCTAssertLessThanOrEqual(focusFrame.maxY, min(viewport.maxY, app.windows.firstMatch.frame.maxY))
+      XCTAssertFalse(app.buttons["cadence.listening-focus"].exists)
+      let firstReplay = app.buttons["cadence.replay-earlier"].exists
+        ? app.buttons["cadence.replay-earlier"] : app.buttons["cadence.replay"]
+      XCTAssertTrue(firstReplay.exists)
+      // Same scroll position; do not require oversized focus plus replay to fit together.
+      let replayFrame = firstReplay.frame
+      XCTAssertLessThanOrEqual(focusFrame.maxY, replayFrame.minY)
+      attach(app, testCase + "-" + tag + "-focus-before-replay")
+      let focusAX = XCTAttachment(string: focus.label)
+      focusAX.name = testCase + "-" + tag + "-focus-AX-label"
+      focusAX.lifetime = .keepAlways
+      add(focusAX)
+    }
+    files(made: 0, kept: 0, app)
+    checks(count: 0, app)
+    history([], app)
+    activate("cadence.guided.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "ball")
+    XCTAssertFalse(guess.exists)
+    XCTAssertFalse(focus.exists)
+    record(app)
+    checks(count: 0, app)
+    activate("cadence.word-check", app)
+    checks(count: 1, app)
+    assertGuess("wall", "initial-current-guess")
+    files(made: 1, kept: 1, app)
+    XCTAssertFalse(app.buttons["cadence.word-check"].isEnabled)
+    XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
+    activate("cadence.guided.continue", app)
+    waitLabel(app.staticTexts["cadence.word"], "pig")
+    XCTAssertFalse(guess.exists)
+    activate("cadence.guided.finish-stage", app)
+    let ball = app.buttons["cadence.guided.select." + entryIDs[0]]
+    XCTAssertTrue(ball.waitForExistence(timeout: 5))
+    XCTAssertTrue(ball.label.contains("First review: No word match"))
+    XCTAssertFalse(ball.label.contains("wall"))
+    files(made: 1, kept: 0, app)
+    checks(count: 1, app)
+    history([], app)
+    activate("cadence.guided.select." + entryIDs[0], app)
+    activate("cadence.guided.practice.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "ball")
+    waitLabel(first, frozen)
+    XCTAssertFalse(guess.exists)
+    record(app)
+    checks(count: 1, app)
+    activate("cadence.word-check", app)
+    checks(count: 2, app)
+    assertGuess("call", "practice-current-guess")
+    files(made: 2, kept: 1, app)
+    waitLabel(first, frozen)
+    scrollTo(first, app, targetTag: "firstObservation")
+    XCTAssertTrue(first.isHittable)
+    attach(app, testCase + "-frozen-first-context")
+    let firstAX = XCTAttachment(string: first.label)
+    firstAX.name = testCase + "-frozen-first-context-AX-label"
+    firstAX.lifetime = .keepAlways
+    add(firstAX)
+    activate("cadence.record-another", app)
+    XCTAssertTrue(app.buttons["cadence.stop"].waitForExistence(timeout: 5))
+    XCTAssertFalse(guess.exists)
+    XCTAssertFalse(focus.exists)
+    checks(count: 2, app)
+    activate("cadence.stop", app)
+    XCTAssertTrue(app.buttons["cadence.replay"].waitForExistence(timeout: 5))
+    XCTAssertFalse(guess.exists)
+    waitLabel(first, frozen)
+    files(made: 3, kept: 2, app)
+    checks(count: 2, app)
+    scrollTo(app.buttons["cadence.word-check"], app, targetTag: "check")
+    attach(app, testCase + "-replacement-no-guess")
+    activate("cadence.word-check", app)
+    checks(count: 3, app)
+    assertGuess("fall", "replacement-current-guess", latest: true)
+    waitLabel(first, frozen)
+    activate("cadence.guided.continue", app)
+    files(made: 3, kept: 0, app)
+    history(["b:1"], app)
+    waitLabel(app.staticTexts["cadence.generated-guided.receipts"],
+      "Generated practice receipts: 1 exact")
+    XCTAssertFalse(guess.exists)
+    activate("cadence.guided.recheck.start", app)
+    waitLabel(app.staticTexts["cadence.word"], "ball")
+    waitLabel(first, frozen)
+    XCTAssertFalse(guess.exists)
+    checks(count: 3, app)
+    record(app)
+    checks(count: 3, app)
+    activate("cadence.word-check", app)
+    checks(count: 4, app)
+    assertGuess("tall", "recheck-current-guess")
+    files(made: 4, kept: 1, app)
+    waitLabel(first, frozen)
+    XCTAssertFalse(app.buttons["cadence.record-another"].isEnabled)
+    activate("cadence.guided.finish-stage", app)
+    let paired = app.staticTexts["cadence.guided.paired." + entryIDs[0]]
+    XCTAssertTrue(paired.waitForExistence(timeout: 5))
+    XCTAssertTrue(paired.label.contains("First review: No word match"))
+    XCTAssertTrue(paired.label.contains("Recheck: No word match"))
+    for alternative in ["wall", "call", "fall", "tall"] {
+      XCTAssertFalse(paired.label.contains(alternative))
+    }
+    for index in 1..<entryIDs.count {
+      let row = app.staticTexts["cadence.guided.paired." + entryIDs[index]]
+      XCTAssertTrue(row.waitForExistence(timeout: 5))
+      XCTAssertTrue(row.label.contains(index == 1
+        ? "First review: Skipped" : "First review: Not reached"))
+      XCTAssertTrue(row.label.contains("Recheck: Not reached"))
+    }
+    XCTAssertFalse(guess.exists)
+    scrollTo(paired, app, targetTag: "paired0")
+    XCTAssertFalse(focus.exists)
+    attach(app, testCase + "-status-only-summary")
+    files(made: 4, kept: 0, app)
+    checks(count: 4, app)
+    history(["b:1"], app)
+    close(made: 4, rows: ["b:1"], app, button: "cadence.guided.done")
+  }
+
   private let trace = GuidedScrollTrace()
 
   private let words = ["ball", "pig", "moon", "tiger", "dog"]
