@@ -692,8 +692,13 @@ import XCTest
         reveal(row, app)
         XCTAssertTrue(row.label.contains(words[index]))
         XCTAssertTrue(row.label.contains("First review: Skipped"))
+        XCTAssertTrue(row.label.contains(index == 1 ? "Practice: Skipped" : "Practice: Not selected"))
         XCTAssertTrue(row.label.contains("Recheck: Skipped"))
+        keepScreenshot("release-guided-practice-row-\(index)", app)
       }
+      XCTAssertEqual(app.buttons.matching(
+        NSPredicate(format: "identifier BEGINSWITH %@", "cadence.guided.research-details.")).count, 0)
+      XCTAssertFalse(app.staticTexts["guided-research-details-title"].exists)
       keepScreenshot("release-guided-paired-skips", app)
       activate("cadence.guided.done", app)
       assertHome(app)
