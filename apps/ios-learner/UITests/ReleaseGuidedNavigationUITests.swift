@@ -505,6 +505,121 @@ import XCTest
       "d-beginning-dog",
     ]
 
+    func testReleasePositionChoicesPreserveSearchAndCancel() {
+      positionFilterJourney(largeText: false)
+    }
+
+    func testReleaseLargestTextPositionChoicesPreserveSearchAndCancel() {
+      positionFilterJourney(largeText: true)
+    }
+
+    private func positionFilterJourney(largeText: Bool) {
+      let app = launch(largeText: largeText)
+      executionTimeAllowance = 360
+      defer { app.terminate() }
+      waitForPracticeSystemBannerToClear()
+      let history = historyRows(app)
+      activate("cadence.local-guided.open", app)
+      assertSetup(app)
+      activate("cadence.guided.setup.0", app)
+      XCTAssertTrue(app.navigationBars["Change word"].waitForExistence(timeout: 5))
+      let search = app.textFields["cadence.guided.search"]
+      XCTAssertTrue(search.waitForExistence(timeout: 5))
+      search.tap()
+      search.typeText("bread")
+      XCTAssertTrue(app.keyboards.firstMatch.exists)
+      activate("cadence.guided.position-filter", app)
+      XCTAssertFalse(app.keyboards.firstMatch.exists)
+      XCTAssertEqual(search.value as? String, "bread")
+      assertPositionChoices(selected: "all", largeText: largeText, app)
+      activate("cadence.guided.position-option.beginning", app)
+      assertPositionResult("Beginning", entryID: "b-beginning-bread", app)
+
+      // Reproduce the exact old warning interaction: Beginning -> All positions.
+      activate("cadence.guided.position-filter", app)
+      assertPositionChoices(selected: "beginning", largeText: largeText, app)
+      activate("cadence.guided.position-option.all", app)
+      XCTAssertEqual(app.buttons["cadence.guided.position-filter"].value as? String, "All positions")
+      XCTAssertEqual(search.value as? String, "bread")
+      XCTAssertEqual(positionOptions(app).count, 0)
+
+      for (choice, value, entryID) in [
+        ("middle", "Middle", "r-middle-bread"), ("end", "End", "d-end-bread")
+      ] {
+        activate("cadence.guided.position-filter", app)
+        activate("cadence.guided.position-option." + choice, app)
+        assertPositionResult(value, entryID: entryID, app)
+        keepScreenshot("position-\(largeText ? "largest" : "compact")-\(choice)-result", app)
+        if choice == "middle" {
+          activate("cadence.guided.position-filter", app)
+          let selected = app.buttons["cadence.guided.position-option.middle"]
+          reveal(selected, app)
+          XCTAssertTrue(selected.isSelected)
+          activate("cadence.guided.position-filter", app)
+          XCTAssertEqual(positionOptions(app).count, 0)
+        }
+      }
+      activate("cadence.guided.position-filter", app)
+      XCTAssertTrue(app.buttons["cadence.guided.position-option.end"].isSelected)
+      activate("cadence.guided.position-option.end", app)
+      XCTAssertEqual(positionOptions(app).count, 0, "Choosing the existing position also collapses")
+      XCTAssertEqual(search.value as? String, "bread")
+      activate("cadence.guided.position-filter", app)
+      activate("cadence.guided.position-option.all", app)
+      XCTAssertEqual(app.buttons["cadence.guided.position-filter"].value as? String, "All positions")
+      XCTAssertEqual(search.value as? String, "bread")
+      activate("cadence.guided.search.clear", app)
+      search.tap()
+      search.typeText("pig\n")
+      let duplicate = app.buttons["cadence.guided.pick.p-beginning-pig"]
+      revealFilteredResult("p-beginning-pig", app)
+      XCTAssertTrue(duplicate.exists)
+      XCTAssertFalse(duplicate.isEnabled)
+      activate("cadence.guided.picker.cancel", app)
+      assertSetup(app)
+      activate("cadence.guided.close", app)
+      assertHome(app)
+      XCTAssertEqual(historyRows(app), history)
+    }
+
+    private func positionOptions(_ app: XCUIApplication) -> XCUIElementQuery {
+      app.buttons.matching(NSPredicate(
+        format: "identifier BEGINSWITH %@", "cadence.guided.position-option."))
+    }
+
+    private func assertPositionChoices(
+      selected: String, largeText: Bool, _ app: XCUIApplication
+    ) {
+      for option in ["all", "beginning", "middle", "end"] {
+        let button = app.buttons["cadence.guided.position-option." + option]
+        reveal(button, app)
+        XCTAssertTrue(button.isHittable)
+        XCTAssertGreaterThanOrEqual(button.frame.height, 44)
+        XCTAssertEqual(button.isSelected, option == selected)
+        if selected == "all" {
+          keepScreenshot("position-\(largeText ? "largest" : "compact")-choice-\(option)", app)
+        }
+      }
+      XCTAssertEqual(positionOptions(app).count, 4)
+    }
+
+    private func assertPositionResult(
+      _ value: String, entryID: String, _ app: XCUIApplication
+    ) {
+      XCTAssertEqual(app.buttons["cadence.guided.position-filter"].value as? String, value)
+      XCTAssertEqual(positionOptions(app).count, 0)
+      XCTAssertEqual(app.textFields["cadence.guided.search"].value as? String, "bread")
+      let result = app.buttons["cadence.guided.pick." + entryID]
+      revealFilteredResult(entryID, app)
+      XCTAssertTrue(result.isHittable)
+      XCTAssertTrue(result.isEnabled)
+      XCTAssertTrue(result.label.contains("bread"))
+      XCTAssertTrue(result.label.contains(value))
+      for other in ["b-beginning-bread", "r-middle-bread", "d-end-bread"] where other != entryID {
+        XCTAssertFalse(app.buttons["cadence.guided.pick." + other].exists)
+      }
+    }
+
     func testReleaseHomeGuidedSkippedRoundsPreserveObservationsAndHistory() {
       let app = launch(largeText: false)
       defer { app.terminate() }
