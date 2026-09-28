@@ -57,3 +57,17 @@ extension XCTestCase {
     }
   }
 }
+
+// A first-launch simulator notification can cover app text without belonging to its AX tree.
+// Wait for the observed banner to leave; never dismiss it or exclude app audit findings.
+extension XCTestCase {
+  @MainActor
+  func waitForPracticeSystemBannerToClear(file: StaticString = #filePath, line: UInt = #line) {
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let banner = springboard.descendants(matching: .any)["NotificationShortLookView"].firstMatch
+    let gone = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "exists == false"), object: banner)
+    XCTAssertEqual(XCTWaiter.wait(for: [gone], timeout: 20), .completed,
+                   "System notification still covers the app", file: file, line: line)
+  }
+}
