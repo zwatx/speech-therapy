@@ -857,6 +857,37 @@ import XCTest
     // Adapt the existing guided test's observed-gutter scroll: never drag over choice buttons.
     // Targets are measured afresh after every drag, including oversized accessibility text.
     private func reveal(_ target: XCUIElement, _ app: XCUIApplication) {
+      // Reuse the native List traversal from ReleaseGuidedRepeatUITests. Its
+      // full-width AX cells have no blank gutter, unlike the practice ScrollView.
+      let picker = app.collectionViews["cadence.guided.picker.scroll"]
+      if picker.exists {
+        if target.exists && target.identifier.hasPrefix("cadence.guided.position-option.") {
+          revealPositionOption(target, in: picker, app)
+          return
+        }
+        for _ in 0..<12 {
+          let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
+          if target.exists, !target.frame.isEmpty {
+            let frame = target.frame
+            // The final result has 24pt content padding; require full visibility,
+            // without demanding extra clearance the list cannot scroll to supply.
+            let bottomMargin: CGFloat =
+              target.identifier.hasPrefix("cadence.guided.pick.") ? 8 : 40
+            if frame.minY >= viewport.minY + 8, frame.maxY <= viewport.maxY - bottomMargin,
+              target.isHittable { return }
+            if frame.minY < viewport.minY + 8 {
+              picker.swipeDown(velocity: .slow)
+            } else {
+              picker.swipeUp(velocity: .slow)
+            }
+          } else {
+            picker.swipeUp(velocity: .slow)
+          }
+        }
+        capturePracticeFailure(app)
+        XCTFail("Picker choice did not enter viewport: \(target.identifier)")
+        return
+      }
       let scroll = app.scrollViews.firstMatch
       let viewport = scroll.frame
       let close = app.buttons["cadence.guided.close"]
