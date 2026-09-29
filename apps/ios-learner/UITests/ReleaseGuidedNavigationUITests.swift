@@ -824,8 +824,13 @@ import XCTest
 
     private func activate(_ id: String, _ app: XCUIApplication) {
       let button = app.buttons[id]
-      XCTAssertTrue(button.waitForExistence(timeout: 5), id)
-      if id == "cadence.guided.close" {
+      // Native List rows can be created only when scrolled into view.
+      if !id.hasPrefix("cadence.guided.pick.") {
+        XCTAssertTrue(button.waitForExistence(timeout: 5), id)
+      }
+      if id == "cadence.guided.close" || id == "cadence.guided.picker.cancel"
+        || id == "cadence.guided.search.clear"
+      {
         XCTAssertTrue(button.isHittable, id)
       } else {
         reveal(button, app)
