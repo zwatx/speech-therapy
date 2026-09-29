@@ -965,6 +965,132 @@ import XCTest
       }
       XCTFail("Control did not enter the unobscured viewport: \(target.identifier)")
     }
+
+    // Page swipes skipped over short rows at AX sizes. Drag only the measured
+    // distance in the observed blank gutter, then measure again without momentum.
+    private func revealPositionOption(
+      _ target: XCUIElement, in picker: XCUIElement, _ app: XCUIApplication
+    ) {
+      var measurements: [[String: Any]] = []
+      defer {
+        if let data = try? JSONSerialization.data(withJSONObject: measurements, options: [.sortedKeys]) {
+          let attachment = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
+          attachment.name = "position-scroll-geometry-" + target.identifier
+          attachment.lifetime = .keepAlways
+          add(attachment)
+        }
+      }
+      for _ in 0..<16 {
+        let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
+        let top = viewport.minY + 8, bottom = viewport.maxY - 40
+        guard target.exists, !target.frame.isEmpty, bottom > top else { break }
+        let frame = target.frame
+        measurements.append([
+          "viewport": [viewport.minX, top, viewport.width, bottom - top],
+          "target": [frame.minX, frame.minY, frame.width, frame.height],
+          "hittable": target.isHittable,
+        ])
+        if frame.minY >= top, frame.maxY <= bottom, target.isHittable { return }
+        guard frame.height <= bottom - top else { break }
+        let buttons = picker.buttons.allElementsBoundByIndex.map(\.frame).filter {
+          !$0.isEmpty && $0.intersects(viewport)
+        }
+        guard !buttons.isEmpty,
+          buttons.allSatisfy({ $0.minX.isFinite && $0.maxX.isFinite }),
+          let leading = buttons.map(\.minX).min(), leading - viewport.minX >= 16
+        else { break }
+        let desiredTop = top + (bottom - top - frame.height) / 2
+        let distance = frame.minY - desiredTop
+        let travel = min(max(abs(distance), 20), (bottom - top) * 0.6)
+        let center = (top + bottom) / 2
+        let x = (viewport.minX + leading) / 2
+        let down = distance < 0
+        let startY = center + (down ? -travel / 2 : travel / 2)
+        let endY = center + (down ? travel / 2 : -travel / 2)
+        let origin = picker.coordinate(withNormalizedOffset: .zero)
+        let start = origin.withOffset(CGVector(dx: x - picker.frame.minX, dy: startY - picker.frame.minY))
+        let end = origin.withOffset(CGVector(dx: x - picker.frame.minX, dy: endY - picker.frame.minY))
+        start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+      }
+      capturePracticeFailure(app)
+      XCTFail("Position choice did not enter viewport: \(target.identifier)")
+    }
+
+    // Start above results, then scan in small pans so an unrealized row cannot
+    // be skipped and mistaken for a missing match. No word row is tapped here.
+    private func revealFilteredResult(_ entryID: String, _ app: XCUIApplication) {
+      let id = "cadence.guided.pick." + entryID
+      let target = app.buttons[id]
+      let picker = app.collectionViews["cadence.guided.picker.scroll"]
+      let header = app.buttons["cadence.guided.position-filter"]
+      var reset = false
+      for _ in 0..<12 {
+        let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
+        if header.exists, header.frame.minY >= viewport.minY + 8,
+          header.frame.maxY <= viewport.maxY - 8, header.isHittable
+        {
+          reset = true
+          break
+        }
+        picker.swipeDown(velocity: .slow)
+      }
+      XCTAssertTrue(reset, "Could not reach the filter header before scanning results")
+      var trace: [[String: Any]] = []
+      defer {
+        if let data = try? JSONSerialization.data(withJSONObject: trace, options: [.sortedKeys]) {
+          let attachment = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
+          attachment.name = "result-scroll-geometry-" + entryID
+          attachment.lifetime = .keepAlways
+          add(attachment)
+        }
+      }
+      var previous: [String]?, unchanged = 0
+      for _ in 0..<32 {
+        XCTAssertTrue(app.navigationBars["Change word"].exists, "Scrolling must keep the picker open")
+        let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
+        let top = viewport.minY + 8, bottom = viewport.maxY - 8
+        guard bottom > top else { break }
+        let visible = picker.buttons.allElementsBoundByIndex.compactMap { button -> String? in
+          let frame = button.frame
+          return !frame.isEmpty && frame.intersects(viewport)
+            ? "\(button.identifier):\(frame.minY):\(frame.height)" : nil
+        }
+        unchanged = previous == visible ? unchanged + 1 : 0
+        previous = visible
+        var row: [String: Any] = [
+          "viewport": [viewport.minX, top, viewport.width, bottom - top], "visible": visible,
+        ]
+        var down = false, travel = (bottom - top) * 0.25
+        if target.exists {
+          let frame = target.frame
+          row["target"] = [frame.minX, frame.minY, frame.width, frame.height]
+          row["hittable"] = target.isHittable
+          trace.append(row)
+          if frame.minY >= top, frame.maxY <= bottom, target.isHittable {
+            XCTAssertGreaterThanOrEqual(frame.height, 44)
+            return
+          }
+          guard frame.height <= bottom - top else { break }
+          let distance = frame.midY - (top + bottom) / 2
+          down = distance < 0
+          travel = min(max(abs(distance), 24), (bottom - top) * 0.4)
+        } else {
+          trace.append(row)
+        }
+        guard unchanged < 2 else { break }
+        // Result rows expose full-width AX frames: this is a native scroll pan,
+        // not a claim of empty hit space. Travel exceeds a tap's small movement.
+        let x = viewport.minX + 12, center = (top + bottom) / 2
+        let origin = picker.coordinate(withNormalizedOffset: .zero)
+        let start = origin.withOffset(CGVector(
+          dx: x - picker.frame.minX, dy: center + (down ? -travel / 2 : travel / 2) - picker.frame.minY))
+        let end = origin.withOffset(CGVector(
+          dx: x - picker.frame.minX, dy: center + (down ? travel / 2 : -travel / 2) - picker.frame.minY))
+        start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+      }
+      capturePracticeFailure(app)
+      XCTFail("Filtered result did not enter viewport: \(id)")
+    }
   }
 
 #endif
