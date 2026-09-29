@@ -835,6 +835,7 @@ import XCTest
       } else {
         reveal(button, app)
       }
+      XCTAssertTrue(button.exists, id)
       XCTAssertTrue(button.isEnabled, id)
       XCTAssertGreaterThanOrEqual(button.frame.height, 44, id)
       button.tap()
