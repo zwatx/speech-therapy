@@ -889,6 +889,7 @@ import XCTest
         return
       }
       let scroll = app.scrollViews.firstMatch
+      XCTAssertTrue(scroll.exists, "Expected the current screen's scroll container")
       let viewport = scroll.frame
       let close = app.buttons["cadence.guided.close"]
       let pickerCancel = app.buttons["cadence.guided.picker.cancel"]
