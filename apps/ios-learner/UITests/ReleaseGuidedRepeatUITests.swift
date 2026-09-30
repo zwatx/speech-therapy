@@ -42,7 +42,7 @@ import XCTest
       activate("cadence.guided.finish-stage", app)
       XCTAssertTrue(app.buttons["cadence.guided.done"].waitForExistence(timeout: 5))
       let repeatButton = app.buttons["cadence.guided.repeat"]
-      reveal(repeatButton, app)
+      reveal(repeatButton, app, id: "cadence.guided.repeat")
       let summary = XCTAttachment(screenshot: app.screenshot())
       summary.name = largeText ? "repeat-five-summary-largest-text" : "repeat-five-summary-compact"
       summary.lifetime = .keepAlways
