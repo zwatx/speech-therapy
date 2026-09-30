@@ -122,12 +122,16 @@ import XCTest
         }
         for move in 0..<12 {
           let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
-          let frame = target.frame
-          if frame.minY >= viewport.minY + 8, frame.maxY <= viewport.maxY - 40,
-            target.isHittable { return }
-          if frame.minY < viewport.minY + 8 {
-            picker.swipeDown(velocity: .slow)
-          } else {
+          let top = viewport.minY + 8, bottom = viewport.maxY - 8
+          guard !viewport.isEmpty, top.isFinite, bottom.isFinite,
+            viewport.minX.isFinite, viewport.maxX.isFinite, bottom > top
+          else {
+            XCTFail("Invalid picker viewport: \(id)")
+            return
+          }
+          guard target.exists else {
+            measurements.append(["move": move, "realized": false,
+              "viewport": [viewport.minX, top, viewport.width, bottom - top]])
             picker.swipeUp(velocity: .slow)
           }
         }
