@@ -80,8 +80,12 @@ import XCTest
     }
     private func activate(_ id: String, _ app: XCUIApplication) {
       let button = app.buttons[id]
-      XCTAssertTrue(button.waitForExistence(timeout: 5), id)
-      reveal(button, app)
+      // Native List choices are materialized as the picker scrolls.
+      if !id.hasPrefix("cadence.guided.pick.") {
+        XCTAssertTrue(button.waitForExistence(timeout: 5), id)
+      }
+      reveal(button, app, id: id)
+      XCTAssertTrue(button.exists, id)
       XCTAssertTrue(button.isEnabled, id)
       XCTAssertGreaterThanOrEqual(button.frame.height, 44, id)
       button.tap()
