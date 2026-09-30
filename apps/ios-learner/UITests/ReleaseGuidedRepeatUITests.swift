@@ -91,6 +91,13 @@ import XCTest
       button.tap()
     }
 
+    private func keepPickerScreenshot(_ name: String, _ app: XCUIApplication) {
+      let attachment = XCTAttachment(screenshot: app.screenshot())
+      attachment.name = name
+      attachment.lifetime = .keepAlways
+      add(attachment)
+    }
+
     // The native picker List scrolls through its full-width cells. Other stages use
     // observed blank gutters so short positioning drags cannot activate word buttons.
     private func reveal(_ target: XCUIElement, _ app: XCUIApplication) {
