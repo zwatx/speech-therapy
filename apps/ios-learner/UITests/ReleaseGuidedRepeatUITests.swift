@@ -109,7 +109,18 @@ import XCTest
       // Its full-width cells have no blank gutter; use its native scrolling gesture.
       let picker = app.collectionViews["cadence.guided.picker.scroll"]
       if picker.exists {
-        for _ in 0..<12 {
+        var measurements: [[String: Any]] = []
+        var capturedFirstRealized = false
+        defer {
+          if let data = try? JSONSerialization.data(
+            withJSONObject: measurements, options: [.sortedKeys]) {
+            let attachment = XCTAttachment(data: data, uniformTypeIdentifier: "public.json")
+            attachment.name = "repeat-picker-movement-" + id
+            attachment.lifetime = .keepAlways
+            add(attachment)
+          }
+        }
+        for move in 0..<12 {
           let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
           let frame = target.frame
           if frame.minY >= viewport.minY + 8, frame.maxY <= viewport.maxY - 40,
