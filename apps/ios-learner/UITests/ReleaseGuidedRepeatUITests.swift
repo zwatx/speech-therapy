@@ -133,6 +133,60 @@ import XCTest
             measurements.append(["move": move, "realized": false,
               "viewport": [viewport.minX, top, viewport.width, bottom - top]])
             picker.swipeUp(velocity: .slow)
+            continue
+          }
+          let frame = target.frame
+          guard !frame.isEmpty, frame.minY.isFinite, frame.maxY.isFinite,
+            frame.minX.isFinite, frame.maxX.isFinite, frame.height <= bottom - top
+          else {
+            capturePracticeFailure(app)
+            XCTFail("Invalid or oversized picker choice: \(id)")
+            return
+          }
+          if !capturedFirstRealized {
+            keepPickerScreenshot("repeat-picker-first-realized-" + id, app)
+            capturedFirstRealized = true
+          }
+          var measurement: [String: Any] = [
+            "move": move, "realized": true,
+            "viewport": [viewport.minX, top, viewport.width, bottom - top],
+            "before": [frame.minX, frame.minY, frame.width, frame.height],
+            "hittable": target.isHittable,
+          ]
+          if frame.minY >= top, frame.maxY <= bottom, target.isHittable {
+            measurements.append(measurement)
+            keepPickerScreenshot("repeat-picker-ready-" + id, app)
+            return
+          }
+          // Native List rows span the width. Use a short native pan, measured
+          // from this realized row; a full swipe can unmaterialize it again.
+          let desiredTop = top + (bottom - top - frame.height) / 2
+          let distance = frame.minY - desiredTop
+          guard abs(distance) > 0 else {
+            measurements.append(measurement)
+            capturePracticeFailure(app)
+            XCTFail("Centered picker choice is not hittable: \(id)")
+            return
+          }
+          let travel = min(max(abs(distance), 12), (bottom - top) * 0.35)
+          let center = (top + bottom) / 2
+          let down = distance < 0
+          let origin = picker.coordinate(withNormalizedOffset: .zero)
+          let start = origin.withOffset(CGVector(
+            dx: viewport.minX + 12 - picker.frame.minX,
+            dy: center + (down ? -travel / 2 : travel / 2) - picker.frame.minY))
+          let finish = origin.withOffset(CGVector(
+            dx: viewport.minX + 12 - picker.frame.minX,
+            dy: center + (down ? travel / 2 : -travel / 2) - picker.frame.minY))
+          start.press(forDuration: 0.01, thenDragTo: finish,
+            withVelocity: .slow, thenHoldForDuration: 0.2)
+          measurement["travel"] = travel
+          measurement["dragDown"] = down
+          measurement["realizedAfter"] = target.exists
+          if target.exists {
+            let after = target.frame
+            measurement["after"] = [after.minX, after.minY, after.width, after.height]
+            measurement["movement"] = after.minY - frame.minY
           }
         }
         capturePracticeFailure(app)
