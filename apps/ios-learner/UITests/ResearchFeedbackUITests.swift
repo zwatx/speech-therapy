@@ -34,10 +34,7 @@ final class ResearchFeedbackUITests: XCTestCase {
     XCTAssertEqual(menu.value as? String, "banana · first n sound")
     attach(app, "feedback-word-menu-selected-banana-setup")
     let word = app.staticTexts["feedback-word"]
-    for _ in 0..<12 {
-      if word.isHittable { break }
-      app.scrollViews.firstMatch.swipeDown()
-    }
+    scrollTo(word, app)
     XCTAssertTrue(word.isHittable)
     let changedWord = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "label == %@", "banana"), object: word)
