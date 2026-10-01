@@ -188,9 +188,10 @@ import XCTest
             measurement["after"] = [after.minX, after.minY, after.width, after.height]
             measurement["movement"] = after.minY - frame.minY
           }
+          measurements.append(measurement)
         }
         capturePracticeFailure(app)
-        XCTFail("Picker choice did not enter viewport: \(target.identifier)")
+        XCTFail("Picker choice did not enter viewport: \(id)")
         return
       }
       let scroll = app.scrollViews.firstMatch
