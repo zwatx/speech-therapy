@@ -250,7 +250,7 @@ import XCTest
         start.press(
           forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
       }
-      XCTFail("Control did not enter viewport: \(target.identifier)")
+      XCTFail("Control did not enter viewport: \(id)")
     }
   }
 #endif
