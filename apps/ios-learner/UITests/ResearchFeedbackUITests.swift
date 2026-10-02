@@ -171,9 +171,24 @@ final class ResearchFeedbackUITests: XCTestCase {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
   }
   private func scrollTo(_ target: XCUIElement, _ app: XCUIApplication) {
-    for _ in 0..<12 {
-      if target.isHittable { return }
-      app.scrollViews.firstMatch.swipeUp()
+    let window = app.windows.firstMatch.frame
+    // Close belongs to the fixed inset, outside the scrolling content.
+    if target.identifier == "feedback-close" {
+      XCTAssertTrue(window.contains(target.frame) && target.isEnabled && target.isHittable)
+      return
+    }
+    // The underlying Today ScrollView can coexist with the presented Feedback view.
+    // Select the actual target's scroll ancestor, never the app's first ScrollView.
+    let scroll = app.scrollViews.containing(.any, identifier: target.identifier).firstMatch
+    guard !target.identifier.isEmpty, scroll.exists else {
+      XCTFail("No scroll ancestor contains \(target.identifier)")
+      return
+    }
+    let viewport = scroll.frame.intersection(window)
+    var top = viewport.minY + 8
+    for identifier in ["feedback-close", "feedback-close-note", "feedback-ui-test-banner"] {
+      let inset = element(identifier, app)
+      if inset.exists { top = max(top, inset.frame.maxY + 8) }
     }
     for _ in 0..<12 {
       if target.isHittable { return }
