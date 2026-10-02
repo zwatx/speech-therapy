@@ -190,9 +190,11 @@ final class ResearchFeedbackUITests: XCTestCase {
       let inset = element(identifier, app)
       if inset.exists { top = max(top, inset.frame.maxY + 8) }
     }
-    for _ in 0..<12 {
-      if target.isHittable { return }
-      app.scrollViews.firstMatch.swipeDown()
+    let bottom = viewport.maxY - 8
+    let visibleHeight = bottom - top
+    guard visibleHeight > 0 else {
+      XCTFail("No unobscured Feedback viewport is available")
+      return
     }
   }
   private func assertNoRecordingOrProcessing(_ app: XCUIApplication) {
