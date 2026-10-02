@@ -295,6 +295,7 @@ final class ResearchFeedbackUITests: XCTestCase {
     if trailingWidth >= 16 { return right - trailingWidth / 2 }
     return nil
   }
+
   private func assertNoRecordingOrProcessing(_ app: XCUIApplication) {
     for id in [
       "feedback-stop", "feedback-check", "feedback-replay", "feedback-permission-progress",
