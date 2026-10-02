@@ -3,6 +3,56 @@ import XCTest
 /// Actual home navigation. Generated seams replace sensors/models; production cases never record.
 @MainActor
 final class ResearchHomeSpeechEntryUITests: XCTestCase {
+  func testCompactHomePrivacyFooterIsFullyReadableAboveTabs() {
+    let app = launch()
+    defer { app.terminate() }
+    let footer = app.staticTexts.matching(
+      NSPredicate(format: "label BEGINSWITH %@", "Practice recordings stay local")
+    ).firstMatch
+    XCTAssertTrue(footer.waitForExistence(timeout: 5))
+    scrollTo(footer, app)
+    XCTAssertTrue(footer.isHittable)
+    XCTAssertTrue(footer.label.contains("Example recordings are requested only when you tap Play."))
+    let viewport = app.scrollViews.firstMatch.frame
+    XCTAssertGreaterThanOrEqual(footer.frame.minY, viewport.minY)
+    XCTAssertLessThanOrEqual(footer.frame.maxY, viewport.maxY)
+    XCTAssertLessThanOrEqual(footer.frame.maxY, app.tabBars.firstMatch.frame.minY)
+    XCTAssertTrue(app.buttons["About practice and privacy"].isHittable)
+    attach(app, "production-home-complete-privacy-footer-above-tabs")
+    XCTAssertFalse(app.buttons["guided-stop"].exists)
+    XCTAssertFalse(app.buttons["feedback-stop"].exists)
+  }
+
+  func testLargestTextHomeKeepsPrivacyHeaderWhileScrolling() throws {
+    let app = launch(large: true)
+    defer { app.terminate() }
+    let about = app.buttons["About practice and privacy"]
+    XCTAssertTrue(about.waitForExistence(timeout: 5))
+    let headerActionFrame = about.frame
+    XCTAssertTrue(app.windows.firstMatch.frame.contains(headerActionFrame))
+    XCTAssertTrue(about.isHittable)
+    XCTAssertGreaterThanOrEqual(headerActionFrame.height, 44)
+    for id in ["cadence.guided-word.start", "cadence.feedback.start", "cadence.start"] {
+      scrollTo(app.buttons[id], app)
+      XCTAssertTrue(app.buttons[id].isHittable)
+      XCTAssertEqual(about.frame, headerActionFrame)
+      XCTAssertTrue(about.isHittable)
+      XCTAssertGreaterThanOrEqual(app.scrollViews.firstMatch.frame.minY, about.frame.maxY)
+      XCTAssertLessThanOrEqual(app.scrollViews.firstMatch.frame.maxY, app.tabBars.firstMatch.frame.minY)
+    }
+    attach(app, "production-home-largest-persistent-privacy-header")
+    about.tap()
+    XCTAssertTrue(app.staticTexts["About practice"].waitForExistence(timeout: 5))
+    let done = app.buttons["Done"]
+    XCTAssertTrue(done.waitForExistence(timeout: 5))
+    XCTAssertTrue(done.isHittable)
+    done.tap()
+    XCTAssertTrue(app.buttons["cadence.start"].waitForExistence(timeout: 5))
+    XCTAssertEqual(about.frame, headerActionFrame)
+    XCTAssertFalse(app.buttons["guided-stop"].exists)
+    XCTAssertFalse(app.buttons["feedback-stop"].exists)
+  }
+
   func testProductionCompactHomeOpensBothRoutesWithoutEnablingChecksOrCapture() throws {
     let app = launch()
     XCTAssertFalse(app.staticTexts["cadence.home.ui-test-banner"].exists)
