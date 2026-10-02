@@ -196,6 +196,104 @@ final class ResearchFeedbackUITests: XCTestCase {
       XCTFail("No unobscured Feedback viewport is available")
       return
     }
+    var previousFrame: CGRect?
+    var previousTravel: CGFloat = 0
+    var previousAbove: Bool?
+    for _ in 0..<24 {
+      let frame = target.frame
+      // Dynamic Type text and choice buttons can be taller than the viewport.
+      // Align the leading edge while still requiring the actual target to be hittable;
+      // demanding both edges be visible would alternate drags without a possible fit.
+      // Full-label and any explicit frame assertions in the journeys remain unchanged.
+      let oversizedTarget = frame.height > visibleHeight
+      let eligible =
+        frame.minX >= viewport.minX && frame.maxX <= viewport.maxX
+        && frame.minY >= top
+        && (oversizedTarget ? frame.minY <= top + visibleHeight * 0.2 : frame.maxY <= bottom)
+      // Preserve the original short circuit: no hittability query when geometry fails.
+      let hittable: Bool? = eligible ? target.isHittable : nil
+      if eligible, hittable == true, target.isEnabled {
+        return
+      }
+      // Near-fit targets have a narrow containment interval. Aim at its midpoint
+      // without a minimum step that could repeatedly jump across the whole interval.
+      let desiredTop = oversizedTarget ? top : top + (visibleHeight - frame.height) / 2
+      let above = frame.minY < desiredTop
+      let distance = abs(frame.minY - desiredTop)
+      var travel =
+        oversizedTarget
+        ? min(max(distance, visibleHeight * 0.2), visibleHeight * 0.6)
+        : min(distance, visibleHeight * 0.6)
+      // Estimate only the preceding drag's lost movement, not a cumulative offset.
+      // Ignore reflow, reversal and overshoot; they do not measure touch slop.
+      if !oversizedTarget, distance > 0, distance <= 24,
+        let previousFrame, previousTravel > 0, previousAbove == above,
+        previousFrame.minX == frame.minX, previousFrame.size == frame.size
+      {
+        let movement = (frame.minY - previousFrame.minY) * (above ? 1 : -1)
+        if movement >= 0, movement <= previousTravel {
+          let lostMovement = min(previousTravel - movement, 24)
+          travel = min(distance + lostMovement, visibleHeight * 0.6)
+        }
+      }
+      // At the desired position, an unhittable target stays unproved; do not tap it.
+      if travel == 0 { continue }
+      let centerY = (top + bottom) / 2
+      let startY = centerY + (above ? -travel / 2 : travel / 2)
+      let finishY = centerY + (above ? travel / 2 : -travel / 2)
+      // A short drag can resolve as a tap. Keep the entire vertical gesture in
+      // an observed blank gutter, outside every button, switch and the target in this scroll.
+      let controlFrames =
+        (scroll.buttons.allElementsBoundByIndex + scroll.switches.allElementsBoundByIndex)
+        .map { $0.frame } + [frame]
+      guard
+        let dragX = gutterX(viewport, window: app.windows.firstMatch.frame, frames: controlFrames)
+      else {
+        XCTFail("No blank Feedback scroll gutter is available")
+        return
+      }
+      previousFrame = frame
+      previousTravel = travel
+      previousAbove = above
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(CGVector(dx: dragX - scroll.frame.minX, dy: startY - scroll.frame.minY))
+      let finish = origin.withOffset(
+        CGVector(dx: dragX - scroll.frame.minX, dy: finishY - scroll.frame.minY))
+      // Use a slow drag and held release to reduce flick-like overshoot.
+      // This is the existing guided-journey gesture pattern; keep oversized
+      // targets inside their eligible leading-edge band without flick overshoot.
+      start.press(
+        forDuration: 0.01, thenDragTo: finish, withVelocity: .slow, thenHoldForDuration: 0.2)
+    }
+    XCTFail("Scroll target did not enter the unobscured viewport")
+  }
+
+  private func gutterX(_ viewport: CGRect, window: CGRect, frames: [CGRect]) -> CGFloat? {
+    let left = max(viewport.minX, window.minX)
+    let right = min(viewport.maxX, window.maxX)
+    guard left.isFinite, right.isFinite, right > left else { return nil }
+    var leading = right
+    var trailing = left
+    var hasFrame = false
+    for frame in frames {
+      guard frame.minX.isFinite, frame.maxX.isFinite, frame.width.isFinite,
+        frame.height.isFinite, frame.width >= 0, frame.height >= 0
+      else { return nil }
+      // Empty accessibility frames do not describe a hit region.
+      guard frame.width > 0, frame.height > 0 else { continue }
+      if frame.maxX > left, frame.minX < right {
+        hasFrame = true
+        leading = min(leading, max(left, frame.minX))
+        trailing = max(trailing, min(right, frame.maxX))
+      }
+    }
+    guard hasFrame else { return nil }
+    let leadingWidth = leading - left
+    let trailingWidth = right - trailing
+    // Eight points from each edge at minimum; never fall back inside a button.
+    if leadingWidth >= 16, leadingWidth >= trailingWidth { return left + leadingWidth / 2 }
+    if trailingWidth >= 16 { return right - trailingWidth / 2 }
+    return nil
   }
   private func assertNoRecordingOrProcessing(_ app: XCUIApplication) {
     for id in [
