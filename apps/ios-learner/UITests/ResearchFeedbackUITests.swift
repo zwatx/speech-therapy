@@ -87,14 +87,14 @@ final class ResearchFeedbackUITests: XCTestCase {
     scrollTo(optIn, app)
     optIn.tap()
     XCTAssertEqual(optIn.value as? String, "On")
-    scrollTo(app.buttons["feedback-next"], app)
-    app.buttons["feedback-next"].tap()
+    let next = app.buttons["feedback-next"]
+    scrollTo(next, app)
+    XCTAssertTrue(next.isEnabled)
+    XCTAssertTrue(next.isHittable)
+    next.tap()
     attach(app, "feedback-after-next-controls")
     let word = app.staticTexts["feedback-word"]
-    for _ in 0..<12 {
-      if word.isHittable { break }
-      app.scrollViews.firstMatch.swipeDown()
-    }
+    scrollTo(word, app)
     XCTAssertTrue(word.isHittable)
     attach(app, "feedback-after-next-visible-word")
     let changedWord = XCTNSPredicateExpectation(
