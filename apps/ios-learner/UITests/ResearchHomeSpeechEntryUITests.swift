@@ -266,10 +266,43 @@ final class ResearchHomeSpeechEntryUITests: XCTestCase {
       }
       let frame = target.frame
       if target.isHittable && frame.minY >= top + 8 && frame.maxY <= viewport.maxY - 8 { return }
-      let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-      let finish = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.5, dy: frame.minY < top + 8 ? 0.7 : 0.3))
-      start.press(forDuration: 0.01, thenDragTo: finish)
+      let bottom = viewport.maxY - 8
+      let center = (top + 8 + bottom) / 2
+      let travel = min(abs(frame.midY - center), (bottom - top - 8) * 0.3)
+      guard travel.isFinite && travel > 0 else {
+        capturePracticeFailure(app)
+        XCTFail("Control could not be revealed within the unobscured viewport")
+        return
+      }
+      let controls = scroll.buttons.allElementsBoundByIndex + scroll.switches.allElementsBoundByIndex
+        + scroll.links.allElementsBoundByIndex + scroll.sliders.allElementsBoundByIndex
+      let left = max(viewport.minX, app.windows.firstMatch.frame.minX)
+      let right = min(viewport.maxX, app.windows.firstMatch.frame.maxX)
+      let active = (controls.map(\.frame) + [frame]).filter {
+        !$0.isEmpty && $0.maxX > left && $0.minX < right
+      }
+      guard active.allSatisfy({ $0.minX.isFinite && $0.maxX.isFinite }) else {
+        XCTFail("Invalid control geometry")
+        return
+      }
+      let leading = active.map(\.minX).min() ?? left
+      let trailing = active.map(\.maxX).max() ?? right
+      let x: CGFloat
+      if leading - left >= 16 { x = (left + leading) / 2 }
+      else if right - trailing >= 16 { x = (right + trailing) / 2 }
+      else {
+        capturePracticeFailure(app)
+        XCTFail("No blank scroll gutter")
+        return
+      }
+      let above = frame.midY < center
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(CGVector(
+        dx: x - viewport.minX, dy: center + (above ? -travel / 2 : travel / 2) - viewport.minY))
+      let finish = origin.withOffset(CGVector(
+        dx: x - viewport.minX, dy: center + (above ? travel / 2 : -travel / 2) - viewport.minY))
+      start.press(
+        forDuration: 0.01, thenDragTo: finish, withVelocity: .slow, thenHoldForDuration: 0.2)
     }
     XCTFail("Control did not become fully visible")
   }
