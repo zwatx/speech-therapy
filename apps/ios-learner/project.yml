@@ -36,7 +36,7 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Cadence
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Cadence records a short practice attempt only after you tap Record.
-        INFOPLIST_KEY_NSCameraUsageDescription: Cadence uses the front camera only when you tap Show mirror. The preview stays on this device and is not recorded or saved.
+        INFOPLIST_KEY_NSCameraUsageDescription: Cadence uses the front camera for the preview during a sound check or practice, or when you choose Show mirror. Face tracking stays on this device. Camera images and face data are not saved or sent.
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         TARGETED_DEVICE_FAMILY: "1,2"
