@@ -304,6 +304,7 @@ final class ResearchHomeSpeechEntryUITests: XCTestCase {
       start.press(
         forDuration: 0.01, thenDragTo: finish, withVelocity: .slow, thenHoldForDuration: 0.2)
     }
+    capturePracticeFailure(app)
     XCTFail("Control did not become fully visible")
   }
   private func attach(_ app: XCUIApplication, _ name: String) {
