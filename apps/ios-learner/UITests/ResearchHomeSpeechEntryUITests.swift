@@ -203,6 +203,7 @@ final class ResearchHomeSpeechEntryUITests: XCTestCase {
     if let guided { app.launchArguments += ["-CadenceGuidedWordUITestCase", guided] }
     if let feedback { app.launchArguments += ["-CadenceUnifiedFeedbackUITestCase", feedback] }
     app.launch()
+    waitForPracticeSystemBannerToClear()
     if modes.isEmpty {
       XCTAssertTrue(app.buttons["cadence.guided-word.start"].waitForExistence(timeout: 5))
       XCTAssertFalse(app.staticTexts["guided-title"].exists)
