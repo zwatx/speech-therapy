@@ -421,3 +421,29 @@ primary agent; source review does not independently reproduce that evidence.
 Final current-source/document review is recorded in the October 15 task directory.
 The native UI setup smoke described above supersedes the earlier inability to
 find the simulator surface: this Xcode version uses Device Hub.
+
+
+## October 24 — retain the take-bound research result
+
+The Debug client now returns the validated target distributions with operation,
+entry, age, request/audio/prompt hashes, model manifest and timings. Guided
+processing snapshots the expected context before the request and retains a result
+only beside the original operation/take. Wrong bindings, malformed vectors,
+unavailable processing and cancellation retain no payload. Both late and
+synchronous-publication cancellation preserve the existing borrow/cleanup behavior.
+Timing-only and admission-only replies do not establish full research processing.
+
+One focused generated-only simulator run passed106 tests with zero failures or
+skips:29 recognizer,16 generated host,5 review/practice/recheck flow,17 client and
+39 session checks. Source review found no blockers; root verified exact executed
+method IDs, current source hashes and both devices' before/after Shutdown states.
+The protected device was only observed through device lists. Existing build
+warnings remain. [Retained verification](../../work/research-result-binding-20261024/HANDOFF.md)
+contains the execution/review boundaries.
+
+This change retains research distributions in session memory; it adds no learner
+score, diagnosis, automatic practice choice or persistence of model results. The
+word-only ledger and ordinary Release behavior retain their prior meaning. No
+real service/model, microphone, camera or phone was exercised in this run; earlier
+live evidence and failures remain separate. This does not validate sound judgments
+or repair/qualify the withheld q8 route.
