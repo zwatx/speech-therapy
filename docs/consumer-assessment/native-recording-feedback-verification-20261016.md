@@ -38,3 +38,33 @@ Root inspected all 12 current UI PNGs and all 10 geometry attachments, covering 
 Inputs and official results are retained in `work/native-recording-feedback-20261016/execution-v1/` and the helper successor `execution-v2/`, with the complete shipping patch and before copies in the parent task. The [history-access checkpoint](native-history-access-verification-20261016.md) and its still-open largest-text Clear-confirmation defect are separate. A repair candidate is prepared; this feedback result does not close that defect.
 
 No live microphone, camera preview, audible playback, new model inference, physical-device, target-sound correctness, clinical diagnosis or effectiveness is established here. The broader app goal remains active. Apple Speech authorization remains denied; earlier bundled-word recognition evidence remains separate from this recording-signal change.
+
+## October 24 accessibility announcement continuation
+
+The existing phase announcement now adds the review payload's own recording
+observation when the view observes recording → review. It reuses the current
+all-zero/volume-limit text rather than introducing an evidence rule. Unknown or
+ordinary evidence announces readiness only. Returning to a kept take does not
+repeat its advice. Checking, cancelling and cleanup-blocked word checks suppress
+the review announcement and retain their existing dedicated announcements.
+
+Nine actual pure XCTest methods pass: five existing advice regressions and four
+new announcement cases covering zero, both rail-assessment details, missing or
+ordinary evidence, independent consecutive inputs and return-to-review copy.
+These ran in a standalone Mac harness with the test body unchanged; only the
+app-module import was removed with a byte-restoration check. They are not iOS
+session-lifecycle or VoiceOver integration tests. The full ordinary Release app
+build also passed for arm64 and x86_64 simulator targets, including the changed
+SwiftUI caller. The build retains one AppIntents metadata-extraction warning.
+
+Root observed the finite verification finish normally, with no signals, cleanup
+errors or remaining owned groups. Postchecks verified 290 source/generated
+bindings. [Evidence and review](../../work/recording-advice-announcement-20261024/HANDOFF.md)
+preserve the narrow patch, actual logs and independent review. No device was
+launched or app installed for this continuation, and no model or recording ran.
+
+SwiftUI can coalesce phase changes, and a fast word check may already be finished
+when the phase callback runs. This change does not guarantee every completion is
+spoken, exactly-once delivery or announcement ordering. Actual VoiceOver timing
+and audibility remain unverified. Existing recording eligibility, visual advice,
+media ownership, scores and pronunciation claims are unchanged.
