@@ -1,5 +1,32 @@
 # Consumer roadmap completion
 
+## Current native status — October 25, 2026
+
+The app offers general practice instructions, explicit recording/replay, optional
+whole-word observations, selected practice and fresh recheck. These do not establish
+individual-sound correctness, improvement or diagnosis. The [default sound
+guides](../native-default-sound-guide-verification-20261024.md) cover all five
+default guided words; the later [ready instruction](../native-practice-instruction-verification-20261024.md)
+and [retake reminder](../native-practice-reminder-verification-20261025.md) keep
+that guidance independent of the recording's observation.
+
+The [installed search-fix candidate 8](../native-search-demo-verification-20261025.md)
+adds truthful sound-group/word-entry announcements and has passed an ordinary arm64
+Release build and exact installed-bundle comparison. Home → guided setup → first
+review's Ball screen was observed through Device Hub without starting media.
+[Candidate 7](../native-current-release-candidate-verification-20261025.md) remains
+the preserved fallback with its separate normal/largest-text Pig/Bread/recheck
+navigation evidence; that qualification does not transfer to candidate 8.
+Candidate 5's [earlier handoff](../../../work/demo-candidate-consolidation-20261025/HANDOFF.md)
+retains its historical demo choice and evidence.
+Candidate 6 is a separate [disabled-button readability checkpoint](../native-readable-actions-verification-20261025.md):
+one ordinary Release journey passed and one failed; search-field and largest-text
+contrast findings remain open. The [14 Release-compiled app-hosted media contracts](../native-release-media-contract-verification-20261025.md)
+are separate from ordinary Release UI media. Current-candidate live media, VoiceOver,
+sound-truth validation and finished-product professional review remain incomplete.
+The dated checkpoints below retain their original scope rather than qualifying
+every later app version.
+
 The October16 [history-access checkpoint](../native-history-access-verification-20261016.md)
 adds the complete retained-session destination to the three-entry Home preview.
 Six generated UI cases pass, including 100 entries at Accessibility XXXL,
