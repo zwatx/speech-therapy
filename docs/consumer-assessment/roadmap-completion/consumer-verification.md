@@ -1,5 +1,11 @@
 # Recording and visual-practice verification
 
+This retains the earlier browser/source-version verification under
+`work/roadmap-completion-20261004/consumer/`. It is historical evidence, not a
+current server-availability or native-app verification claim. See the
+[current roadmap status](README.md#current-native-status--october-25-2026) for later
+native work and the dated study-status correction below.
+
 The local app at `http://127.0.0.1:8782/` centers recording rather than practice marks. Choose a word, tap Record, stop or let the four-second cap finish, then replay or record again. The camera mirror has its own opt-in button. To process audio, select an age from 6 to 12, enable optional computer processing, and tap Process this recording for that take. Enabling processing never submits a recording automatically.
 
 The mirror displays live video locally; no frames are saved or sent. It does not analyze faces, mouth movements or articulation. A processed response means the research pipeline finished; it provides no correctness score or corrective guidance. The prototype age restriction is not evidence of child accuracy.
