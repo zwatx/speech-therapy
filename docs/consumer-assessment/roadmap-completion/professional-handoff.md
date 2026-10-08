@@ -14,7 +14,7 @@ A later professional review should make factual, version-bound records for:
 - Whether evidence supports a narrowly worded learner finding. Current corpus-rating probabilities and engineering admission cannot supply that finding.
 - Recording repeatability and an independently justified change criterion before improvement claims. New observations and unfamiliar transfer tasks need a separate declared protocol; identical examples do not supply them.
 
-Actual identity, qualifications, conflicts, guardian authority, consent, use rights and collection authorization must come from people and source records. Models and local passwords cannot establish those facts. The public reference source license is separate from participant permissions. No child has been enrolled, no reviewer contacted and no clinical signoff issued in this continuation.
+Actual identity, qualifications, conflicts, guardian authority, consent, use rights and collection authorization must come from people and source records. Models and local passwords cannot establish those facts. The public reference source license is separate from participant permissions. The original desktop continuation recorded no child enrollment, reviewer contact or clinical signoff; that is dated provenance, not a current contact-status assertion.
 
 Before enabling learner findings, archive the reviewed product/content/model/policy versions and the professional decisions, implement any justified changes, and rerun affected engineering checks. Before any public release, establish the actual product-rights/deployment boundary and validate intended-use evidence; the present local tools carry false learner, clinical and production eligibility throughout.
 
