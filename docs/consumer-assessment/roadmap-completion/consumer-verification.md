@@ -37,6 +37,15 @@ The desktop example-check tool retains its separate evidence: 49 backend and nin
 
 Local recordings stay in browser memory until an explicit processing action. That action sends a bounded WAV to the local computer service. Normal processing removes its private temporary audio copy; crashes or uncertain cleanup can leave a private copy and block further work pending deliberate owner reconciliation. Cancelling the browser request does not promise immediate server-worker termination or secure erasure.
 
-Actual authorized intended recordings, factual consent/rights/reviewer records, target-sound reference evidence, finished-product professional review, physical-device verification and production release controls remain separate work. Facial/articulation analysis and evidence-supported learner feedback are not implemented. The reserved once-only study remains sealed and unexecuted.
+Actual authorized intended recordings, factual consent/rights/reviewer records, target-sound reference evidence, finished-product professional review, physical-device verification and production release controls remain separate work. These historical checks establish no facial/articulation analysis or validated individual-sound finding.
+
+### Study-status correction — October 25, 2026
+
+The earlier “sealed and unexecuted” status is superseded. The once-only PERCEPT-R
+study was attempted and failed before prediction lock. The attempt is consumed,
+its exact cause is unknown, and it produced no accuracy, comparative-model,
+clinical or learner-feedback result. It must not be retried or rescued. This
+correction reads the [preserved failed-attempt report](../../../work/r-inference-checkpoint-20261011/FAILED-STUDY-v1.md),
+not reserved inputs or outcomes, and changes none of the historical browser results.
 
 Private verification receipts and actual screenshots are retained under `work/roadmap-completion-20261004/consumer/`; these checkout artifacts are not publicly deployed app resources.
