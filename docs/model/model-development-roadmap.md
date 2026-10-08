@@ -1,5 +1,51 @@
 # Cadence model development roadmap
 
+**Model-development update, October 25:** the prompt-blind prefix-beam research
+option and exact sequence scorer pass13 independent arithmetic tests. A separate fixed 192-utterance
+JIBO TRAIN panel (73 children, including longer speech, excluding the earlier32
+inputs) yields 1,673→1,655 edits across3,375 reference phones: PER49.57%→49.04%.
+Twenty-five utterances improve, ten regress and157 tie; long letters/digits
+regresses slightly. The [broader decoder report](ctc-prefix-broad-development-20261025.md)
+records selection, all cells, higher decode cost and independent saved-output
+recount. The [earlier32-input result](ctc-prefix-development-20261025.md) stays
+separate. These are modest in-training-set diagnostics, not independent accuracy
+or clinical validation. Weights, phone mapping, beam16 and app policy stay fixed;
+no held-out data or new fit is involved. The saved-TRAIN exact-likelihood audit finds178/192 references ranked below both
+decoders, with one witnessed beam search miss. Next is qualifying a separately
+trained phoneme-CTC challenger and its rights/runtime, not beam-width tuning.
+The [XLS-R/TIMIT metadata qualification and research adapter](xlsr-timit-challenger-qualification-20261025.md)
+are now implemented:22 model-free tests and actual pinned-metadata checks pass,
+with independent review clear. A subsequent [fixed32-TRAIN challenger test](xlsr-timit-train-comparison-20261025.md)
+loads verified safe weights and completes its CPU runtime checks:281 edits versus
+C greedy283/C beam279 across596 phones, with short-utterance regressions. It is
+not a winning replacement. Whole-sequence agreement is nonexact in both observed
+agreement cases; an oracle whole-utterance selector still has247 edits. No fusion
+or learner policy is promoted. Missing AO/ZH, unsupported flap, clinical/native
+qualification and redistribution-rights limits remain explicit. User app rehearsal is separate.
+
+The subsequent review-evidence audit found and fixed a selected-target binding
+gap: [new intended-review v2](../consumer-assessment/intended-review-context-binding-20261025.md)
+rejects reuse of unchanged reviews after banana's selected N occurrence changes.
+All34 generated/CLI checks pass; historical v1 report digests remain unchanged.
+This prepares stronger future reference evidence without creating human judgments
+or enabling learner pronunciation decisions.
+
+The next [scoring-ambiguity diagnostic and tie repair](model-scoring-ambiguity-verification-20261025.md)
+expose arbitrary occurrence attribution across equally optimal edit paths and
+remove lexicon-order-dependent error-family claims. All32 focused Python and34
+scorer tests pass; the complete saved192-TRAIN audit finds133 greedy/121beam
+positions whose match/mismatch status depends on the selected edit path, out of
+3,375 per decoder. Historical feature/metric replay and acoustic error rates stay
+unchanged. This is stronger diagnostic uncertainty handling, not a new clinical
+or native learner-feedback rule.
+
+A separate [native decoder-logit optimization](native-decoder-logits-verification-20261025.md)
+preserves recognition decisions while removing boxed tensor-copy overhead. Six
+actual iOS units and ordinary Release compilation pass; generated copy timings
+improve64.38ms→0.288ms. No full word-check timing or accuracy gain is claimed, and
+the prepared simulator demo is not replaced.
+
+
 **Milestone steering, October 14, 2026:** target a reviewable prototype by Sunday,
 October 18: real in-app recording → validated pronunciation judgment → practice
 → recheck across multiple common sounds. Model integration takes priority over
