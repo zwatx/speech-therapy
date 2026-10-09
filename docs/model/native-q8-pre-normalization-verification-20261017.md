@@ -98,3 +98,145 @@ tensor-lifetime defect: the final anchor remains raw output 4, and all OrtValues
 survive complete copy-out. No model was rerun during reconciliation.
 The working whole-word guided-practice route remains unchanged; this checkpoint
 adds no sound-correction, diagnosis, full-pipeline or clinical claim.
+
+## October 23: generated comparison-reader controls
+
+The unchanged optimized-graph metadata reader now passes ten generated-protobuf
+helper tests, including changed normalization metadata, output exposure,
+producer identity and rejection cases. Root observed normal owned-process
+closure; the independent engineering review is clear with limits. The exact
+scope and retained receipts are in
+[the reader-control handoff](../../work/native-q8-reader-controls-20261023/HANDOFF.md).
+These tests use no retained model, saved numerical array, recording, inference
+or simulator. They do not test full export admission or repair this probe's
+two failed preservation checks. A fresh optimized-graph comparison remains
+unexecuted; q8 remains withheld at 5 passing/22 failing of 27.
+
+A separate [generated output-exposure control](../../work/native-q8-fusion-control-20261023/HANDOFF.md)
+then reproduced the proposed fusion mechanism in the cached runtime. Two tiny
+graphs differ only by exposing the residual as an extra output: the internal
+case becomes one SkipLayerNormalization node, while the exposed case retains
+Add plus LayerNormalization. Both optimization-only sessions closed normally,
+with zero inference calls. This supports a specific instrumentation hypothesis;
+it does not establish that the retained graphs take those paths, explain their
+numerical differences or repair the failed preservation checks.
+
+The subsequent [retained public graph comparison](../../work/native-q8-optimized-comparison-20261023/HANDOFF.md)
+now observes that structural difference in the actual two diagnostic graphs.
+Among 939 shared producer tensors, only the final-normalization producer
+metadata changes: fused SkipLayerNormalization becomes separate Add and
+LayerNormalization when the block-23 sum is exposed. Initializer metadata,
+input signatures and the five old output signatures are preserved. Both
+optimization-only exports closed normally, with zero explicit inference calls.
+This confirms that the probe changes the optimized path it intended to measure;
+it does not prove numerical causation or repair. A replacement exposing the
+fused operation's existing inputs needs its own structural and numerical
+preservation checks before attribution. Original failures remain unchanged.
+
+The [replacement input-exposure probe](../../work/native-q8-fusion-preserving-probe-20261023/HANDOFF.md)
+now passes that optimized structural check: all 939 producer tensors and their
+metadata remain equal, as do initializer metadata, inputs and the old output
+prefix; final SkipLayerNormalization is retained. The public graph copy changes
+only two exact output declarations. One fresh optimization-only export closed
+normally, reusing the saved baseline and making no explicit inference call.
+Numerical preservation still requires the original generated-control output
+guards; this structural pass does not qualify the model or erase any failure.
+
+The [replacement probe's numerical preservation check](../../work/native-q8-preserving-measurement-20261023/HANDOFF.md)
+also passes for the two fixed original generated controls. Two Mac and two iOS
+calls returned; all 24 original logits, log-probability and four-anchor byte
+hashes match their saved same-runtime baselines exactly. Mac guards passed
+before iOS dispatch. The fresh iOS 26.5 simulator and native processes closed
+normally, with final Shutdown verified; the protected older device stayed
+Shutdown. No reference forward, recording, reserved data, refit, threshold
+change or numerical operand interpretation occurred in this execution.
+The two additional operands can now support a separate analysis without the
+known instrumentation disturbance. This establishes preservation for these
+specific cases, not cross-runtime equality, numerical causation, a model repair
+or clinical validity. Original q8 failures and learner exclusion remain.
+
+A subsequent [analysis of twelve preserved generated tensors](../../work/native-q8-operand-analysis-20261023/HANDOFF.md)
+places a substantial impulse-case discrepancy before final normalization: the
+two inputs differ between Mac and iOS by maxima 4.1026859283 and 4.7265396118,
+while the final anchor differs by 0.0706451535. The periodic control is bitwise
+equal in all three tensors. This analysis made no new model call and used no
+recording or reserved data. It narrows the next investigation earlier in the
+late encoder; it does not isolate the cause, establish repair or qualify q8.
+
+The next [block-19 midpoint probe](../../work/native-q8-late-encoder-midpoint-20261023/HANDOFF.md)
+has passed all seven optimized structural checks, retaining 939 unchanged
+producer tensors and the final fused normalization. Only one exact existing
+output declaration was appended. Preparation and one optimization-only export
+closed normally, with zero explicit inference calls. Its numerical measurement
+remains separate and must preserve all 24 original same-runtime byte guards.
+
+Its [four-call numerical measurement](../../work/native-q8-midpoint-measurement-20261023/HANDOFF.md)
+now passes all 24 original same-runtime byte guards for the two fixed generated
+controls on Mac and iOS. Both native processes closed normally, and final
+Shutdown was verified for the owned simulator; the protected device stayed
+Shutdown. Four additional block-19 tensors are admitted for a separate analysis.
+This checkpoint did not decode their values or make a reference forward. It
+establishes preservation for these cases, not cross-runtime equality, repair,
+learner eligibility or clinical validity. Prior q8 failures remain unchanged.
+
+A separate [saved block-19 analysis](../../work/native-q8-midpoint-analysis-20261023/HANDOFF.md)
+now finds the impulse discrepancy already substantial at this checkpoint:
+maximum absolute difference 1.2184143066 and RMS 0.3039612148, with all 4096
+element bit patterns differing. The periodic control remains bitwise equal.
+Combined with the small previously preserved block-15 difference, this
+prioritizes blocks 16–19 for the next investigation. It does not identify the
+first faulty operator or establish a repair. The analysis reads four admitted
+synthetic tensors and makes zero model or reference calls; q8 remains withheld.
+
+The next [block-17 probe](../../work/native-q8-block17-probe-20261023/HANDOFF.md)
+now passes all seven optimized structural checks, preserving the 939 producer
+tensors and final fused normalization. Preparation added only one exact existing
+output declaration; the single optimization-only candidate session made no
+explicit inference call. This prepares the midpoint of the 16–19 investigation
+interval. Numerical measurement and all 24 original same-runtime byte guards
+remain separate requirements; no repair or model qualification follows yet.
+
+The subsequent [block-17 numerical preservation check](../../work/native-q8-block17-measurement-20261023/HANDOFF.md)
+now passes all 24 original same-runtime byte guards for the two fixed generated
+controls on Mac and iOS. Four calls returned with clean native closure and final
+owned-simulator Shutdown; the protected device remained Shutdown. Four additional
+block-17 tensors are admitted for a separate analysis. This measurement made no
+new reference forward or numerical interpretation and does not qualify q8 or
+erase its original failures.
+
+A separate [saved block-17 analysis](../../work/native-q8-block17-analysis-20261023/HANDOFF.md)
+finds a substantial impulse discrepancy already at block 17: maximum absolute
+difference 0.4266924858, RMS 0.1046575402, with all 4096 element bit patterns
+differing. The periodic control remains bitwise equal. Together with the small
+preserved block-15 discrepancy, this prioritizes blocks 16–17 next; it does not
+identify a first faulty operator, mechanism or repair. Four admitted saved
+synthetic arrays were analyzed with zero new model/reference calls. q8 remains
+withheld and the next block-16 checkpoint requires its own preservation checks.
+
+The [block-16 probe](../../work/native-q8-block16-probe-20261023/HANDOFF.md)
+now passes all seven optimized structural checks: the same 939 producer tensors
+and metadata, preserved signatures and final fused normalization. Only one
+existing output declaration was appended; preparation and one optimization-only
+candidate session closed normally with zero explicit inference calls. Numerical
+preservation remains a separate requirement before interpreting this checkpoint.
+
+
+### October 24 — preserved block-16 execution
+
+The [block-16 measurement](../../work/native-q8-block16-measurement-20261023/HANDOFF.md)
+returned exactly four synthetic calls and passed all24 original same-runtime byte
+guards. The owned simulator returned to verified Shutdown; the protected device
+remained Shutdown. Four saved block-16 arrays are admitted for a separate bounded
+analysis. No numerical interpretation or q8 qualification follows from preservation.
+Generic localization will close after this boundary check unless a concrete
+bounded repair mechanism emerges; app result integration is the next priority.
+
+
+The separate [saved block-16 analysis](../../work/native-q8-block16-analysis-20261024/HANDOFF.md)
+completed with zero new model calls. The periodic control is bitwise equal.
+Impulse maximum absolute discrepancy is0.0768928528/RMS0.0112120201, concentrated
+in frame1; other frames have maxima≤1.52587890625e-5. A larger discrepancy is
+present by block16, without identifying a faulty operator or repair. Generic
+checkpoint localization is closed; q8 remains5P22F/27 and withheld. Next priorities
+are preserving typed take-bound research results in the app and separately
+qualifying any public full-precision projection route.
