@@ -35,3 +35,15 @@ The official ONNX Runtime1.24.3 static simulator framework now links and execute
 The cached archive is52,317,093 bytes, observed SHA256 `b7eedc45932bac758ffd057cac0feb3f682269e47750b159e4c865145cbf0a8e`; the published podspec provides no publisher checksum. The MIT package includes arm64/x86_64 simulator support and API24 headers. [Published metadata](https://cdn.cocoapods.org/Specs/3/a/a/onnxruntime-c/1.24.3/onnxruntime-c.podspec.json) and the [official pinned build configuration](https://raw.githubusercontent.com/microsoft/onnxruntime/v1.24.3/tools/ci_build/github/apple/default_full_ios_framework_build_settings.json) are recorded locally. No CocoaPods/global dependency installation or app runtime dependency change occurred.
 
 Actual quantized-model operators/parity on that iOS runtime, hidden/head iOS execution, complete packaging/lifecycle/memory, and live Release recording/playback/mirror/practice/recheck remain to verify. Apple Speech authorization remains denied; bundled CoreML word recognition remains the verified default. Research rating classes do not establish produced-phone correctness, effective corrective feedback or diagnosis. The failed consumed study and sealed reserve remain untouched.
+
+## Subsequent arithmetic correction
+
+The October 23 [log-softmax correction](native-head-normalization-20261023.md)
+changes the helper after the historical snapshot above. Its generated checks and
+Release build pass separately; the original model-output comparisons were not
+repeated, and this change does not qualify the complete assessment route.
+
+The October 24 [public CTC head screen](native-public-head-screen-20261024.md)
+adds a separate pure Swift arithmetic component. Its same-input checks pass32/32,
+but composed checks pass23/24, so the fixed overall screen fails. It has no learner
+caller and does not replace or qualify the retained research recipe above.
