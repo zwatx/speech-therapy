@@ -196,6 +196,82 @@ test("the highest constrained error path supplies the error family", () => {
   assert.equal(score.evidence.likelyError, "omission");
 });
 
+test("equally likely different error families do not depend on lexicon order", () => {
+  const lexicon: ClinicalLexiconEntry = {
+    ...ballLexicon,
+    hypotheses: [
+      { id: "expected", kind: "expected", phones: ["b", "l"] },
+      { id: "omitted", kind: "omission", phones: ["b"], likelyError: "omission" },
+      {
+        id: "replaced", kind: "substitution", phones: ["b", "d"],
+        likelyError: "substitution",
+      },
+    ],
+  };
+  for (const hypotheses of [lexicon.hypotheses, [...lexicon.hypotheses].reverse()]) {
+    const score = scoreConstrainedPronunciation(
+      [
+        { "<blank>": 0, b: 1, l: 0, d: 0 },
+        { "<blank>": 0.45, b: 0, l: 0.1, d: 0.45 },
+      ],
+      { ...lexicon, hypotheses }, calibration, verifiedManifest, policy,
+    );
+    assert.ok(Math.abs(score.evidence.pCorrect - 0.1) < 1e-12);
+    assert.ok(Math.abs(score.evidence.pError - 0.9) < 1e-12);
+    assert.equal(score.evidence.ambiguous, false);
+    assert.equal(Object.hasOwn(score.evidence, "likelyError"), false);
+  }
+});
+
+test("tied paths within one error family retain that family", () => {
+  const score = scoreConstrainedPronunciation(
+    [
+      { "<blank>": 0, b: 1, l: 0, d: 0, k: 0 },
+      { "<blank>": 0, b: 0, l: 0.1, d: 0.45, k: 0.45 },
+    ],
+    {
+      ...ballLexicon,
+      hypotheses: [
+        { id: "expected", kind: "expected", phones: ["b", "l"] },
+        {
+          id: "d", kind: "substitution", phones: ["b", "d"],
+          likelyError: "substitution",
+        },
+        {
+          id: "k", kind: "substitution", phones: ["b", "k"],
+          likelyError: "substitution",
+        },
+      ],
+    },
+    calibration, verifiedManifest, policy,
+  );
+  assert.equal(score.evidence.ambiguous, false);
+  assert.equal(score.evidence.likelyError, "substitution");
+});
+
+test("a strictly higher error path retains its family without a tie tolerance", () => {
+  const score = scoreConstrainedPronunciation(
+    [
+      { "<blank>": 0, b: 1, l: 0, d: 0 },
+      { "<blank>": 0.4499999999, b: 0, l: 0.1, d: 0.4500000001 },
+    ],
+    {
+      ...ballLexicon,
+      hypotheses: [
+        { id: "expected", kind: "expected", phones: ["b", "l"] },
+        { id: "omitted", kind: "omission", phones: ["b"], likelyError: "omission" },
+        {
+          id: "replaced", kind: "substitution", phones: ["b", "d"],
+          likelyError: "substitution",
+        },
+      ],
+    },
+    calibration, verifiedManifest, policy,
+  );
+  assert.equal(score.evidence.ambiguous, false);
+  assert.equal(score.evidence.likelyError, "substitution");
+});
+
 test("unvalidated calibration can never produce non-ambiguous evidence", () => {
   const score = scoreConstrainedPronunciation(
     [
