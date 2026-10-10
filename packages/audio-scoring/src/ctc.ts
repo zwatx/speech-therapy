@@ -255,8 +255,10 @@ export function scoreConstrainedPronunciation(
   const highestError = errorScores.reduce((best, candidate) =>
     candidate.logProbability > best.logProbability ? candidate : best,
   );
-  const errorHypothesis = lexicon.hypotheses.find(
-    (hypothesis) => hypothesis.id === highestError.id,
+  const highestErrorIds = new Set(
+    errorScores
+      .filter((score) => score.logProbability === highestError.logProbability)
+      .map((score) => score.id),
   );
   const ambiguous =
     !calibrationIsValid ||
