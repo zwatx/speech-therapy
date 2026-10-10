@@ -260,6 +260,16 @@ export function scoreConstrainedPronunciation(
       .filter((score) => score.logProbability === highestError.logProbability)
       .map((score) => score.id),
   );
+  // A tie can support an error without identifying which error family it is.
+  const errorFamilies = new Set(
+    lexicon.hypotheses
+      .filter((hypothesis) => highestErrorIds.has(hypothesis.id))
+      .map((hypothesis) => hypothesis.likelyError),
+  );
+  const likelyError =
+    Number.isFinite(highestError.logProbability) && errorFamilies.size === 1
+      ? errorFamilies.values().next().value
+      : undefined;
   const ambiguous =
     !calibrationIsValid ||
     hypothesisCoverage < policy.minimumHypothesisCoverage ||
