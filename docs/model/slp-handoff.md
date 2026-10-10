@@ -21,6 +21,10 @@ to choose one therapy word over another. It helps identify where new,
 permissioned isolated-word examples would differ from current model evidence.
 All content decisions below remain pending.
 
+## October 23, 2026 scope note
+
+This September 26 handoff preserves the earlier roughly ages 2–12, 72-prompt demo and its separate prepared studies. For current native ages 6–12, expanded practice, word-check limits and optional B/R/BR teaching, use the [dated native supplement](../consumer-assessment/roadmap-completion/professional-handoff.md#current-native-app-supplement--october-23-2026). Historical no-contact statements below describe this earlier handoff; the user now reports replies pending, without verified contact, qualification, consent, rights or reply records here. Neither handoff establishes professional approval.
+
 ## First practice pack
 
 The [72-prompt review worksheet](practice-content-review.md) lists the exact
