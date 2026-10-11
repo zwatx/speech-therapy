@@ -34,3 +34,38 @@ Phone correctness is excluded from this protocol: the old three-class corpus pre
 Planned new-recording repeats are linked by participant, word, variant and occurrence, with declared conditions and a 24-hour to seven-day interval. Missing pairs and deviations remain reported. Identical audio bytes are a computational replay; a post-practice observation is not automatically improvement. No meaningful-change threshold is invented.
 
 Observed verification: 26 focused checks pass with warnings treated as errors, including actual private CLI preparation/report, exclusive-output refusal, malformed/private-file rejection, primary allocation binding, stale original/adjudication hashes, unknown linkage, missing reviews, invalid occurrence/age, retry misuse and repeated-byte rejection. Intended-child data collection and performance verification have not run.
+
+## V2 review context binding — October 25, 2026
+
+New CLI preparations now create protocol/bundle/report schema2. Programmatic new
+preparations use `make_protocol_v2(...)`; the existing `make_protocol(...)` and
+v1 report path remain available for historical replay. Protocol and bundle
+versions must match exactly. Existing saved protocols, observations and reports
+are not rewritten.
+
+Every new v2 original includes `reviewContextSha256`, computed with
+`review_context_digest(protocol, attempt)` for the actual context presented to
+the reviewer. It binds protocol hash, attempt ID, recording hash, prompt ID,
+word, variant ID and selected occurrence index. Include that field before
+computing the original's `originalSha256`. Adjudications continue to pin both
+immutable original hashes and therefore inherit the target-context binding.
+No prediction or challenge assignment is added to the review context.
+
+This closes a generated counterexample: changing banana's selected N from valid
+index2 to valid index4 could previously leave the same recording-bound originals
+accepted. V2 rejects missing or stale context even when both occurrences exist
+in the unchanged content pack. V1 lacks this selected-target binding; use it for
+historical replay, not a new intended-recording evaluation. Do not automatically
+attach context hashes to old human reviews or recompute their original hashes.
+Genuine new context-bound observations are required when that provenance is absent.
+
+Root observed34 focused tests passing under Python3.13.14 with warnings treated
+as errors: the26 existing tests remain byte-identical, with8 new v2 cases. They
+cover the target swap, missing/stale/unhashed context, stale adjudication after
+changed-context original rehashing, strict version dispatch, unchanged v1 semantic
+digests and actual private/exclusive CLI preparation of schema2. A direct generated
+v2 replay also rejects the target swap while preserving original review records.
+The [verification record](../../docs/consumer-assessment/intended-review-context-binding-20261025.md)
+contains the scope and evidence. No actual reviewers, recordings, model calls or
+clinical labels were created. Correspondence hashes do not independently establish
+identity, blinding, chronology, permissions or clinical validity.
