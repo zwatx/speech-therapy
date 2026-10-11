@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from content_review.packet import strict_json
 from content_review.private_io import read_private, write_private, create_root
-from . import ProtocolError, make_protocol, blank_bundle, build_report
+from . import ProtocolError, make_protocol_v2, blank_bundle, build_report
 from workbench.domain import semantic_digest
 
 def encode(value):
