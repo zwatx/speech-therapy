@@ -284,8 +284,8 @@ export function scoreConstrainedPronunciation(
       ...(!ambiguous &&
       calibrationIsValid &&
       pError > pCorrect &&
-      errorHypothesis?.likelyError
-        ? { likelyError: errorHypothesis.likelyError }
+      likelyError
+        ? { likelyError }
         : {}),
     },
     hypothesisCoverage,
