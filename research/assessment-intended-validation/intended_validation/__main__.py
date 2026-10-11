@@ -24,7 +24,7 @@ def main():
     try:
         args = parser.parse_args()
         if args.command == 'prepare':
-            protocol = make_protocol(args.model_manifest_sha256, args.admission_policy_sha256, semantic_digest([]), semantic_digest([]))
+            protocol = make_protocol_v2(args.model_manifest_sha256, args.admission_policy_sha256, semantic_digest([]), semantic_digest([]))
             root = Path(args.destination)
             create_root(str(root))
             write_private(str(root / 'protocol.json'), encode(protocol))
