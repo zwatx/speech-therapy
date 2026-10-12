@@ -57,7 +57,8 @@ def _fraction(a, b):
 def build_report(protocol, bundle):
     validate_protocol(protocol)
     exact(bundle, 'schemaVersion mode protocolSha256 independenceDeclared allocation participants attempts reviewerRecords originalReviews adjudications')
-    integer(bundle['schemaVersion'], 1, 1)
+    version = protocol['schemaVersion']
+    integer(bundle['schemaVersion'], version, version)
     choice(bundle['mode'], ('preparation', 'invented_exercise', 'supplied_observations'))
     if type(bundle['independenceDeclared']) is not bool:
         raise ProtocolError('invalid_value')
