@@ -81,6 +81,18 @@ def make_protocol(model_manifest_sha, admission_policy_sha, allocation_sha, part
         'claimLimits': deepcopy(CLAIMS),
     }
 
+def make_protocol_v2(model_manifest_sha, admission_policy_sha, allocation_sha, participant_roster_sha):
+    protocol = make_protocol(model_manifest_sha, admission_policy_sha, allocation_sha, participant_roster_sha)
+    protocol.update(schemaVersion=2, id='intended-recording-admission-v2')
+    protocol['reviewContextBinding'] = {
+        'fields': ['protocolSha256', 'attemptId', 'recordingSha256', 'promptId',
+                   'word', 'variantId', 'occurrenceIndex'],
+        'digest': 'semantic_digest', 'originalField': 'reviewContextSha256',
+        'requiredForEveryOriginal': True, 'legacyReviewsMayBeAutoBound': False,
+        'adjudicationBinding': 'immutable_original_hashes',
+    }
+    return protocol
+
 def validate_protocol(protocol):
     if type(protocol) is not dict:
         raise ProtocolError('invalid_protocol')
