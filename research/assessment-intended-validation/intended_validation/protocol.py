@@ -114,6 +114,29 @@ def blank_bundle(protocol):
             'independenceDeclared': False, 'allocation': [], 'participants': [], 'attempts': [],
             'reviewerRecords': [], 'originalReviews': [], 'adjudications': []}
 
+def review_context_digest(protocol, attempt):
+    """Bind a v2 review's visible target context, without predicting judgments.
+
+    This computes a correspondence hash only; callers must obtain genuine new
+    reviews rather than use it to retrofit historical reviews. Full prompt and
+    occurrence validity is checked by build_report before comparing the digest.
+    """
+    validate_protocol(protocol)
+    if protocol['schemaVersion'] != 2 or type(attempt) is not dict:
+        raise ProtocolError('invalid_review_context')
+    try:
+        for field in ('id', 'promptId', 'variantId'):
+            identifier(attempt[field])
+        sha(attempt['recordingSha256'], nullable=True)
+        choice(attempt['word'], protocol['lexicalGroups'])
+        integer(attempt['occurrenceIndex'], 0, 128)
+        context = {field: attempt[field] for field in (
+            'recordingSha256', 'promptId', 'word', 'variantId', 'occurrenceIndex')}
+        context.update(protocolSha256=semantic_digest(protocol), attemptId=attempt['id'])
+    except KeyError:
+        raise ProtocolError('invalid_review_context') from None
+    return semantic_digest(context)
+
 def prompt_definitions():
     path = Path(__file__).resolve().parents[3] / 'work/assessment-real-data-20261004/engineering-pack.json'
     raw = path.read_bytes()
