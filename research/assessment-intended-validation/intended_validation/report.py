@@ -2,7 +2,7 @@
 from collections import Counter
 from math import sqrt
 from .protocol import (CLAIMS, ProtocolError, exact, identifier, sha, choice, integer,
-                       roster, validate_protocol, prompt_definitions)
+                       roster, validate_protocol, prompt_definitions, review_context_digest)
 from workbench.domain import semantic_digest
 
 FIELDS = {
