@@ -110,7 +110,7 @@ def validate_protocol(protocol):
 
 def blank_bundle(protocol):
     validate_protocol(protocol)
-    return {'schemaVersion': 1, 'mode': 'preparation', 'protocolSha256': semantic_digest(protocol),
+    return {'schemaVersion': protocol['schemaVersion'], 'mode': 'preparation', 'protocolSha256': semantic_digest(protocol),
             'independenceDeclared': False, 'allocation': [], 'participants': [], 'attempts': [],
             'reviewerRecords': [], 'originalReviews': [], 'adjudications': []}
 
