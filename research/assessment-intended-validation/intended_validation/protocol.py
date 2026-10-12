@@ -96,6 +96,10 @@ def make_protocol_v2(model_manifest_sha, admission_policy_sha, allocation_sha, p
 def validate_protocol(protocol):
     if type(protocol) is not dict:
         raise ProtocolError('invalid_protocol')
+    version = protocol.get('schemaVersion')
+    if type(version) is not int or version not in (1, 2):
+        raise ProtocolError('invalid_protocol')
+    builder = make_protocol if version == 1 else make_protocol_v2
     try:
         expected = make_protocol(protocol['modelManifestSha256'], protocol['admissionPolicySha256'], protocol['allocationSha256'], protocol['participantRosterSha256'])
     except KeyError:
