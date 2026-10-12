@@ -101,7 +101,7 @@ def validate_protocol(protocol):
         raise ProtocolError('invalid_protocol')
     builder = make_protocol if version == 1 else make_protocol_v2
     try:
-        expected = make_protocol(protocol['modelManifestSha256'], protocol['admissionPolicySha256'], protocol['allocationSha256'], protocol['participantRosterSha256'])
+        expected = builder(protocol['modelManifestSha256'], protocol['admissionPolicySha256'], protocol['allocationSha256'], protocol['participantRosterSha256'])
     except KeyError:
         raise ProtocolError('invalid_protocol') from None
     if protocol != expected or semantic_digest(protocol) != semantic_digest(expected):
