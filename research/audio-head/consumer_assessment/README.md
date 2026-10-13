@@ -71,14 +71,19 @@ and a two-socket backlog are allowed; excess sockets are closed and otherwise
 concurrent attempts receive bound `busy` responses. This is a local engineering
 endpoint, without authentication or an assertion of child identity.
 
-HTTP uses a fresh private temporary directory for each worker. Raw request,
-audio, features, CTC artifacts and temporary runtime model copies are removed
-on worker completion, failure, cancellation of the parent call or timeout.
-Timeout kills the worker process group, including its CTC child. Client
-disconnection after the request is read can leave bounded work running until
-completion or timeout; its files are still removed. Abrupt host/process death
-cannot guarantee cleanup. There are no request logs, private error strings,
-tracebacks or retained HTTP attempt artifacts. Responses use `Cache-Control:
+HTTP uses a fresh private temporary directory for each worker. The bridge keeps
+its process-group identity pinned by retaining the unreaped Python leader,
+including after normal exit or a crash. Before publishing a result, it inspects the group, terminates active members
+and confirms their exit within a bounded cleanup deadline. Only inactive zombie
+rows may remain; their eventual reaping belongs to the OS. The bridge reaps its
+own leader and removes scratch after confirming no active group members remain.
+If termination or inspection cannot confirm cleanup, scratch is retained and the
+attempt's connection closes without a result. The service then reports unavailable
+health and refuses further workers until operator recovery and restart. Retained
+scratch may contain private inputs and must be recovered or removed deliberately.
+Client disconnection after the request is read can leave bounded work running
+until completion or timeout. Abrupt host/process death cannot guarantee cleanup.
+There are no request logs or private error strings in public responses. Responses use `Cache-Control:
 no-store`. No model download is permitted; the CTC worker denies fetch and
 Python loaders use pinned local files with offline configuration.
 
