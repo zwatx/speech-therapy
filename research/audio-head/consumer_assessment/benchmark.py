@@ -252,6 +252,8 @@ def run_benchmark(wav, prompt, age_years, *, repeats=3, interval_seconds=0.05, o
                     response = bridge.assess(data)  # No deliberate bridge artifact export.
                     elapsed = (time.perf_counter() - started) * 1000
                     aggregate = aggregate_response(response, binding, len(prompt_value['targets']))
+                except bridge.CleanupUnconfirmed:
+                    raise
                 except Exception:
                     elapsed = (time.perf_counter() - started) * 1000
                     aggregate = {'outcome': 'unavailable', 'reason': 'benchmark_runtime_failure',
