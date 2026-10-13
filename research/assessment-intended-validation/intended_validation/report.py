@@ -197,6 +197,10 @@ def build_report(protocol, bundle):
         if (original['recordingSha256'] != attempt['recordingSha256']
                 or original['protocolSha256'] != bundle['protocolSha256']):
             raise ProtocolError('review_binding_mismatch')
+        if version == 2:
+            sha(original['reviewContextSha256'])
+            if original['reviewContextSha256'] != review_context_digest(protocol, attempt):
+                raise ProtocolError('review_context_binding_mismatch')
         _available_observations(original['observations'], attempt['recordingSha256'])
         if (aid, reviewer['role']) in reviews:
             raise ProtocolError('duplicate_original_review')
