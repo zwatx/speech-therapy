@@ -294,7 +294,7 @@ def build_report(protocol, bundle):
                                 'conditionMatch': attempt['conditionId'] == parent['conditionId'],
                                 'withinDeclaredInterval': key == 'repeatOf' and protocol['repeatSchedule']['newRecordingIntervalSeconds'][0] <= interval <= protocol['repeatSchedule']['newRecordingIntervalSeconds'][1],
                                 'meaningfulImprovementEstablished': False})
-    return {'schemaVersion': 1, 'protocolSha256': bundle['protocolSha256'], 'bundleSha256': semantic_digest(bundle),
+    return {'schemaVersion': version, 'protocolSha256': bundle['protocolSha256'], 'bundleSha256': semantic_digest(bundle),
             'mode': bundle['mode'], 'allAttemptDenominators': {'participants': len(people), 'attempts': len(attempts),
                  'recordings': sum(a['recordingSha256'] is not None for a in attempts.values()),
                  'uniqueRecordingHashes': len({a['recordingSha256'] for a in attempts.values() if a['recordingSha256']}),
