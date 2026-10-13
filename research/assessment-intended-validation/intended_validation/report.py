@@ -181,7 +181,10 @@ def build_report(protocol, bundle):
         raise ProtocolError('missing_primary_roster')
     reviews, blind_ids = {}, set()
     for original in originals.values():
-        exact(original, 'id reviewerId blindItemId attemptId recordingSha256 protocolSha256 observations originalSha256')
+        original_fields = 'id reviewerId blindItemId attemptId recordingSha256 protocolSha256 observations originalSha256'
+        if version == 2:
+            original_fields += ' reviewContextSha256'
+        exact(original, original_fields)
         _bound_hash(original, 'originalSha256'); identifier(original['blindItemId'])
         if original['blindItemId'] in blind_ids:
             raise ProtocolError('duplicate_blind_item')
