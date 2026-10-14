@@ -200,9 +200,32 @@ def _active_group_members(pgid, timeout):
 
 
 def stop_process(process):
-    try: os.killpg(process.pid,signal.SIGKILL)
-    except ProcessLookupError: pass
-    process.wait()
+    deadline = time.monotonic() + CLEANUP_TIMEOUT_SECONDS
+    signalled = False
+    while True:
+        remaining = deadline-time.monotonic()
+        if remaining <= 0: raise TimeoutError('worker group did not drain')
+        # Inspection comes first: macOS can reject killpg for a zombie-only
+        # group even though no executable member remains to terminate.
+        exited = _leader_exited(process)
+        active = _active_group_members(process.pid,min(remaining,INSPECTION_TIMEOUT_SECONDS))
+        # Orphan zombies cannot execute or hold scratch open. Their reaping is
+        # owned by the OS; we reap our own leader only after all active rows end.
+        if exited and not active:
+            process.wait(timeout=max(0,deadline-time.monotonic()))
+            return
+        if active and not signalled:
+            # The unreaped child pins this group ID through inspection/signal.
+            try: os.killpg(process.pid,signal.SIGKILL)
+            except ProcessLookupError: pass
+            signalled = True
+        time.sleep(min(0.02,remaining))
+
+
+def _launch_worker(stage, env):
+    return subprocess.Popen([sys.executable,'-m','consumer_assessment.worker',str(stage)],
+                            cwd=HERE,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,start_new_session=True)
 
 
 def run_isolated(prepared, *, artifacts=None):
