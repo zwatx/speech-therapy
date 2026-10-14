@@ -242,9 +242,7 @@ def run_isolated(prepared, *, artifacts=None):
         path = stage/'request.json'; path.write_bytes(canonical_bytes(prepared.request)); path.chmod(0o600)
         env = {**os.environ,'HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1','OMP_NUM_THREADS':'2','MKL_NUM_THREADS':'2',
                'PYTHONPATH':str(HERE),'TMPDIR':str(stage/'runtime')}
-        process = subprocess.Popen([sys.executable,'-m','consumer_assessment.worker',str(stage)],
-                                   cwd=HERE,env=env,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,
-                                   stderr=subprocess.DEVNULL,start_new_session=True)
+        process = _launch_worker(stage,env)
         try:
             try: process.wait(timeout=TIMEOUT_SECONDS)
             except subprocess.TimeoutExpired:
