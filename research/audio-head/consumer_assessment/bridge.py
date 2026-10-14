@@ -39,6 +39,15 @@ class Unavailable(Exception):
     def __init__(self, reason): self.reason = reason
 
 
+class CleanupUnconfirmed(Exception):
+    """No result is safe to publish or worker capacity safe to reuse."""
+    def __init__(self, process, directory):
+        super().__init__('worker cleanup unconfirmed')
+        # Retain the unreaped leader (and private scratch) for operator recovery.
+        self.process = process
+        self.directory = directory
+
+
 def sha(data): return hashlib.sha256(data).hexdigest()
 
 
