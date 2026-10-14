@@ -179,6 +179,26 @@ def response_base(data):
             'targets':[],'model':None}
 
 
+def _leader_exited(process):
+    # WNOWAIT pins the PID/PGID even after leader exit. Popen.poll/wait would
+    # reap it and make a later killpg vulnerable to process-group ID reuse.
+    return os.waitid(os.P_PID,process.pid,os.WEXITED | os.WNOHANG | os.WNOWAIT) is not None
+
+
+def _active_group_members(pgid, timeout):
+    result = subprocess.run(['/bin/ps','-axo','pid=,pgid=,stat='],
+                            stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,
+                            timeout=timeout,check=True)
+    active, leader_seen = [], False
+    for line in result.stdout.decode('ascii').splitlines():
+        pid, group, state = line.split()
+        if int(pid) == pgid and int(group) == pgid: leader_seen = True
+        if int(group) == pgid and not state.startswith('Z'):
+            active.append(int(pid))
+    if not leader_seen: raise RuntimeError('worker leader missing from process table')
+    return active
+
+
 def stop_process(process):
     try: os.killpg(process.pid,signal.SIGKILL)
     except ProcessLookupError: pass
