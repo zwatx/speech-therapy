@@ -229,9 +229,15 @@ def _launch_worker(stage, env):
 
 
 def run_isolated(prepared, *, artifacts=None):
-    # Parent owns cleanup even when its model worker crashes or times out.
-    with tempfile.TemporaryDirectory(prefix='speech-assessment-',dir=TEMP_ROOT) as directory:
-        stage = Path(directory)
+    # Fail before launch on a platform that cannot preserve group identity.
+    for name in ('waitid','P_PID','WEXITED','WNOHANG','WNOWAIT'):
+        if not hasattr(os,name): raise RuntimeError('worker ownership unsupported')
+    # Explicit ownership: TemporaryDirectory's destructor would erase uncertain
+    # scratch while a worker may still be using it.
+    stage = Path(tempfile.mkdtemp(prefix='speech-assessment-',dir=TEMP_ROOT))
+    process = None
+    group_drained = False
+    try:
         (stage/'runtime').mkdir(mode=0o700)
         path = stage/'request.json'; path.write_bytes(canonical_bytes(prepared.request)); path.chmod(0o600)
         env = {**os.environ,'HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1','OMP_NUM_THREADS':'2','MKL_NUM_THREADS':'2',
