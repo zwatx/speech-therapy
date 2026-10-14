@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import signal
+import shutil
 import struct
 import subprocess
 import sys
@@ -25,6 +26,8 @@ MAX_AUDIO_BYTES = 132_096
 # Keep an explicit worker-group deadline, with transport timeouts above this budget.
 TIMEOUT_SECONDS = 90
 TEMP_ROOT = None
+CLEANUP_TIMEOUT_SECONDS = 2
+INSPECTION_TIMEOUT_SECONDS = 0.5
 PHONES = tuple('B P M T D N K G F V S Z SH CH JH L R W Y HH TH DH NG'.split())
 VOWELS = set('AA AE AH AO AW AY EH ER EY IH IY OW OY UH UW'.split())
 MANIFEST_SHA = 'bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf'
