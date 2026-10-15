@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import socket
 import threading
-from consumer_assessment.bridge import MAX_BODY, FLAGS, assess, response_base
+from consumer_assessment.bridge import MAX_BODY, FLAGS, CleanupUnconfirmed, assess, response_base
 
 
 def acceptable_headers(headers, port):
