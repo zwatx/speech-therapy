@@ -36,6 +36,7 @@ class LocalServer(ThreadingHTTPServer):
     request_queue_size = 2
     def __init__(self, port=8765):
         self.inference_slot = threading.BoundedSemaphore(1)
+        self.cleanup_failure = None
         self.handler_slots = threading.BoundedSemaphore(4)
         super().__init__(('127.0.0.1',port),Handler)
     def process_request(self, request, address):
