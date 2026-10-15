@@ -76,6 +76,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path != '/health' or self.headers.get('Origin') is not None or self.headers.get('Host') not in {f'127.0.0.1:{self.server.server_port}',f'localhost:{self.server.server_port}'}:
             self.send_json({'available':False,**FLAGS},404); return
+        if self.server.cleanup_failure is not None:
+            self.send_json({'available':False,**FLAGS},503); return
         # Liveness only, deliberately does not claim a loaded/working model.
         self.send_json({'available':True,'modelAvailability':'checked_per_attempt',**FLAGS},200)
     def do_POST(self):
