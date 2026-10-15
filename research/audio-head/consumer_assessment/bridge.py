@@ -250,7 +250,27 @@ def run_isolated(prepared, *, artifacts=None):
                 if remaining <= 0: raise Unavailable('timeout')
                 time.sleep(min(0.02,remaining))
         finally:
-            if process.poll() is None: stop_process(process)
+            # Always drain the group, even when the Python leader has exited.
+            # A result is not read/exported until ownership is safely closed.
+            try:
+                stop_process(process)
+                group_drained = True
+            except BaseException:
+                raise CleanupUnconfirmed(process,stage) from None
+        result = strict_json((stage/'result.json').read_bytes())
+        if process.returncode != 0:
+            reason = result.get('reason')
+            raise Unavailable(reason if reason in {'model_unavailable','invalid_request','inference_failed'} else 'inference_failed')
+        if artifacts is not None:
+            # Deliberate CLI artifacts only; HTTP never retains these files.
+            for name in ('features.npy','engineering.json'):
+                shutil.copyfile(stage/name,artifacts/name)
+        return result
+    finally:
+        if process is None or group_drained:
+            try: shutil.rmtree(stage)
+            except BaseException:
+                raise CleanupUnconfirmed(process,stage) from None
 
 
 def checked_result(result, request):
