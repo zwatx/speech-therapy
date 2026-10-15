@@ -244,19 +244,11 @@ def run_isolated(prepared, *, artifacts=None):
                'PYTHONPATH':str(HERE),'TMPDIR':str(stage/'runtime')}
         process = _launch_worker(stage,env)
         try:
-            try: process.wait(timeout=TIMEOUT_SECONDS)
-            except subprocess.TimeoutExpired:
-                stop_process(process); raise Unavailable('timeout') from None
-            result = strict_json((stage/'result.json').read_bytes())
-            if process.returncode != 0:
-                reason = result.get('reason')
-                raise Unavailable(reason if reason in {'model_unavailable','invalid_request','inference_failed'} else 'inference_failed')
-            if artifacts is not None:
-                # Deliberate CLI artifacts only; HTTP never retains these files.
-                import shutil
-                for name in ('features.npy','engineering.json'):
-                    shutil.copyfile(stage/name,artifacts/name)
-            return result
+            deadline = time.monotonic()+TIMEOUT_SECONDS
+            while not _leader_exited(process):
+                remaining = deadline-time.monotonic()
+                if remaining <= 0: raise Unavailable('timeout')
+                time.sleep(min(0.02,remaining))
         finally:
             if process.poll() is None: stop_process(process)
 
