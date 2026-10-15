@@ -297,6 +297,7 @@ def assess(data, *, artifacts=None):
         try: result = checked_result(run_isolated(p,artifacts=artifacts),p.request)
         finally: response['timingMilliseconds']['inference'] = (time.perf_counter()-t0)*1000
         response.update(outcome='processed',**result)
+    except CleanupUnconfirmed: raise
     except Unavailable as exc: response['reason'] = exc.reason
     except Exception: response['reason'] = 'inference_failed'
     response['timingMilliseconds']['total'] = (time.perf_counter()-started)*1000
