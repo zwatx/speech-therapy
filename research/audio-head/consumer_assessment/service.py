@@ -95,7 +95,18 @@ class Handler(BaseHTTPRequestHandler):
         self.read_deadline.cancel()
         if not self.server.inference_slot.acquire(blocking=False):
             result=response_base(data); result['reason']='busy'; self.send_json(result,429); return
-        try: result=assess(data)
+        try:
+            if self.server.cleanup_failure is not None:
+                result=response_base(data); result['reason']='model_unavailable'
+            else:
+                try: result=assess(data)
+                except CleanupUnconfirmed as exc:
+                    # Keep the leader reference and fail closed until recovery.
+                    # This attempt has no trustworthy completion: close transport
+                    # without turning unknown execution into a reusable failure.
+                    self.server.cleanup_failure=exc
+                    self.close_connection=True
+                    return
         finally: self.server.inference_slot.release()
         self.send_json(result,status_for(result))
     def do_OPTIONS(self): self.send_json({'error':'origin_not_supported',**FLAGS},403)
