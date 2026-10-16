@@ -122,7 +122,7 @@ class LifecycleTests(unittest.TestCase):
                              start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
             created.append(child); return child
         with tempfile.TemporaryDirectory() as temp:
-            with patch.object(bridge,'TEMP_ROOT',Path(temp)),patch.object(bridge,'TIMEOUT_SECONDS',0.05),patch.object(bridge.subprocess,'Popen',side_effect=sleeper):
+            with patch.object(bridge,'TEMP_ROOT',Path(temp)),patch.object(bridge,'TIMEOUT_SECONDS',0.05),patch.object(bridge,'_launch_worker',side_effect=sleeper):
                 response=bridge.assess(raw(request()))
             self.assertEqual(response['reason'],'timeout')
             self.assertEqual(created[0].returncode,-9)
