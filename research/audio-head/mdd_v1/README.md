@@ -35,6 +35,32 @@ is scores rather than produced-phone truth. Unknown identities are never filled
 in. Primary and review-added descriptive metrics are separate. Nothing here
 establishes child MDD performance or the prospective feedback gates.
 
+### All-optimal edit-alignment diagnostics
+
+`alignment_ambiguity.analyze_alignment(reference, hypothesis)` is an additive,
+model-free diagnostic for sequences of nonblank string phone tokens. Each
+reference occurrence exposes all hypothesis indices/deletion and distinct phone
+identities/deletion allowed by minimum-cost unit-edit alignments. Index ambiguity,
+identity ambiguity and agreement (`match`, `mismatch`, `ambiguous`) are separate:
+`['N', 'N']` versus `['N']` cannot localize the deletion; `['N']` versus
+`['N', 'N']` has two possible indices but the same matching identity.
+
+These choices are marginals and cannot be freely combined into one alignment.
+They do not measure acoustic confidence, phone timing, intended pronunciation or
+clinical correctness. Insertion-location ambiguity is outside this per-reference
+API. Results are immutable; empty inputs work; grids above 250,000 cells fail
+before distance-grid allocation. Existing `align`, `anchored`, features, metrics
+and model behavior remain unchanged for historical replay.
+
+```sh
+.venv/bin/python -B -W error -m unittest mdd_v1.test_alignment_ambiguity
+```
+
+Ten generated tests include independent exhaustive enumeration of all edit paths
+for 225 sequence pairs. The [saved TRAIN audit and separate constrained-scorer
+tie repair](../../../docs/model/model-scoring-ambiguity-verification-20261025.md)
+record the observed ambiguity without promoting a learner feedback rule.
+
 ## Stage C: child adaptation and prompt-aware detection
 
 JIBO Kids (CC BY 4.0) uses manually transcribed produced phones, ages 4–7,
