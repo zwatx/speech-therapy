@@ -130,6 +130,39 @@ class ReportTests(unittest.TestCase):
                 self.assertIs(report[flag], False)
             self.assertEqual(report['model']['manifestSha256'], bridge.MANIFEST_SHA)
 
+    def test_cleanup_uncertainty_aborts_repeats_without_report(self):
+        with tempfile.TemporaryDirectory() as temp:
+            wav, prompt = synthetic_inputs(Path(temp))
+            output = Path(temp)/'report.json'
+            failure = bridge.CleanupUnconfirmed(None,Path(temp)/'private-scratch')
+            with patch.object(bridge,'assess',side_effect=failure) as assess, \
+                 patch.object(benchmark,'environment_report',return_value={}), \
+                 patch.object(benchmark.ProcessTreeSampler,'sample'):
+                with self.assertRaises(bridge.CleanupUnconfirmed) as caught:
+                    benchmark.run_benchmark(wav,prompt,6,repeats=3,output=output)
+            self.assertIs(caught.exception,failure)
+            self.assertEqual(assess.call_count,1)
+            self.assertFalse(output.exists())
+
+    def test_cleanup_uncertainty_cli_has_no_report_or_private_error(self):
+        from contextlib import redirect_stdout, redirect_stderr
+        with tempfile.TemporaryDirectory() as temp:
+            wav, prompt = synthetic_inputs(Path(temp))
+            output = Path(temp)/'report.json'
+            stdout, stderr = io.StringIO(),io.StringIO()
+            failure = bridge.CleanupUnconfirmed(None,Path(temp)/'private-scratch')
+            with patch.object(bridge,'assess',side_effect=failure) as assess, \
+                 patch.object(benchmark,'environment_report',return_value={}), \
+                 patch.object(benchmark.ProcessTreeSampler,'sample'), \
+                 redirect_stdout(stdout), redirect_stderr(stderr):
+                code = benchmark.main(['--wav',str(wav),'--prompt',str(prompt),'--age-years','6',
+                                       '--repeats','3','--output',str(output)])
+            self.assertEqual(code,2)
+            self.assertEqual(assess.call_count,1)
+            self.assertFalse(output.exists())
+            self.assertEqual(stdout.getvalue(),'')
+            self.assertEqual(stderr.getvalue(),'Benchmark input or output unavailable; no report written.\n')
+
     def test_existing_output_and_input_alias_fail_before_assessment(self):
         with tempfile.TemporaryDirectory() as temp:
             wav, prompt = synthetic_inputs(Path(temp))
