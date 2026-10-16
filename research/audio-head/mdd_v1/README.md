@@ -166,3 +166,66 @@ The combined 30-minute candidate fit cap excludes feature extraction and final
 reporting. Reports export full PR/coverage curves, ECE, target-phone metrics and
 2,000 speaker-cluster bootstrap intervals. This remains score-proxy development
 evidence, with previously exposed reporting cohorts, not clinical qualification.
+
+## Training-only prefix-beam decoder development — October 25
+
+`prefix_decode.py` adds a separate prompt-blind, language-model-free CTC prefix
+beam option with explicit blank ID, full-vocabulary expansion and deterministic
+ties. Returned scores are retained alignment log mass, a lower bound after beam
+pruning. It changes no legacy Stage C/D entrypoint, frozen selection or app policy.
+
+Thirteen model-free tests can be run with the existing environment:
+
+```sh
+.venv/bin/python -B -W error -m unittest mdd_v1.test_prefix_decode
+```
+
+A fixed32-child training-only cached-feature comparison of unchanged Stage C
+weights, greedy and beam16 reduced184 to178 edits across307 reference phones.
+This is an in-training-set diagnostic, not independent accuracy or child error
+validation. Beam was slower and is not promoted automatically. The
+[decoder development report](../../../docs/model/ctc-prefix-development-20261025.md)
+retains the exact selection, S/D/I tradeoff, runtime, independent saved-output
+recount and limits. Old evaluation commands above remain completed declarations,
+not authorization to repeat their model or holdout runs.
+
+A separately declared broader panel excludes those32 IDs and includes192 TRAIN
+utterances/73 children, balanced over four tasks and short/long recordings up to
+12 seconds. Unchanged beam16 reduces1,673 to1,655 edits over3,375 phones
+(PER49.57%→49.04%);25 utterances improve,10 regress and157 tie. Long letters/digits
+regresses. All cell outcomes, slower decoding and the independent recount are in
+the [broader development report](../../../docs/model/ctc-prefix-broad-development-20261025.md).
+No independent accuracy, new fit, app promotion or width tuning is implied.
+
+`sequence_log_probability(log_probs, tokens, blank_id=...)` is an additive exact
+whole-sequence CTC alignment sum; it changes no decoding behavior. All13 tests
+pass. A separate saved-output audit finds178/192 training references below both
+decoded hypotheses and one witnessed finite-beam miss, without new model calls.
+See the broader report for numerical tolerance, interpretation and source snapshots.
+
+## Separate XLS-R/TIMIT research challenger
+
+`xlsr_timit.py` pins the public44-token contract of
+`vitouphy/wav2vec2-xls-r-300m-timit-phoneme` at revision
+`efb7ae9b88f13db0d42eac8cedbba19739e2a278`. It provides model-free metadata and
+posterior validation, native-frame collapse and an explicit scoring projection.
+Blank41 differs from Stage C; native IDs1/2 are vowels despite config BOS/EOS
+fields, and unsupported flap/special tokens remain visible. AO/ZH outputs are
+absent. No model loading, audio preprocessing or app integration is added.
+
+```sh
+.venv/bin/python -B -W error -m unittest mdd_v1.test_prefix_decode mdd_v1.test_xlsr_timit
+```
+
+Root verified22 tests and the actual public metadata contract. The
+[challenger qualification](../../../docs/model/xlsr-timit-challenger-qualification-20261025.md)
+records exact vocabulary, provenance, rights and runtime gaps. This does not
+establish better child-phone accuracy or authorize repeating historical studies.
+
+The separate [fixed32-TRAIN runtime comparison](../../../docs/model/xlsr-timit-train-comparison-20261025.md)
+has now completed with exact safe-weight verification and clean CPU loading:
+challenger281 versus C greedy283/C beam279 edits over596 phones. All32 crop
+identities matched. Deletions decrease while substitutions/insertions increase;
+short-utterance regressions remain. Saved-output complementarity does not justify
+whole-sequence agreement as correctness. No app replacement, fusion, tuning or
+historical-study rerun follows. Scripts and aggregate/owner receipts stay task-local.
