@@ -84,7 +84,7 @@ class InputTests(unittest.TestCase):
 
     def test_failure_cleanup_and_private_errors(self):
         with tempfile.TemporaryDirectory() as temp:
-            with patch.object(bridge,'TEMP_ROOT',Path(temp)), patch.object(bridge.subprocess,'Popen',side_effect=RuntimeError('/private/secret')):
+            with patch.object(bridge,'TEMP_ROOT',Path(temp)), patch.object(bridge,'_launch_worker',side_effect=RuntimeError('/private/secret')):
                 response=bridge.assess(raw(request()))
             self.assertEqual(list(Path(temp).iterdir()),[])
             self.assertEqual(response['reason'],'inference_failed')
