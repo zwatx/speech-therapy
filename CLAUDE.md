@@ -8,7 +8,7 @@ Consumer speech app for children ages6–12 first, an expanded local native prac
 - `docs/model/child-acoustic-heads-result-20260929.md`: latest model result (M6/M10 comparison executed, failed screen, closed). Earlier state: `docs/model/child-acoustic-transfer-status-20260928.md`.
 - `docs/implementation/native-demo-checkpoint.md`: iOS demo delivery record.
 - `research/audio-head/README.md`: recipes, checkpoints, verification commands.
-- `.plans/2026-10-02_consumer_speech_app_direction.html`: current consumer product/vision/model plan; July plan is historical. `.plans/high-effort-continuation.md`: Codex checkpoint log.
+- `.plans/2026-10-02_consumer_speech_app_direction.html`: current consumer product/vision/model plan; July plan is historical.
 
 ## Layout
 - `apps/ios-learner` SwiftUI learner (XcodeGen; project is generated, ignored by git); `apps/clinician-web` Next.js portal.
