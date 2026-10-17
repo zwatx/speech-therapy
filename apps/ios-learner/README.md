@@ -1,7 +1,7 @@
-# iOS learner
+# Cadence iOS app
 
-SwiftUI speech-practice app for children ages 6–12. The app currently displays
-Cadence; the Xcode project, scheme, and bundle identifiers retain that name.
+Cadence's SwiftUI speech-practice app for children ages 6–12.
+The Xcode project and scheme are named `CadenceLearner`.
 See the [root README](../../README.md) for product scope and the
 [consumer plan](../../.plans/2026-10-02_consumer_speech_app_direction.html)
 for the intended assessment and practice experience.

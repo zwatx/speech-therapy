@@ -1,14 +1,13 @@
-# Speech Therapy
+# Cadence
 
-A consumer speech-practice app for children ages 6–12, built with SwiftUI.
+Cadence is a consumer speech-practice app for children ages 6–12, built with SwiftUI.
 The product goal is to let families start an assessment, practice the sounds
 identified, and recheck without requiring an account or clinician enrollment.
 See the [consumer product plan](.plans/2026-10-02_consumer_speech_app_direction.html)
 for the intended scope.
 
 This repository contains the iOS app, a separate clinician web portal, shared
-packages, and speech-model research. The app still uses the name Cadence in its
-bundle and project files; a replacement name is pending.
+packages, and speech-model research.
 
 ## Current app
 

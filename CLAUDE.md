@@ -21,7 +21,7 @@ Consumer speech app for children ages6–12 first, an expanded local native prac
 - Consumer app: download, optional account, immediate assessment followed by targeted practice. No required clinician setup, assignment, organizational tenant, or device enrollment in the consumer flow.
 - Children ages6–12 FIRST. Speech score, condition assessment, movement guidance, exercises, and validated progress are requested goals, not existing capabilities. Do not fabricate them or enable old clinical/learner flags.
 - Major RGB/TrueDepth/audio research alongside audio improvement. New runnable offline visible-motion tool is research/visual-speech; no depth or child/clinical validation yet. Primary-source dataset rights audit and actual phone capture design are there.
-- Cadence name rejected. Brainstorm names with wordplay/a story; no placeholder and no rename until chosen.
+- The app is called Cadence. The owner will rename the repository later; keep existing repository and package identifiers until requested.
 - Current consumer implementation/verification: work/consumer-app-20261002/ and work/assessment-milestone-20261002/. Active product plan .plans/2026-10-02_consumer_speech_app_direction.html supersedes July clinician-first direction. Lab plan publication only is covered by thelab-plans standing permission; no issue side effects.
 - New binary/r/head is CLOSED, development screen/audit passed, saved result docs/model/percept-r-binary-head-result-20261002.md. 80reservedchildren remain sealed; no scientific changes or TEST access in this product tranche.
 
