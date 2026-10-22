@@ -82,180 +82,244 @@ struct DirectPracticeRootView: View {
   @Environment(\.refreshAudioCleanupRecovery) private var refreshCleanupRecovery
   @ScaledMetric(relativeTo: .largeTitle) private var titleSize = 48
 
-  var body: some View {
-    NavigationStack {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 0) {
-          HStack(alignment: .firstTextBaseline) {
-            Text("cadence")
-              .font(.title3.weight(.semibold))
-              .tracking(-0.5)
-            Spacer()
-            Button {
-              showingAbout = true
-            } label: {
-              Text("About")
-                .font(.subheadline)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("About practice and privacy")
-          }
-          PracticeRule()
-          #if DEBUG && targetEnvironment(simulator)
-            if controlledUI != nil || ResearchGuidedWordUITestFixtures.selected() != nil
-              || ResearchUnifiedFeedbackUITestFixtures.selected() != nil
-            {
-              Text("UI test: generated recordings and feedback. No real voice.")
-                .font(.footnote)
-                .foregroundStyle(DirectPracticeStyle.muted)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 12)
-                .accessibilityIdentifier("cadence.home.ui-test-banner")
-            }
-          #endif
+  private enum RootTab: Hashable { case today, sounds, progress }
+  @State private var tab: RootTab = .today
 
-          VStack(alignment: .leading, spacing: 20) {
-            Text("Practice speaking.")
-              .font(.system(size: titleSize, weight: .regular, design: .serif))
-              .tracking(-1.8)
-              .fixedSize(horizontal: false, vertical: true)
-              .accessibilityAddTraits(.isHeader)
-            Text("Say a few words. Listen back. Try again.")
-              .font(.body)
+  var body: some View {
+    TabView(selection: $tab) {
+      NavigationStack { todayTab }
+        .tabItem { Label("Today", systemImage: "sun.max") }
+        .tag(RootTab.today)
+      NavigationStack { soundsTab }
+        .tabItem { Label("Sounds", systemImage: "waveform") }
+        .tag(RootTab.sounds)
+      NavigationStack {
+        PracticeProgressView(history: history, allowsLiveRoutes: allowsLiveRoutes)
+          // Also runs when a pushed library route pops back to Progress.
+          .onAppear { refreshCleanupRecovery() }
+      }
+      .tabItem { Label("Progress", systemImage: "chart.bar") }
+      .tag(RootTab.progress)
+    }
+    .tint(DirectPracticeStyle.ink)
+    .fullScreenCover(item: $selectedSound, onDismiss: { refreshCleanupRecovery() }) { sound in
+      if allowsLiveRoutes {
+        DirectPracticePlayerView(sound: sound, history: history)
+      } else {
+        Color.clear
+      }
+    }
+    .fullScreenCover(
+      item: $localGuidedRoute, onDismiss: { refreshCleanupRecovery() }
+    ) { route in
+      if allowsLiveRoutes {
+        LocalGuidedReviewPresenter(
+          history: history, store: savedWordsStore, entryIDs: route.entryIDs)
+      } else {
+        Color.clear
+      }
+    }
+    .sheet(isPresented: $showingAbout, onDismiss: { refreshCleanupRecovery() }) {
+      aboutPractice
+    }
+    #if DEBUG && targetEnvironment(simulator)
+      .fullScreenCover(item: $researchRoute, onDismiss: { refreshCleanupRecovery() }) { route in
+        if allowsResearchRoute(route) {
+          // Admission guarantees the default actual view selects this exact generated fixture.
+          switch route {
+          case .guidedWord: ResearchGuidedWordView()
+          case .feedback: ResearchFeedbackView(participationWriter: history)
+          case .soundPreview: soundPreviewContent
+          case .assessment: ResearchAssessmentLabView()
+          }
+        } else {
+          Color.clear
+        }
+      }
+    #endif
+  }
+
+  private var todayTab: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 0) {
+        HStack(alignment: .center) {
+          Text(Date.now, format: .dateTime.weekday(.wide))
+            .font(.subheadline)
+            .foregroundStyle(DirectPracticeStyle.muted)
+          Spacer()
+          Button {
+            showingAbout = true
+          } label: {
+            Text("For grown-ups")
+              .font(.subheadline)
+              .frame(minWidth: 44, minHeight: 44)
+              .contentShape(Rectangle())
+          }
+          .buttonStyle(.plain)
+          .accessibilityLabel("About practice and privacy")
+        }
+        PracticeRule()
+        #if DEBUG && targetEnvironment(simulator)
+          if controlledUI != nil || ResearchGuidedWordUITestFixtures.selected() != nil
+            || ResearchUnifiedFeedbackUITestFixtures.selected() != nil
+          {
+            Text("UI test: generated recordings and feedback. No real voice.")
+              .font(.footnote)
               .foregroundStyle(DirectPracticeStyle.muted)
               .fixedSize(horizontal: false, vertical: true)
-            Button {
-              if allowsLiveRoutes { selectedSound = PracticeLibrary.starterSound }
-            } label: {
-              HStack {
-                Text("Start practice")
-                Spacer()
-                Image(systemName: "arrow.right")
-              }
-            }
-            .buttonStyle(DirectPracticeButtonStyle())
-            .accessibilityIdentifier("cadence.start")
-            .disabled(!allowsLiveRoutes)
+              .padding(.top, 12)
+              .accessibilityIdentifier("cadence.home.ui-test-banner")
           }
-          .padding(.vertical, 40)
+        #endif
 
+        VStack(alignment: .leading, spacing: 18) {
+          Text("Today’s practice.")
+            .font(.system(size: titleSize, weight: .regular, design: .serif))
+            .tracking(-1.6)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityAddTraits(.isHeader)
+          Text("Say a word, listen back, try again. A few minutes is plenty.")
+            .font(.body)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
           Button {
-            if allowsLiveRoutes { localGuidedRoute = LocalGuidedRoute(entryIDs: nil) }
+            if allowsLiveRoutes { selectedSound = PracticeLibrary.starterSound }
           } label: {
+            HStack {
+              Text("Start practice")
+              Spacer()
+              Image(systemName: "arrow.right")
+            }
+          }
+          .buttonStyle(DirectPracticeButtonStyle())
+          .accessibilityIdentifier("cadence.start")
+          .disabled(!allowsLiveRoutes)
+          .padding(.top, 6)
+        }
+        .padding(.vertical, 36)
+
+        PracticeRule()
+        Button {
+          if allowsLiveRoutes { localGuidedRoute = LocalGuidedRoute(entryIDs: nil) }
+        } label: {
+          HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 5) {
               Text("Review, practice, recheck").font(.body.weight(.medium))
               Text("Five words, then a few to practice.")
                 .font(.subheadline).foregroundStyle(DirectPracticeStyle.muted)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
-            .contentShape(Rectangle())
-          }
-          .buttonStyle(.plain)
-          .accessibilityIdentifier("cadence.local-guided.open")
-          .disabled(!allowsLiveRoutes)
-          .padding(.bottom, 24)
-
-          if let savedWordsStore {
-            SavedGuidedWordsSection(store: savedWordsStore, allowsLiveRoutes: allowsLiveRoutes) {
-              ids in
-              guard allowsLiveRoutes,
-                (try? SavedGuidedWordsValidation.entries(entryIDs: ids)) != nil
-              else { return }
-              localGuidedRoute = LocalGuidedRoute(entryIDs: ids)
+            Spacer(minLength: 4)
+            if !dynamicTypeSize.isAccessibilitySize {
+              Image(systemName: "chevron.right")
+                .font(.subheadline)
+                .foregroundStyle(DirectPracticeStyle.muted)
+                .accessibilityHidden(true)
             }
           }
+          .frame(maxWidth: .infinity, minHeight: 72, alignment: .leading)
+          .contentShape(Rectangle())
+          .accessibilityElement(children: .combine)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("cadence.local-guided.open")
+        .disabled(!allowsLiveRoutes)
+        PracticeRule()
+          .padding(.bottom, 32)
 
-          #if DEBUG && targetEnvironment(simulator)
-            wordChecks
-          #endif
-
-          NavigationLink {
-            if allowsLiveRoutes { PracticeWordSearchView(history: history) } else { Color.clear }
-          } label: {
-            Label("Search words", systemImage: "magnifyingglass")
-              .font(.body)
-              .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-              .contentShape(Rectangle())
+        if let savedWordsStore {
+          SavedGuidedWordsSection(store: savedWordsStore, allowsLiveRoutes: allowsLiveRoutes) {
+            ids in
+            guard allowsLiveRoutes,
+              (try? SavedGuidedWordsValidation.entries(entryIDs: ids)) != nil
+            else { return }
+            localGuidedRoute = LocalGuidedRoute(entryIDs: ids)
           }
-          .buttonStyle(.plain)
-          .accessibilityIdentifier("cadence.search.open")
-          .disabled(!allowsLiveRoutes)
-          .padding(.bottom, 24)
+        }
 
-          PracticeParticipationHistorySection(history: history, allowsLiveRoutes: allowsLiveRoutes)
+        #if DEBUG && targetEnvironment(simulator)
+          wordChecks
+        #endif
 
-          Text("Choose a sound")
-            .font(.title3.weight(.medium))
+        PracticeParticipationHistorySection(history: history, allowsLiveRoutes: allowsLiveRoutes)
+
+        Text(footerPrivacy)
+          .font(.footnote)
+          .foregroundStyle(DirectPracticeStyle.muted)
+          .fixedSize(horizontal: false, vertical: true)
+          .padding(.vertical, 28)
+      }
+      .padding(.horizontal, 24)
+      .padding(.top, 8)
+      .frame(maxWidth: 680)
+      .frame(maxWidth: .infinity)
+    }
+    .modifier(PracticeTabSurface())
+    // Also runs when a pushed history route pops back to Today.
+    .onAppear { refreshCleanupRecovery() }
+  }
+
+  private var soundsTab: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 0) {
+        Text("Sounds")
+          .font(.subheadline)
+          .foregroundStyle(DirectPracticeStyle.muted)
+          .frame(minHeight: 44, alignment: .leading)
+        PracticeRule()
+        VStack(alignment: .leading, spacing: 12) {
+          Text("Choose a sound.")
+            .font(.system(size: titleSize * 0.84, weight: .regular, design: .serif))
+            .tracking(-1.2)
+            .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
-            .padding(.bottom, 18)
-          PracticeRule()
-          ForEach(PracticeLibrary.sounds) { sound in
-            soundRow(sound)
-            PracticeRule()
-          }
-
-          Text(footerPrivacy)
-            .font(.footnote)
+          Text("\(Self.libraryWordCount) words, grouped by where you hear the sound.")
+            .font(.body)
             .foregroundStyle(DirectPracticeStyle.muted)
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.vertical, 28)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 8)
-        .frame(maxWidth: 680)
-        .frame(maxWidth: .infinity)
-      }
-      .background(DirectPracticeStyle.canvas.ignoresSafeArea())
-      .foregroundStyle(DirectPracticeStyle.ink)
-      .tint(DirectPracticeStyle.ink)
-      // Opaque strip behind the status bar so scrolled rows do not show through it.
-      .safeAreaInset(edge: .top, spacing: 0) {
-        Color.clear.frame(height: 0)
-          .background(DirectPracticeStyle.canvas.ignoresSafeArea(edges: .top))
-      }
-      // Also runs when a pushed library or search route pops back to Home.
-      .onAppear { refreshCleanupRecovery() }
-      .fullScreenCover(item: $selectedSound, onDismiss: { refreshCleanupRecovery() }) { sound in
-        if allowsLiveRoutes {
-          DirectPracticePlayerView(sound: sound, history: history)
-        } else {
-          Color.clear
+        .padding(.top, 28)
+        .padding(.bottom, 20)
+
+        NavigationLink {
+          if allowsLiveRoutes { PracticeWordSearchView(history: history) } else { Color.clear }
+        } label: {
+          Label("Search words", systemImage: "magnifyingglass")
+            .font(.body)
+            .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+            .padding(.horizontal, 14)
+            .overlay(
+              RoundedRectangle(cornerRadius: DirectPracticeStyle.cornerRadius, style: .continuous)
+                .strokeBorder(DirectPracticeStyle.border))
+            .contentShape(Rectangle())
         }
-      }
-      .fullScreenCover(
-        item: $localGuidedRoute, onDismiss: { refreshCleanupRecovery() }
-      ) { route in
-        if allowsLiveRoutes {
-          LocalGuidedReviewPresenter(
-            history: history, store: savedWordsStore, entryIDs: route.entryIDs)
-        } else {
-          Color.clear
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("cadence.search.open")
+        .disabled(!allowsLiveRoutes)
+        .padding(.bottom, 20)
+
+        PracticeRule()
+        ForEach(PracticeLibrary.sounds) { sound in
+          soundRow(sound)
+          PracticeRule()
         }
       }
-      .sheet(isPresented: $showingAbout, onDismiss: { refreshCleanupRecovery() }) {
-        aboutPractice
-      }
-      #if DEBUG && targetEnvironment(simulator)
-        .fullScreenCover(item: $researchRoute, onDismiss: { refreshCleanupRecovery() }) { route in
-          if allowsResearchRoute(route) {
-            // Admission guarantees the default actual view selects this exact generated fixture.
-            switch route {
-            case .guidedWord: ResearchGuidedWordView()
-            case .feedback: ResearchFeedbackView(participationWriter: history)
-            case .soundPreview: soundPreviewContent
-            case .assessment: ResearchAssessmentLabView()
-            }
-          } else {
-            Color.clear
-          }
-        }
-      #endif
+      .padding(.horizontal, 24)
+      .padding(.top, 8)
+      .padding(.bottom, 28)
+      .frame(maxWidth: 680)
+      .frame(maxWidth: .infinity)
     }
-    .toolbar(.hidden, for: .navigationBar)
+    .modifier(PracticeTabSurface())
+    // Also runs when a pushed library or search route pops back to Sounds.
+    .onAppear { refreshCleanupRecovery() }
   }
+
+  private static let libraryWordCount = Set(
+    PracticeLibrary.sounds.flatMap { sound in
+      PracticeLibrary.entries(soundID: sound.id).map { $0.prompt.word }
+    }
+  ).count
 
   private var allowsLiveRoutes: Bool {
     #if DEBUG && targetEnvironment(simulator)
@@ -604,5 +668,21 @@ private struct LocalGuidedReviewPresenter: View {
     } else {
       LocalGuidedReviewView(session: session, savedWordsStore: store)
     }
+  }
+}
+
+/// Shared paper background, opaque status-bar strip and hidden bar for each tab root.
+private struct PracticeTabSurface: ViewModifier {
+  func body(content: Content) -> some View {
+    content
+      .background(DirectPracticeStyle.canvas.ignoresSafeArea())
+      .foregroundStyle(DirectPracticeStyle.ink)
+      .tint(DirectPracticeStyle.ink)
+      // Opaque strip behind the status bar so scrolled rows do not show through it.
+      .safeAreaInset(edge: .top, spacing: 0) {
+        Color.clear.frame(height: 0)
+          .background(DirectPracticeStyle.canvas.ignoresSafeArea(edges: .top))
+      }
+      .toolbar(.hidden, for: .navigationBar)
   }
 }
