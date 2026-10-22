@@ -1,0 +1,37 @@
+{
+  "name": "clinician-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test:a11y": "playwright test --config playwright.accessibility.config.ts",
+    "lint": "eslint",
+    "smoke:benchmark": "node scripts/benchmark-smoke.ts",
+    "test": "node --test src/app/api/attempts/evaluate/route.test.ts src/lib/benchmark-attempt-scorer.test.ts src/lib/identity-hash.test.ts src/lib/learner-assignment-fetch.test.ts src/lib/learner-attempt-upload.test.ts src/lib/platform-api-handlers.test.ts src/lib/portal-action-state.test.ts src/lib/practice-access.test.ts src/lib/overview-data.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "7.5.16",
+    "@speech-therapy/audio-model-adapter": "workspace:*",
+    "@speech-therapy/audio-scoring": "workspace:*",
+    "@speech-therapy/clinical-domain": "workspace:*",
+    "@speech-therapy/contracts": "workspace:*",
+    "@speech-therapy/platform-data": "workspace:*",
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,407 @@
+.page-frame:has(.assignment-page) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+.assignment-page,
+.assignment-workflow {
+  --assignment-ink: var(--ink);
+  --assignment-muted: var(--ink-soft);
+  --assignment-line: var(--line);
+  --assignment-accent: var(--ink);
+  color: var(--assignment-ink);
+}
+
+.assignment-page {
+  min-height: 100dvh;
+  background: var(--paper);
+}
+
+.assignment-page > .portal-header {
+  padding: 25px clamp(20px, 3vw, 44px) 22px;
+}
+
+.assignment-page .page-eyebrow,
+.assignment-page .section-kicker,
+.assignment-workflow .section-kicker {
+  color: var(--assignment-muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .08em;
+}
+
+.assignment-page > .portal-header h1 {
+  font-size: clamp(26px, 2.5vw, 34px);
+  font-weight: 630;
+  letter-spacing: -.04em;
+  line-height: 1.12;
+}
+
+.assignment-page > .portal-header > div:first-child > p:last-child {
+  max-width: 64ch;
+  margin-top: 7px;
+  color: var(--assignment-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.assignment-page > .preview-disclosure {
+  margin: 0;
+  padding: 8px clamp(20px, 3vw, 44px);
+  border-color: var(--assignment-line);
+  color: var(--assignment-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.assignment-page > .preview-disclosure strong {
+  color: var(--assignment-ink);
+  font-weight: 650;
+}
+
+.assignment-page > .content-section {
+  padding: 24px clamp(20px, 3vw, 44px) 30px;
+  border-color: var(--assignment-line);
+}
+
+.assignment-page .content-section h2 {
+  font-size: 18px;
+  font-weight: 630;
+  letter-spacing: -.025em;
+}
+
+.assignment-page .section-heading-row {
+  margin-bottom: 15px;
+}
+
+.assignment-page .demo-notice,
+.assignment-page .live-data-notice {
+  color: var(--assignment-muted);
+}
+
+.assignment-page .protocol-list,
+.assignment-page .protocol-list li {
+  border-color: var(--assignment-line);
+}
+
+.assignment-page .protocol-list li {
+  padding-block: 13px;
+}
+
+.assignment-page .protocol-list strong {
+  color: var(--assignment-ink);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.assignment-page .protocol-list p,
+.assignment-page .protocol-list code,
+.assignment-page .read-only-note {
+  color: var(--assignment-muted);
+}
+
+.assignment-page .protocol-list code {
+  overflow-wrap: anywhere;
+}
+
+.assignment-page .empty-state {
+  border-color: var(--assignment-line);
+  background: transparent;
+}
+
+.assignment-page .read-only-note {
+  margin-top: 16px;
+}
+
+.assignment-page .preview-assignment-layout {
+  padding: 20px clamp(20px, 3vw, 44px) 42px;
+  border-top: 1px solid var(--assignment-line);
+}
+
+.assignment-workflow {
+  max-width: 680px;
+  gap: 0;
+}
+
+.assignment-workflow.assignment-form {
+  border: 0;
+  padding: 0;
+}
+
+.assignment-workflow .form-heading {
+  align-items: baseline;
+  gap: 16px;
+  margin: 0 0 10px;
+}
+
+.assignment-workflow .form-heading h2 {
+  max-width: 40ch;
+  margin: 0;
+  color: var(--assignment-ink);
+  font-size: 18px;
+  font-weight: 630;
+  letter-spacing: -.025em;
+  line-height: 1.25;
+}
+
+.assignment-workflow .form-heading .demo-notice {
+  color: var(--assignment-muted);
+  font-size: 11px;
+}
+
+.assignment-workflow .assignment-intro {
+  margin: 0 0 10px;
+  color: var(--assignment-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.assignment-workflow .assignment-step {
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 12px;
+  border-color: var(--assignment-line);
+  padding: 11px 0;
+}
+
+.assignment-workflow .assignment-step-number {
+  padding-top: 2px;
+  color: var(--assignment-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.assignment-workflow .assignment-step-body {
+  gap: 8px;
+}
+
+.assignment-workflow .assignment-step-label {
+  color: var(--assignment-muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .06em;
+}
+
+.assignment-workflow .field-stack > span {
+  color: var(--assignment-ink);
+  font-size: 12px;
+}
+
+.assignment-workflow .field-stack select {
+  min-height: 42px;
+  border-color: var(--line-strong);
+  border-radius: 5px;
+  padding-inline: 12px;
+  background: var(--white);
+  color: var(--assignment-ink);
+  font-size: 14px;
+}
+
+.assignment-workflow .field-stack select:disabled {
+  background: var(--paper-deep);
+}
+
+.assignment-workflow .assignment-target {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 0;
+}
+
+.assignment-target-phone {
+  display: grid;
+  min-width: 48px;
+  height: 38px;
+  place-items: center;
+  border-right: 1px solid var(--line-strong);
+  color: var(--assignment-ink);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+
+.assignment-target > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.assignment-target strong {
+  font-size: 16px;
+  font-weight: 630;
+  line-height: 1.2;
+}
+
+.assignment-target > div > span {
+  color: var(--assignment-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.assignment-workflow .assignment-exercise-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 8px 0;
+  border: 0;
+}
+
+.assignment-workflow .assignment-exercise-facts > div {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+
+.assignment-workflow .assignment-exercise-facts dt {
+  color: var(--assignment-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.assignment-workflow .assignment-exercise-facts dd,
+.assignment-workflow .assignment-exercise-facts > div:first-child dd {
+  margin: 3px 0 0;
+  color: var(--assignment-ink);
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+.assignment-workflow .assignment-plan-fit {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid var(--assignment-line);
+  padding-top: 11px;
+}
+
+.assignment-workflow .assignment-plan-fit p {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.assignment-workflow .assignment-plan-fit span {
+  color: var(--assignment-muted);
+  font-size: 11px;
+}
+
+.assignment-workflow .assignment-plan-fit strong {
+  color: var(--assignment-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.assignment-workflow .assignment-plan-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding-block: 7px;
+  color: var(--assignment-ink);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.assignment-workflow .assignment-plan-confirm input {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--assignment-ink);
+}
+
+.assignment-workflow .assignment-plan-hint {
+  margin: -4px 0 0 26px;
+  color: var(--assignment-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.assignment-workflow .form-grid-two {
+  gap: 12px;
+}
+
+.assignment-workflow .assignment-dose-warning {
+  border: 0;
+  padding: 3px 0 0;
+  background: transparent;
+  color: var(--assignment-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.assignment-workflow > .primary-action {
+  min-height: 42px;
+  margin: 10px 0 0 36px;
+  border-radius: 5px;
+  background: var(--assignment-ink);
+  color: var(--white);
+  font-size: 12px;
+}
+
+.assignment-workflow > .primary-action:hover {
+  background: #444851;
+}
+
+.assignment-workflow > .preview-result,
+.assignment-workflow > .form-error,
+.assignment-workflow > .form-success {
+  margin-left: 36px;
+}
+
+.assignment-workflow > .preview-result:empty {
+  min-height: 0;
+}
+
+@media (max-width: 720px) {
+  .assignment-page > .portal-header {
+    padding: 22px 18px 15px;
+  }
+
+  .assignment-page > .preview-disclosure,
+  .assignment-page > .content-section,
+  .assignment-page .preview-assignment-layout {
+    padding-inline: 18px;
+  }
+
+  .assignment-workflow .field-stack select {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .assignment-workflow .form-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .assignment-workflow .assignment-step {
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .assignment-workflow .form-grid-two {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .assignment-workflow .assignment-plan-fit {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .assignment-workflow > .primary-action,
+  .assignment-workflow > .preview-result,
+  .assignment-workflow > .form-error,
+  .assignment-workflow > .form-success {
+    margin-left: 32px;
+  }
+}
