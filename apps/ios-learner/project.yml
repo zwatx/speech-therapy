@@ -1,0 +1,81 @@
+name: CadenceLearner
+
+options:
+  bundleIdPrefix: com.cadence.speechtherapy
+  deploymentTarget:
+    iOS: "17.0"
+  groupSortPosition: top
+
+packages:
+  CadenceContracts:
+    path: ../../packages/contracts/swift
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  CadenceLearner:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+      - path: WhisperResources
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - package: CadenceContracts
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cadence.speechtherapy.learner
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Cadence
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Cadence records a short practice attempt only after you tap Record.
+        INFOPLIST_KEY_NSCameraUsageDescription: Cadence uses the front camera only when you tap Show mirror. The preview stays on this device and is not recorded or saved.
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+  CadenceLearnerTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+      - path: PublicFixture
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - target: CadenceLearner
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cadence.speechtherapy.learner.tests
+        GENERATE_INFOPLIST_FILE: YES
+  CadenceLearnerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: CadenceLearner
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cadence.speechtherapy.learner.ui-tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  CadenceLearner:
+    build:
+      targets:
+        CadenceLearner: all
+        CadenceLearnerTests: [test]
+        CadenceLearnerUITests: [test]
+    test:
+      targets:
+        - CadenceLearnerTests
+        - CadenceLearnerUITests
+      gatherCoverageData: true

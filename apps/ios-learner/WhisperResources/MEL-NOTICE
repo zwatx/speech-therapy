@@ -1,0 +1,7 @@
+# Derived mel resource attribution
+
+Whisper feature_extraction_whisper.py: Copyright 2022 The HuggingFace Inc. team. audio_utils.py: Copyright 2023 The HuggingFace Inc. team and the librosa & torchaudio authors. Both are Apache-2.0; the installed Transformers 4.57.6 license is copied beside this notice. Its installed RECORD lists no applicable upstream NOTICE file. The RECORD is externally pinned.
+
+Change notice: this distinct draft exports the exact CPU Float32, transposed mel filter tensor consumed by the unmodified pinned HF torch path. Swift implements the described STFT/log-mel procedure separately. Cached model/configuration data remains unchanged and retains its separate provenance; this note does not relicense it.
+
+OpenAI Whisper algorithm attribution is preserved separately under MIT: the separately copied LICENSE-OPENAI-MIT.txt from the admitted upstream license. OpenAI's MIT attribution does not replace the HF Apache-2.0 attribution. No claim of ownership of numerical constants is made.

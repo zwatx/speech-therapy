@@ -1,0 +1,608 @@
+import SwiftUI
+
+struct DirectPracticeRootView: View {
+  @State private var selectedSound: PracticeSound?
+  @State private var showingAbout = false
+  @State private var localGuidedRoute: LocalGuidedRoute?
+  #if DEBUG && targetEnvironment(simulator)
+    private let savedWordsStore: SavedGuidedWordsStore?
+  #else
+    private let savedWordsStore: SavedGuidedWordsStore? = .shared
+  #endif
+
+  private struct LocalGuidedRoute: Identifiable {
+    let id = UUID()
+    let entryIDs: [String]?
+  }
+  #if DEBUG && targetEnvironment(simulator)
+    private let controlledUI: ControlledUIConfiguration?
+    private let controlledSoundResources: ResearchSoundUITestFixtures.RunResources?
+    @ObservedObject private var history: PracticeParticipationStore
+
+    init(
+      controlledUI: ControlledUIConfiguration? = nil,
+      controlledSoundResources: ResearchSoundUITestFixtures.RunResources? = nil
+    ) {
+      self.savedWordsStore =
+        controlledUI == nil
+          && ResearchRoute.launch(ProcessInfo.processInfo.arguments) == nil
+          && ResearchGuidedWordUITestFixtures.selected() == nil
+          && ResearchUnifiedFeedbackUITestFixtures.selected() == nil ? .shared : nil
+      self.controlledUI = controlledUI
+      self.controlledSoundResources = controlledSoundResources
+      _history = ObservedObject(
+        wrappedValue: Self.participationHistoryStore(controlledUI: controlledUI))
+      _researchRoute = State(
+        initialValue: controlledUI.map { ResearchRoute.fixtureRoute($0.fixture) }
+          ?? ResearchRoute.launch(ProcessInfo.processInfo.arguments))
+    }
+
+    /// Home and generated free/guided writers borrow exactly the same isolated store.
+    @MainActor static func participationHistoryStore(
+      arguments: [String] = ProcessInfo.processInfo.arguments,
+      controlledUI: ControlledUIConfiguration? = nil
+    ) -> PracticeParticipationStore {
+      if let controlledUI {
+        switch controlledUI.fixture {
+        case .sound:
+          return ResearchSoundUITestFixtures.participationStore(runID: controlledUI.runID)
+        case .guided(let testCase):
+          return ResearchGuidedWordUITestFixtures.participationStore(for: testCase)
+        case .feedback(let testCase):
+          return ResearchUnifiedFeedbackUITestFixtures.participationStore(
+            for: testCase, arguments: arguments)
+        case .mirror:
+          preconditionFailure("The generated mirror host has no home or history route")
+        case .directTry:
+          preconditionFailure("The generated direct-try host owns its isolated history")
+        case .localGuided:
+          preconditionFailure("The generated local-guided host owns its isolated history")
+        case .history:
+          preconditionFailure("The generated history host owns its isolated store")
+        }
+      }
+      if let guided = ResearchGuidedWordUITestFixtures.selected(arguments) {
+        return ResearchGuidedWordUITestFixtures.participationStore(for: guided)
+      }
+      if let free = ResearchUnifiedFeedbackUITestFixtures.selected(arguments) {
+        return ResearchUnifiedFeedbackUITestFixtures.participationStore(
+          for: free, arguments: arguments)
+      }
+      return PracticeParticipationStore.shared
+    }
+  #else
+    @ObservedObject private var history = PracticeParticipationStore.shared
+  #endif
+  #if DEBUG && targetEnvironment(simulator)
+    // One research destination at a time; Close (child dismiss) sets this back to nil.
+    @State private var researchRoute: ResearchRoute?
+  #endif
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  // Passive re-read of process cleanup; a no-op unless an ordinary recovery host is present.
+  @Environment(\.refreshAudioCleanupRecovery) private var refreshCleanupRecovery
+  @ScaledMetric(relativeTo: .largeTitle) private var titleSize = 48
+
+  var body: some View {
+    NavigationStack {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 0) {
+          HStack(alignment: .firstTextBaseline) {
+            Text("cadence")
+              .font(.title3.weight(.semibold))
+              .tracking(-0.5)
+            Spacer()
+            Button {
+              showingAbout = true
+            } label: {
+              Text("About")
+                .font(.subheadline)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("About practice and privacy")
+          }
+          PracticeRule()
+          #if DEBUG && targetEnvironment(simulator)
+            if controlledUI != nil || ResearchGuidedWordUITestFixtures.selected() != nil
+              || ResearchUnifiedFeedbackUITestFixtures.selected() != nil
+            {
+              Text("UI test: generated recordings and feedback. No real voice.")
+                .font(.footnote)
+                .foregroundStyle(DirectPracticeStyle.muted)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 12)
+                .accessibilityIdentifier("cadence.home.ui-test-banner")
+            }
+          #endif
+
+          VStack(alignment: .leading, spacing: 20) {
+            Text("Practice speaking.")
+              .font(.system(size: titleSize, weight: .regular, design: .serif))
+              .tracking(-1.8)
+              .fixedSize(horizontal: false, vertical: true)
+              .accessibilityAddTraits(.isHeader)
+            Text("Say a few words. Listen back. Try again.")
+              .font(.body)
+              .foregroundStyle(DirectPracticeStyle.muted)
+              .fixedSize(horizontal: false, vertical: true)
+            Button {
+              if allowsLiveRoutes { selectedSound = PracticeLibrary.starterSound }
+            } label: {
+              HStack {
+                Text("Start practice")
+                Spacer()
+                Image(systemName: "arrow.right")
+              }
+            }
+            .buttonStyle(DirectPracticeButtonStyle())
+            .accessibilityIdentifier("cadence.start")
+            .disabled(!allowsLiveRoutes)
+          }
+          .padding(.vertical, 40)
+
+          Button {
+            if allowsLiveRoutes { localGuidedRoute = LocalGuidedRoute(entryIDs: nil) }
+          } label: {
+            VStack(alignment: .leading, spacing: 5) {
+              Text("Review, practice, recheck").font(.body.weight(.medium))
+              Text("Five words, then a few to practice.")
+                .font(.subheadline).foregroundStyle(DirectPracticeStyle.muted)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+            .contentShape(Rectangle())
+          }
+          .buttonStyle(.plain)
+          .accessibilityIdentifier("cadence.local-guided.open")
+          .disabled(!allowsLiveRoutes)
+          .padding(.bottom, 24)
+
+          if let savedWordsStore {
+            SavedGuidedWordsSection(store: savedWordsStore, allowsLiveRoutes: allowsLiveRoutes) {
+              ids in
+              guard allowsLiveRoutes,
+                (try? SavedGuidedWordsValidation.entries(entryIDs: ids)) != nil
+              else { return }
+              localGuidedRoute = LocalGuidedRoute(entryIDs: ids)
+            }
+          }
+
+          #if DEBUG && targetEnvironment(simulator)
+            wordChecks
+          #endif
+
+          NavigationLink {
+            if allowsLiveRoutes { PracticeWordSearchView(history: history) } else { Color.clear }
+          } label: {
+            Label("Search words", systemImage: "magnifyingglass")
+              .font(.body)
+              .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+              .contentShape(Rectangle())
+          }
+          .buttonStyle(.plain)
+          .accessibilityIdentifier("cadence.search.open")
+          .disabled(!allowsLiveRoutes)
+          .padding(.bottom, 24)
+
+          PracticeParticipationHistorySection(history: history, allowsLiveRoutes: allowsLiveRoutes)
+
+          Text("Choose a sound")
+            .font(.title3.weight(.medium))
+            .accessibilityAddTraits(.isHeader)
+            .padding(.bottom, 18)
+          PracticeRule()
+          ForEach(PracticeLibrary.sounds) { sound in
+            soundRow(sound)
+            PracticeRule()
+          }
+
+          Text(footerPrivacy)
+            .font(.footnote)
+            .foregroundStyle(DirectPracticeStyle.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.vertical, 28)
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 8)
+        .frame(maxWidth: 680)
+        .frame(maxWidth: .infinity)
+      }
+      .background(DirectPracticeStyle.canvas.ignoresSafeArea())
+      .foregroundStyle(DirectPracticeStyle.ink)
+      .tint(DirectPracticeStyle.ink)
+      // Opaque strip behind the status bar so scrolled rows do not show through it.
+      .safeAreaInset(edge: .top, spacing: 0) {
+        Color.clear.frame(height: 0)
+          .background(DirectPracticeStyle.canvas.ignoresSafeArea(edges: .top))
+      }
+      // Also runs when a pushed library or search route pops back to Home.
+      .onAppear { refreshCleanupRecovery() }
+      .fullScreenCover(item: $selectedSound, onDismiss: { refreshCleanupRecovery() }) { sound in
+        if allowsLiveRoutes {
+          DirectPracticePlayerView(sound: sound, history: history)
+        } else {
+          Color.clear
+        }
+      }
+      .fullScreenCover(
+        item: $localGuidedRoute, onDismiss: { refreshCleanupRecovery() }
+      ) { route in
+        if allowsLiveRoutes {
+          LocalGuidedReviewPresenter(
+            history: history, store: savedWordsStore, entryIDs: route.entryIDs)
+        } else {
+          Color.clear
+        }
+      }
+      .sheet(isPresented: $showingAbout, onDismiss: { refreshCleanupRecovery() }) {
+        aboutPractice
+      }
+      #if DEBUG && targetEnvironment(simulator)
+        .fullScreenCover(item: $researchRoute, onDismiss: { refreshCleanupRecovery() }) { route in
+          if allowsResearchRoute(route) {
+            // Admission guarantees the default actual view selects this exact generated fixture.
+            switch route {
+            case .guidedWord: ResearchGuidedWordView()
+            case .feedback: ResearchFeedbackView(participationWriter: history)
+            case .soundPreview: soundPreviewContent
+            case .assessment: ResearchAssessmentLabView()
+            }
+          } else {
+            Color.clear
+          }
+        }
+      #endif
+    }
+    .toolbar(.hidden, for: .navigationBar)
+  }
+
+  private var allowsLiveRoutes: Bool {
+    #if DEBUG && targetEnvironment(simulator)
+      controlledUI == nil
+    #else
+      true
+    #endif
+  }
+
+  #if DEBUG && targetEnvironment(simulator)
+    @ViewBuilder private var soundPreviewContent: some View {
+      if let controlledUI {
+        if case .sound(let testCase) = controlledUI.fixture,
+          let resources = controlledSoundResources,
+          resources.runID == controlledUI.runID
+        {
+          ResearchSoundPreviewView(
+            session: ResearchSoundUITestFixtures.session(for: testCase, resources: resources))
+        } else {
+          Color.clear
+        }
+      } else {
+        ResearchSoundPreviewView()
+      }
+    }
+
+    private func allowsResearchRoute(_ route: ResearchRoute) -> Bool {
+      guard let controlledUI else { return true }
+      // Process launch arguments cannot change after validated App admission. Keep an
+      // additional exact match before any default view initializer can choose its fallback.
+      guard
+        ControlledAppLaunch.select(
+          arguments: ProcessInfo.processInfo.arguments,
+          environment: ProcessInfo.processInfo.environment,
+          hasXCTestRuntime: NSClassFromString("XCTestCase") != nil) == .generated(controlledUI)
+      else { return false }
+      return controlledUI.admits(route.destination)
+    }
+  #endif
+
+  private var footerPrivacy: String {
+    #if DEBUG && targetEnvironment(simulator)
+      "Practice recordings stay local and are cleared as you go. Review, practice, recheck uses a bundled on-device English word model. In the simulator, you can also opt in to research sound processing on this Mac after a word match; it gives no pronunciation judgment. The separate Word checks tools below use the check service on this computer only when you tap Check. Example recordings are requested only when you tap Play."
+    #else
+      "Practice recordings stay on your device and are cleared as you go. Word checks use a bundled on-device English word model."
+    #endif
+  }
+
+  #if DEBUG && targetEnvironment(simulator)
+    private var wordChecks: some View {
+      VStack(alignment: .leading, spacing: 0) {
+        Text("Word checks")
+          .font(.title3.weight(.medium))
+          .accessibilityAddTraits(.isHeader)
+        Text(
+          "A check listens for the whole word you meant to say. It is not a pronunciation score or a diagnosis. Nothing is sent until you choose options and tap Check."
+        )
+        .font(.subheadline)
+        .foregroundStyle(DirectPracticeStyle.muted)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.top, 8)
+        .padding(.bottom, 12)
+        PracticeRule()
+        researchEntry(
+          .guidedWord, title: "Guided word check",
+          detail: "Ages 6–12, with a grown-up.",
+          id: "cadence.guided-word.start")
+        PracticeRule()
+        researchEntry(
+          .feedback, title: "Record with feedback",
+          detail: "One word. Listen, then check if you like.",
+          id: "cadence.feedback.start")
+        PracticeRule()
+      }
+      .padding(.bottom, 24)
+    }
+
+    private func researchEntry(
+      _ route: ResearchRoute, title: String, detail: String, id: String
+    ) -> some View {
+      Button {
+        if allowsResearchRoute(route) { researchRoute = route }
+      } label: {
+        HStack(alignment: .center, spacing: 12) {
+          VStack(alignment: .leading, spacing: 5) {
+            Text(title)
+              .font(.body.weight(.medium))
+              .foregroundStyle(DirectPracticeStyle.ink)
+            Text(detail)
+              .font(.subheadline)
+              .foregroundStyle(DirectPracticeStyle.muted)
+          }
+          .fixedSize(horizontal: false, vertical: true)
+          Spacer(minLength: 4)
+          // At accessibility sizes the chevron's column costs text width and row height.
+          if !dynamicTypeSize.isAccessibilitySize {
+            Image(systemName: "chevron.right")
+              .font(.subheadline)
+              .foregroundStyle(DirectPracticeStyle.muted)
+              .accessibilityHidden(true)
+          }
+        }
+        .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+        .padding(.vertical, 8)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+      }
+      .buttonStyle(.plain)
+      .accessibilityIdentifier(id)
+      .disabled(!allowsResearchRoute(route))
+    }
+  #endif
+
+  private func soundRow(_ sound: PracticeSound) -> some View {
+    NavigationLink {
+      if allowsLiveRoutes {
+        PracticeSoundLibraryView(sound: sound, history: history)
+      } else {
+        Color.clear
+      }
+    } label: {
+      HStack(alignment: .center, spacing: 20) {
+        if !dynamicTypeSize.isAccessibilitySize {
+          Text(sound.symbol)
+            .font(.system(.title, design: .serif))
+            .frame(width: 40, alignment: .leading)
+            .accessibilityHidden(true)
+        }
+        VStack(alignment: .leading, spacing: 5) {
+          Text(sound.name.lowercased())
+            .font(.body.weight(.medium))
+            .foregroundStyle(DirectPracticeStyle.ink)
+          Text("\(wordCount(for: sound)) words to practice")
+            .font(.subheadline)
+            .foregroundStyle(DirectPracticeStyle.muted)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        Spacer(minLength: 4)
+        Image(systemName: "chevron.right")
+          .font(.subheadline)
+          .foregroundStyle(DirectPracticeStyle.muted)
+          .accessibilityHidden(true)
+      }
+      .frame(maxWidth: .infinity, minHeight: 76, alignment: .leading)
+      .padding(.vertical, 8)
+      .contentShape(Rectangle())
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(
+        "\(sound.name), \(wordCount(for: sound)) words")
+    }
+    .buttonStyle(.plain)
+    .accessibilityHint("Opens words grouped by sound position")
+    .accessibilityIdentifier("cadence.sound.\(sound.id)")
+    .disabled(!allowsLiveRoutes)
+  }
+
+  private var aboutPractice: some View {
+    NavigationStack {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 28) {
+          Text("About practice")
+            .font(.system(.largeTitle, design: .serif))
+            .accessibilityAddTraits(.isHeader)
+          #if DEBUG && targetEnvironment(simulator)
+            NavigationLink("Sound preview") {
+              if allowsResearchRoute(.soundPreview) {
+                soundPreviewContent
+              } else {
+                Color.clear
+              }
+            }
+            .font(.body)
+            .frame(minHeight: 48)
+            .accessibilityIdentifier("cadence.sound-preview.open")
+            .disabled(!allowsResearchRoute(.soundPreview))
+          #endif
+          aboutItem(
+            "How words are chosen",
+            "Words are grouped by where a sound occurs in a General American English pronunciation, rather than how the word is spelled. For example, phone starts with the F sound. The library includes single sounds and consonant blends."
+          )
+          aboutItem(
+            "Practice together",
+            "Younger children and new readers can practice with a grown-up nearby. Read the word together, then let the child choose when to record."
+          )
+          aboutItem(
+            "Listen to your own voice",
+            "Record, play it back, and try again whenever you like. Finishing a session celebrates taking part, not saying a sound correctly."
+          )
+          aboutItem(
+            "Private, temporary recordings",
+            "During ordinary practice, audio stays on this device. It is removed when you retry, move on, close practice, or leave the app. Practice does not upload audio."
+          )
+          aboutItem(
+            "Saved words",
+            "You can choose to save one set of five words on this device. Saved words contain only your choices, without recordings or results. Clear them from Saved words on Home."
+          )
+          aboutItem(
+            "Recent practice",
+            "Completed sessions save their date, sound group and word count on this device, up to 100 sessions. This records participation, not pronunciation or improvement. You can clear this history from the practice screen."
+          )
+          aboutItem(
+            "An early practice demo",
+            "This word library is awaiting speech-language pathologist review. Recording tips check volume and length only. Cadence does not yet judge pronunciation or recommend which sounds a child should work on."
+          )
+          VStack(alignment: .leading, spacing: 12) {
+            Text("Pronunciation source")
+              .font(.headline)
+              .accessibilityAddTraits(.isHeader)
+            Text(PracticeLibrary.sourceNotice)
+              .font(.body)
+              .foregroundStyle(DirectPracticeStyle.muted)
+            DisclosureGroup("Dictionary license") {
+              Text(PracticeLibrary.sourceLicense)
+                .font(.footnote)
+                .foregroundStyle(DirectPracticeStyle.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+          }
+          #if DEBUG && targetEnvironment(simulator)
+            aboutItem(
+              "Word checks",
+              "Guided word check and Record with feedback are on the home screen. They listen for whole words, not pronunciation. A take is sent to the check service on this computer only after you choose options and tap Check. Example recordings are public and are requested only when you tap Play. Recording and listening back without a check stays on this device."
+            )
+            NavigationLink("Speech check lab") {
+              if allowsLiveRoutes {
+                ResearchAssessmentLabView(admissionMode: false)
+              } else {
+                Color.clear
+              }
+            }
+            .font(.body)
+            .frame(minHeight: 48)
+            .accessibilityIdentifier("cadence.lab.open")
+            .disabled(!allowsLiveRoutes)
+            NavigationLink("Speech admission lab") {
+              if allowsLiveRoutes {
+                ResearchAssessmentLabView(admissionMode: true)
+              } else {
+                Color.clear
+              }
+            }
+            .font(.body)
+            .frame(minHeight: 48)
+            .accessibilityIdentifier("cadence.admission-lab.open")
+            .disabled(!allowsLiveRoutes)
+          #endif
+          #if DEBUG && !targetEnvironment(simulator)
+            if MouthMovementLabView.isAvailable {
+              NavigationLink("Camera lab") { MouthMovementLabView() }
+                .font(.body)
+                .frame(minHeight: 44)
+            }
+          #endif
+        }
+        .padding(24)
+      }
+      .accessibilityIdentifier("cadence.about.scroll")
+      .background(DirectPracticeStyle.canvas)
+      .foregroundStyle(DirectPracticeStyle.ink)
+      .tint(DirectPracticeStyle.ink)
+      .toolbar {
+        ToolbarItem(placement: .confirmationAction) {
+          Button("Done") { showingAbout = false }
+        }
+      }
+    }
+  }
+
+  private func aboutItem(_ title: String, _ detail: String) -> some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text(title)
+        .font(.headline)
+        .accessibilityAddTraits(.isHeader)
+      Text(detail)
+        .font(.body)
+        .foregroundStyle(DirectPracticeStyle.muted)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+  }
+
+  private func wordCount(for sound: PracticeSound) -> Int {
+    Set(PracticeLibrary.entries(soundID: sound.id).map { $0.prompt.word }).count
+  }
+}
+
+#if DEBUG && targetEnvironment(simulator)
+  private enum ResearchRoute: String, Identifiable {
+    case guidedWord, feedback, soundPreview, assessment
+    var id: String { rawValue }
+
+    var destination: ControlledUIConfiguration.Destination {
+      switch self {
+      case .guidedWord: .guided
+      case .feedback: .feedback
+      case .soundPreview: .sound
+      case .assessment: .assessment
+      }
+    }
+
+    static func fixtureRoute(_ fixture: ControlledUIConfiguration.Fixture) -> ResearchRoute {
+      switch fixture {
+      case .sound: .soundPreview
+      case .feedback: .feedback
+      case .guided: .guidedWord
+      case .mirror: preconditionFailure("Mirror fixtures use their isolated host")
+      case .directTry: preconditionFailure("Direct-try fixtures use their isolated host")
+      case .localGuided: preconditionFailure("Local-guided fixtures use their isolated host")
+      case .history: preconditionFailure("History fixtures use their isolated host")
+      }
+    }
+
+    /// Launch flags for verification; if several are given, the first in this order wins.
+    static func launch(_ arguments: [String]) -> ResearchRoute? {
+      if arguments.contains("-CadenceGuidedWordMode") { return .guidedWord }
+      if arguments.contains("-CadenceFeedbackMode") { return .feedback }
+      if arguments.contains("-CadenceSoundMode") { return .soundPreview }
+      if arguments.contains("-CadenceAssessmentMode") { return .assessment }
+      return nil
+    }
+  }
+#endif
+
+/// Retains one owner across setup, media visits and summaries.
+@MainActor
+private struct LocalGuidedReviewPresenter: View {
+  @StateObject private var session: LocalGuidedReviewSession
+
+  private let store: SavedGuidedWordsStore?
+  @Environment(\.dismiss) private var dismiss
+
+  init(history: PracticeParticipationStore, store: SavedGuidedWordsStore?, entryIDs: [String]?) {
+    self.store = store
+    _session = StateObject(
+      wrappedValue: LocalGuidedReviewSession(history: history, setupEntryIDs: entryIDs))
+  }
+
+  var body: some View {
+    if session.setupSeedFailed {
+      VStack(alignment: .leading, spacing: 24) {
+        Text("Saved words could not be opened. Close and try again.")
+          .fixedSize(horizontal: false, vertical: true)
+        Button("Close") { Task { if await session.close() { dismiss() } } }
+          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+      }.padding(24).interactiveDismissDisabled(true)
+        .background(DirectPracticeStyle.canvas.ignoresSafeArea())
+    } else {
+      LocalGuidedReviewView(session: session, savedWordsStore: store)
+    }
+  }
+}

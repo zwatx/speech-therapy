@@ -1,0 +1,107 @@
+{
+  "admitted": true,
+  "decoderGeneratedParityReceiptSHA256": "ddf98014aeca5dddaeede3c4a48379e1809a8eadd2b009222037de69c0315db3",
+  "encoderGeneratedParityReceiptSHA256": "ddf98014aeca5dddaeede3c4a48379e1809a8eadd2b009222037de69c0315db3",
+  "files": [
+    {
+      "bytes": 1063,
+      "path": "LICENSE",
+      "sha256": "b5d65a59060e68c4ff940e1eddfa6f94b2d68fdf58ed7f4dd57721c997e35e9d"
+    },
+    {
+      "bytes": 1013,
+      "path": "MEL-NOTICE",
+      "sha256": "50a13f51a13bc21dcd1ed5a9a505f17063102354e593e7d77bb253b8a5cc39e3"
+    },
+    {
+      "bytes": 64320,
+      "path": "MEL.f32",
+      "sha256": "88df35e6c6d720d89b2d59b410cf386081a6ad04ccc6daaa732ca9b481575137"
+    },
+    {
+      "bytes": 11418,
+      "path": "TRANSFORMERS-LICENSE",
+      "sha256": "77fd4710def9ec3c0f6225800e0235f15a425abd4a8b03559127fcd782612049"
+    },
+    {
+      "bytes": 243,
+      "path": "WhisperDecoder.mlmodelc/analytics/coremldata.bin",
+      "sha256": "14ab606df92a01d208db343cbcb238f6c204333c59a828991253aca5a8c702a7"
+    },
+    {
+      "bytes": 448,
+      "path": "WhisperDecoder.mlmodelc/coremldata.bin",
+      "sha256": "a5dfe8ffca6c79d4e80299a6a1825a282c63d27aad4969d50130ebe4bf7147d6"
+    },
+    {
+      "bytes": 2541,
+      "path": "WhisperDecoder.mlmodelc/metadata.json",
+      "sha256": "fc72aa654d30e034e72e1f6d694860aee08f42c8844b964457203e1d7c0c0dd2"
+    },
+    {
+      "bytes": 144787,
+      "path": "WhisperDecoder.mlmodelc/model.mil",
+      "sha256": "b32c25c6db7d4bc514910c939522980857baf384250bb65172aa0497972ca29b"
+    },
+    {
+      "bytes": 208230432,
+      "path": "WhisperDecoder.mlmodelc/weights/weight.bin",
+      "sha256": "dbca95170012a691e6639452142eb978fd9083b8a40952e430de5055814bcae2"
+    },
+    {
+      "bytes": 243,
+      "path": "WhisperEncoder.mlmodelc/analytics/coremldata.bin",
+      "sha256": "ebbdc4fec0ce3daa5de000442af3c63858d4dd75366f72ae423a4f670b963d09"
+    },
+    {
+      "bytes": 395,
+      "path": "WhisperEncoder.mlmodelc/coremldata.bin",
+      "sha256": "02374caad637009f587c287fcf7e935ab4499d279f03d9755eb7ff9634ab96c8"
+    },
+    {
+      "bytes": 1864,
+      "path": "WhisperEncoder.mlmodelc/metadata.json",
+      "sha256": "f089d1ba843b0a37abe3697e588fbc7caafbfe006b045d86fe15171d9cf944f8"
+    },
+    {
+      "bytes": 69699,
+      "path": "WhisperEncoder.mlmodelc/model.mil",
+      "sha256": "b3120c842f0856bd03a5ba3ee9d2d1e71180e6b7de050cfe3781fb28dc9d5b93"
+    },
+    {
+      "bytes": 82370752,
+      "path": "WhisperEncoder.mlmodelc/weights/weight.bin",
+      "sha256": "4cc988377a5decff9d7363c048734e77254a5fe1de6139f89762fe12343c7c9c"
+    },
+    {
+      "bytes": 1937,
+      "path": "config.json",
+      "sha256": "160c1df40a60d4ef5a6014d536fd845c33aabfd1f318458ac7f87cfe91ebbe76"
+    },
+    {
+      "bytes": 1531,
+      "path": "generation_config.json",
+      "sha256": "c5750f05d94777579e00ce26ef65e5d87c108439f90e3ac519df2587b9d5d41f"
+    },
+    {
+      "bytes": 1830,
+      "path": "special_tokens_map.json",
+      "sha256": "014f8f802366ed818919550be0ad9e35907327cb9e142e8aaa102420f460bda8"
+    },
+    {
+      "bytes": 2405679,
+      "path": "tokenizer.json",
+      "sha256": "5eb60cec1e77aeeb6869a2bb5a8e01a84c3fe5d072d75369343021fe6f5310d0"
+    }
+  ],
+  "melDerivationPolicy": "HFCPUFloat32V2",
+  "melProvenanceReceiptSHA256": "43d4a2b047d4bab3e54f12832bcf5a66e55907e8c0ea1c71cdf6becfee012b7b",
+  "melRoundtripReceiptSHA256": "43d4a2b047d4bab3e54f12832bcf5a66e55907e8c0ea1c71cdf6becfee012b7b",
+  "melSourceHFSourceSHA256": "c209e669fae0ea5de92e1846d8790e3d6d66ce28f4cd4071789c2eec88c84a66",
+  "nativePackageCompilationReceiptSHA256": "602c730e1c77572f3f10828fe03545d22fb2b7fd9db10f284baacc287bbc8b7f",
+  "preprocessingParityReceiptSHA256": "d5ee79292fa7c2065374cea537f3c44168938f958c296e6bb74484174a4c8359",
+  "schema": "WhisperBundledResourcesV1",
+  "sourceRevision": "911407f4214e0e1d82085af863093ec0b66f9cd6",
+  "sourceWeightsSHA256": "d4dd5542fd6a1d35639e21384238f3bfe6c557c849d392b5905d33ee29e71db5",
+  "tokenizerParityReceiptSHA256": "79a3e1664779f7605f21d6385c86b711923ca13c39b3e7f6ca0591bcf41cdb6e"
+}

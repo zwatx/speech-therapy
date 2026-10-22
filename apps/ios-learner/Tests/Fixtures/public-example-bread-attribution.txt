@@ -1,0 +1,4 @@
+PUBLIC LICENSED TEST FIXTURE, not owner/participant audio or adult phone gold.
+File:En-us-bread.ogg — Dvortygirl; https://commons.wikimedia.org/wiki/File:En-us-bread.ogg; https://creativecommons.org/licenses/by-sa/3.0/. Converted original to mono 16000 Hz PCM16 WAV; no trimming, normalization or speed changes.
+Speaker age unknown. Not clinically approved; no participant consent established.
+SHA256 0972084b7673d4d3053ca5c73f9c2ca81ee98bb580a401061ca55bb51ee5ac6f

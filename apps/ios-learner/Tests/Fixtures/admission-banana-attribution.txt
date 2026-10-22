@@ -1,0 +1,9 @@
+Engineering integration fixture; actual speaker age unknown.
+Source: https://commons.wikimedia.org/wiki/File:En-us-banana.ogg
+Author: Dvortygirl
+License: Creative Commons Attribution-ShareAlike 3.0
+https://creativecommons.org/licenses/by-sa/3.0/
+Converted from licensed OGG to mono 16 kHz PCM16 WAV; same retained WAV bytes as
+work/assessment-real-data-20261004/references/wav/banana.wav.
+WAV SHA-256: 8a90981bb21ef4137d9a52dd4d9b38457bbda014ce684f12910303ea5eaf7054
+No phonetic correctness, child age, intended population accuracy or sensor claim.
