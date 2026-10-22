@@ -213,9 +213,8 @@ struct DirectPracticePlayerView: View {
       if !dynamicTypeSize.isAccessibilitySize {
         if let picture = Self.pictures[session.currentPrompt.word] {
           Text(picture)
-            .font(.system(size: 72))
-            .saturation(0)
-            .padding(.bottom, 8)
+            .font(.system(size: 80))
+            .padding(.bottom, 4)
             .accessibilityHidden(true)
         } else if session.currentPrompt.systemImage != "text.bubble.fill" {
           Image(systemName: session.currentPrompt.systemImage)
@@ -232,11 +231,7 @@ struct DirectPracticePlayerView: View {
         .minimumScaleFactor(0.25)
         .accessibilityIdentifier("cadence.word")
         .accessibilityAddTraits(.isHeader)
-      Text(
-        session.sound.position == .middle
-          ? "/\(session.sound.symbol)/ in the middle"
-          : "/\(session.sound.symbol)/ at the \(session.sound.position.rawValue)"
-      )
+      practicePositionText(symbol: session.sound.symbol, position: session.sound.position)
       .font(.body)
       .foregroundStyle(DirectPracticeStyle.muted)
       .fixedSize(horizontal: false, vertical: true)
@@ -365,24 +360,27 @@ struct DirectPracticePlayerView: View {
         spokenWordStatus(recordingHint: true)
         if session.canRetrySpokenWordStop { spokenWordRetry }
         if let guided, guided.showsRecordAndCheck {
-          Button {
+          recordControl(caption: "Record and check") {
             Task { await guided.recordAndCheck() }
-          } label: {
-            Label("Record and check", systemImage: "mic")
           }
-          .buttonStyle(DirectPracticeButtonStyle())
           .accessibilityIdentifier("cadence.record-and-check")
           .accessibilityHint("Records a fresh try, then checks for the word on this device.")
           .disabled(!guided.canRecordAndCheck)
+          Button {
+            Task { await session.startRecording() }
+          } label: {
+            Label("Record only", systemImage: "mic")
+          }
+          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+          .accessibilityIdentifier("cadence.record")
+          .disabled(!session.canStartRecording)
+        } else {
+          recordControl(caption: "Record") {
+            Task { await session.startRecording() }
+          }
+          .accessibilityIdentifier("cadence.record")
+          .disabled(!session.canStartRecording)
         }
-        Button {
-          Task { await session.startRecording() }
-        } label: {
-          Label(guided?.showsRecordAndCheck == true ? "Record only" : "Record", systemImage: "mic")
-        }
-        .buttonStyle(DirectPracticeButtonStyle(secondary: guided?.showsRecordAndCheck == true))
-        .accessibilityIdentifier("cadence.record")
-        .disabled(!session.canStartRecording)
       }
     case .requestingPermission:
       Text("Getting the microphone ready…")
@@ -397,12 +395,9 @@ struct DirectPracticePlayerView: View {
           .foregroundStyle(DirectPracticeStyle.muted)
           .multilineTextAlignment(.center)
           .fixedSize(horizontal: false, vertical: true)
-        Button {
+        recordControl(caption: "Stop recording", recording: true) {
           session.stopRecording()
-        } label: {
-          Label("Stop recording", systemImage: "stop.fill")
         }
-        .buttonStyle(DirectPracticeButtonStyle())
         .accessibilityIdentifier("cadence.stop")
         TimelineView(.periodic(from: .now, by: 0.1)) { _ in
           RecordingInputLevelView(
@@ -752,6 +747,18 @@ struct DirectPracticePlayerView: View {
     }
   }
 
+  /// Round record/stop control with its caption read as the button's label.
+  private func recordControl(
+    caption: String, recording: Bool = false, action: @escaping () -> Void
+  ) -> some View {
+    Button(action: action) {
+      Text(caption)
+    }
+    .buttonStyle(PracticeRecordControlStyle(recording: recording))
+    .frame(maxWidth: .infinity)
+    .accessibilityLabel(caption)
+  }
+
   private func replayButton(
     label: String, duration: Double, active: Bool, identifier: String,
     action: @escaping () -> Void
@@ -991,7 +998,7 @@ struct DirectPracticePlayerView: View {
     .fixedSize(horizontal: false, vertical: true)
   }
 
-  // Familiar pictures support early readers without adding color to the interface.
+  // Familiar pictures support early readers; color helps younger children recognize them.
   // The printed word remains the prompt; pictures are not pronunciation feedback.
   private static let pictures: [String: String] = [
     "ball": "🏀", "boat": "⛵️", "bee": "🐝", "pig": "🐷", "pear": "🍐", "pie": "🥧",
@@ -1019,10 +1026,10 @@ private struct SpokenWordButtonStyle: ButtonStyle {
       .padding(.vertical, 10)
       .frame(minHeight: 44)
       .foregroundStyle(DirectPracticeStyle.ink)
-      .background(DirectPracticeStyle.ink.opacity(configuration.isPressed ? 0.10 : 0.035))
-      .clipShape(RoundedRectangle(cornerRadius: 8))
-      .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(DirectPracticeStyle.border))
-      .contentShape(RoundedRectangle(cornerRadius: 8))
+      .padding(.horizontal, 4)
+      .background(DirectPracticeStyle.ink.opacity(configuration.isPressed ? 0.10 : 0.035), in: Capsule())
+      .overlay(Capsule().strokeBorder(DirectPracticeStyle.border))
+      .contentShape(Capsule())
       .opacity(isEnabled ? 1 : 0.45)
   }
 }
