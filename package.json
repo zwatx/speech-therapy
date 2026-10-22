@@ -1,0 +1,23 @@
+{
+  "name": "speech-therapy",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.10.0",
+  "scripts": {
+    "dev": "pnpm --filter clinician-web dev",
+    "build": "pnpm build:js && pnpm build:ios",
+    "build:ios": "pnpm ios:generate && xcodebuild -quiet -project apps/ios-learner/CadenceLearner.xcodeproj -scheme CadenceLearner -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/CadenceLearnerDerivedData build",
+    "build:js": "pnpm -r build",
+    "contracts:generate": "pnpm --filter @speech-therapy/contracts generate",
+    "ios:generate": "xcodegen --spec apps/ios-learner/project.yml",
+    "lint": "pnpm lint:js && pnpm lint:swift",
+    "lint:js": "pnpm -r lint",
+    "lint:swift": "swift format lint --recursive apps/ios-learner/Sources apps/ios-learner/Tests apps/ios-learner/UITests packages/contracts/swift/Tests",
+    "test": "pnpm test:js && pnpm test:swift-contracts && pnpm test:ios",
+    "test:a11y": "pnpm --filter clinician-web test:a11y",
+    "test:ios": "pnpm ios:generate && xcodebuild -quiet -project apps/ios-learner/CadenceLearner.xcodeproj -scheme CadenceLearner -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/CadenceLearnerDerivedData test",
+    "test:js": "pnpm -r test",
+    "test:swift-contracts": "swift test --package-path packages/contracts/swift",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

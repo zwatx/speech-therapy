@@ -1,0 +1,15 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true
+  unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - '@clerk/backend@3.11.3'
+  - '@clerk/nextjs@7.5.16'
+  - '@clerk/react@6.12.2'
+  - '@clerk/shared@4.25.2'

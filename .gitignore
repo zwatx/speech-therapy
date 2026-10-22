@@ -1,0 +1,32 @@
+node_modules/
+.pnpm-store/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+*.log
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+DerivedData/
+.build/
+apps/ios-learner/CadenceLearner.xcodeproj/
+*.xcuserstate
+research/audio-head/.venv/
+research/audio-head/.venv-*/
+research/audio-head/vendor/**/*.h5
+research/audio-head/outputs/
+work/WORKLOG*.md
+__pycache__/
+*.pyc
+
+# Local corpus research contains restricted source and derived records.
+work/child-label-feasibility-20260929/
+
+# Experiment outputs, receipts and corpus derivatives stay local (~169 GB).
+work/
+# Vendor Core ML weights exceed GitHub's file limit; see RESOURCE-MANIFEST-v1.json.
+apps/ios-learner/WhisperResources/*.mlmodelc/
