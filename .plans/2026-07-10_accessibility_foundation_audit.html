@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TheLab metadata (read by the `lab` CLI on publish; do not remove).
+     thelab:plan is the STABLE plan id — re-publishing this file updates the same
+     plan (bumping its version) even if the title changes. -->
+<meta name="thelab:project" content="speech-therapy">
+<meta name="thelab:title" content="Accessibility Foundation Audit: Clinician Web and iOS Learner">
+<meta name="thelab:plan" content="accessibility-foundation-audit-clinician-web-and-ios-learner">
+<meta name="thelab:kind" content="review">
+<meta name="thelab:status" content="done">
+<meta name="thelab:tags" content="accessibility,wcag,ios,web">
+<!-- Optional: issue numbers this plan closes on ship, e.g. content="3,7". They
+     auto-close when the plan is marked done (`lab done … --commit`). -->
+<meta name="thelab:addresses" content="">
+<meta name="thelab:version" content="1">
+<meta name="thelab:hosted-url" content="https://thelab.wilsonzach.com/project/speech-therapy/review/accessibility-foundation-audit-clinician-web-and-ios-learner">
+<title>Accessibility Foundation Audit: Clinician Web and iOS Learner</title>
+<style>
+  /* Self-contained. Mirrors The Lab reader so the local file looks like the hosted
+     one. This block is NOT published: the hosted view uses The Lab's own reader
+     stylesheet, and only the article content below is published. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #0a0a0a; color: #a1a1a1;
+    font-size: 15px; line-height: 1.7; letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 24px 96px; }
+  a { color: #4e9bfa; text-decoration: none; } a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: #ededed; margin-bottom: 8px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: #ededed; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #222; }
+  h3 { font-size: 14px; font-weight: 600; color: #ededed; margin: 32px 0 12px; }
+  p { margin: 0 0 12px; } strong { color: #ededed; font-weight: 600; }
+  ul, ol { margin: 0 0 12px 22px; } li { margin: 4px 0; }
+  .lede { color: #ededed; font-size: 16px; margin: 4px 0 8px; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  pre.code { background: #0d0d0d; border: 1px solid #222; border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.65; color: #a1a1a1; tab-size: 2; margin: 16px 0; }
+  .callout { border: 1px solid #222; border-left: 2px solid #4e9bfa; border-radius: 0 6px 6px 0; padding: 14px 20px; margin: 20px 0; font-size: 13.5px; color: #a1a1a1; }
+  .callout strong { color: #ededed; }
+  figure { margin: 16px 0; } figcaption { font-size: 12px; color: #6b6b6b; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  .fig-scroll { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
+  .fig-scroll svg { display: block; width: 100%; height: auto; }
+  .tbl-scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  table.data th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; padding: 10px 14px; border-bottom: 1px solid #222; }
+  table.data td { padding: 10px 14px; border-bottom: 1px solid #222; color: #a1a1a1; vertical-align: top; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td:first-child { color: #ededed; white-space: nowrap; }
+  .plan-links { margin: 16px 0 8px; }
+  .plan-links table.data td:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; width: 90px; }
+  .plan-links table.data td:nth-child(2) { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; word-break: break-all; }
+  .status { display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+  .st-draft::before { border: 1px solid #6b6b6b; }
+  .st-active::before { background: #4e9bfa; }
+  .st-done::before { background: #ededed; }
+  .st-archived::before { background: #333; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<article>
+  <h1>Accessibility Foundation Audit: Clinician Web and iOS Learner</h1>
+
+  <!-- Plan meta: local-file chrome only — `lab publish` strips this whole section
+       from the published body (The Lab renders its own header + metadata rail). The
+       CLI fills the Version cell on publish (v1, v2, …). -->
+  <section class="plan-links">
+    <div class="tbl-scroll"><table class="data">
+      <tr><td>Project</td><td>speech-therapy</td></tr>
+      <tr><td>Version</td><td id="thelab-version">v1</td></tr>
+      <tr><td>Status</td><td><span class="status st-done">done</span> · 2026-07-10</td></tr>
+    </table></div>
+  </section>
+
+  <p class="lede">The automated accessibility foundation is ready to retain as a release guard; it found and drove real fixes, but it is not a conformance certificate or a substitute for disabled-participant and assistive-technology testing.</p>
+
+  <div class="callout"><strong>Verdict: approve the automated foundation.</strong> Playwright + axe and native XCTest audits are green, focus and status semantics are materially stronger, and the audit fixtures do not weaken production authorization. Keep the product accessibility gate open until the manual matrix is complete.</div>
+
+  <h2>Scope</h2>
+  <p>The review covers the Next.js clinician shell, access boundary, representative dashboard/table/safety/form states, and the SwiftUI enrollment and ready-practice screens. The target standard is WCAG 2.2 A/AA plus Apple Dynamic Type and native accessibility guidance. Automated states include desktop, keyboard-only skip behavior, 390-pixel mobile, reduced motion, Windows forced colors, enrollment, and ready practice.</p>
+
+  <h2>Findings resolved</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Finding</th><th>Severity</th><th>Resolution</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>iOS field and progress text could clip at larger Dynamic Type sizes</td><td>major</td><td>Persistent visible field labels replaced placeholder-only context; inputs use explicit accessibility names; progress retains intrinsic width.</td><td>XCTest initially failed twice, then passed enrollment and practice audits after both fixes.</td></tr>
+      <tr><td>Practice phase changes lacked explicit assistive-technology announcements</td><td>major</td><td>Every recording, permission, save, retry, and failure transition posts a concise native announcement.</td><td>Swift build and two native audits pass; physical VoiceOver quality remains manual.</td></tr>
+      <tr><td>Create/delete errors were not tied to their fields</td><td>major</td><td>Conditional <code>aria-invalid</code> and exact error IDs in <code>aria-describedby</code>.</td><td>Semantic review, TypeScript, lint, and representative axe scan pass.</td></tr>
+      <tr><td>Navigation/focus location cues were incomplete</td><td>minor</td><td>Focusable main skip target, <code>aria-current</code> on primary/privacy navigation, explicit compact-brand destination, 44-point mobile menu target.</td><td>Keyboard focus-transfer test and independent review pass.</td></tr>
+      <tr><td>Forced-colors affordances were implicit</td><td>minor</td><td>System-color borders/outlines preserve buttons, status, routing, and selected location without relying on hue.</td><td>Authored colors pass axe; operability passes with forced colors and reduced motion active.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Verification</h2>
+  <ul>
+    <li><code>pnpm test:a11y</code> — four Playwright tests pass; three run WCAG A/AA axe scans with zero detectable violations and one verifies keyboard focus transfer.</li>
+    <li><code>pnpm test:ios</code> — 36 native unit tests plus two platform accessibility UI audits pass on iPhone 17 Pro simulator.</li>
+    <li><code>pnpm typecheck</code>, <code>pnpm lint</code>, <code>pnpm test:js</code>, Swift contract tests, and <code>pnpm build</code> pass.</li>
+    <li>A production server returns HTTP 404 for <code>/accessibility-preview</code>; the route needs both a non-production runtime and an explicit audit environment variable. The iOS practice fixture is compiled only in Debug and has no submitter.</li>
+    <li>An independent read-only review approved the accessibility and authorization boundaries with no blocking finding.</li>
+  </ul>
+
+  <h2>Release boundary</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Evidence</th><th>Meaning</th><th>Does not prove</th></tr></thead>
+    <tbody>
+      <tr><td>axe + Playwright</td><td>Detectable semantic, contrast, landmark, keyboard, mobile and system-setting regressions on representative states</td><td>Full authenticated-route conformance, screen-reader usability, cognitive accessibility</td></tr>
+      <tr><td>XCTest accessibility audit</td><td>Native platform findings on enrollment and ready practice</td><td>Every recording/camera/error phase, physical-device behavior, announcement quality</td></tr>
+      <tr><td>Source and independent review</td><td>Reasonable semantic and security-boundary design</td><td>Success for disabled clinicians, caregivers, or children</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Required before pilot</h2>
+  <ol>
+    <li>Run every authenticated clinician workflow with VoiceOver/Safari, NVDA/Firefox or Chrome, and JAWS/Chrome.</li>
+    <li>Run every learner phase on physical iPhone/iPad with VoiceOver, Voice Control, Switch Control, all accessibility Dynamic Type sizes, Bold Text, Increase Contrast, Reduce Motion, and supported orientations.</li>
+    <li>Complete task-based sessions with disabled clinicians, caregivers, and children; severity-rate, remediate, and retest every barrier.</li>
+    <li>Record device, OS, browser, assistive-technology version, task, result, evidence, owner, and retest state. Do not label an automated zero-finding run as WCAG certification.</li>
+  </ol>
+</article>
+</main>
+</body>
+</html>

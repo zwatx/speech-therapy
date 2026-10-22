@@ -1,0 +1,871 @@
+{
+  "schemaVersion": 1,
+  "protocolId": "r-confirmatory-frozen-preparation-20261003",
+  "status": "actual_bound_reviewable_protocol_not_reserved_study_execution",
+  "researchOnly": true,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "productionUseEligible": false,
+  "humanClinicalOrStatisticalSignoffClaimed": false,
+  "ownerAuthority": "delegated research decisions; authorized isolated DEV calibration and reserved structural metadata binding",
+  "candidateCheckpointSha256": "7867466527c7f2edbeb2df12416c5b63b97bb66f9f95270f368b1a0d746a815d",
+  "retainedManifestSha256": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf",
+  "selectedResearchPolicy": {
+    "schemaVersion": 1,
+    "policyId": "r-confirmatory-ai-decisions-20261003",
+    "decisionDate": "2026-10-03",
+    "status": "selected_research_policy_not_executable_study_declaration",
+    "authority": "owner_delegated_technical_research_choices_to_models",
+    "reviewKind": "AI_research_design_engineering",
+    "independentReviewModel": "gpt-6-astra",
+    "humanExpertSignoffClaimed": false,
+    "researchOnly": true,
+    "learnerFeedbackEligible": false,
+    "clinicalUseEligible": false,
+    "productionUseEligible": false,
+    "primary": {
+      "metric": "unweighted_mean_paired_within_child_vote_weighted_auroc_gain",
+      "comparison": "candidate_minus_unchanged_retained_p0_plus_p1",
+      "positiveVotes": "derhotic_n_minus_k",
+      "negativeVotes": "rhotic_k",
+      "mixedVotesAndSelfTieHalfCredit": true,
+      "rankingProbabilityClip": null,
+      "meanGainTarget": 0.02,
+      "meanGainOperator": ">=",
+      "bootstrapLowerTarget": 0,
+      "bootstrapLowerOperator": ">",
+      "targetIsClinicalMinimum": false,
+      "passProvesTrueGainExceedsMeanTarget": false
+    },
+    "coverage": {
+      "fullChildDenominator": 80,
+      "requiredDefinedPairedChildren": 80,
+      "selectedDenominator": "all_capped_selected_tokens_before_post_cap_exclusions_or_processing_rating_failures",
+      "overallSharedPercentMinimum": 95,
+      "perChildSharedPercentMinimum": 90,
+      "integerComparison": "100*paired_shared_count>=minimum_percent*capped_selected_count",
+      "positiveSelectionRequiredForEveryChild": true,
+      "substitutionAllowed": false
+    },
+    "bootstrap": {
+      "population": "paired_defined_numeric_children_fixed_models",
+      "generator": "numpy_default_rng_PCG64",
+      "seed": 20261002,
+      "draws": 2000,
+      "quantiles": [
+        0.025,
+        0.975
+      ],
+      "quantileMethod": "linear",
+      "resamplingUnit": "whole_child",
+      "undefinedSubsetCanYieldDecisiveVerdict": false,
+      "thresholdComparisonsUse": "unrounded_saved_values_no_audit_tolerance_adjustment"
+    },
+    "verdictOrder": [
+      {
+        "verdict": "invalid",
+        "when": "integrity_failure"
+      },
+      {
+        "verdict": "inconclusive_coverage",
+        "when": "any_coverage_gate_fails"
+      },
+      {
+        "verdict": "pass_ranking",
+        "when": "mean_gain>=0.02_and_lower95>0"
+      },
+      {
+        "verdict": "fail_below_target",
+        "when": "not_pass_and_upper95<0.02"
+      },
+      {
+        "verdict": "inconclusive_precision",
+        "when": "otherwise"
+      }
+    ],
+    "secondary": {
+      "comparison": "candidate_vs_fixed_full_DEV_monotonic_calibration",
+      "metrics": [
+        "child_balanced_log_loss",
+        "child_balanced_expected_per_vote_brier"
+      ],
+      "probabilityClip": 1e-06,
+      "role": "descriptive_only",
+      "rescuesPrimary": false,
+      "independentConfirmatoryClaimAllowed": false,
+      "simultaneousIntervalCoverageClaimed": false
+    },
+    "preservedRecipes": {
+      "candidate": "preserved_full_DEV_candidate_ridge_0.01_no_refit",
+      "retained": "unchanged_ages_6_12_bundle",
+      "selectionSalt": "percept-r-external-v1",
+      "perChildCap": 40,
+      "postCapExclusionsCounted": true,
+      "calibrationRecipe": "r-calibration-preparation.md_plus_reviewed_calibrate.py",
+      "closedStudyChangesAllowed": false
+    },
+    "retryPolicy": "no_TEST_informed_tuning_checkpoint_replacement_or_rescue_run_after_once_only_outcome",
+    "executionPerformed": false,
+    "testPartitionTouched": false,
+    "sealedDataAccessAuthorized": false,
+    "actualCalibrationBytesPresent": false,
+    "actualReservedMembershipBound": false,
+    "powerClaimed": false,
+    "populationOrStudyLevelUncertaintyClaimed": false,
+    "limitations": [
+      "numeric_ID_not_established_biological_household_independence",
+      "no_study_or_word_holdout",
+      "child_bootstrap_conditional_on_fixed_models",
+      "token_missingness_bias_not_removed",
+      "no_clinical_product_or_treatment_claim",
+      "no_independent_age6_age7_claim",
+      "policy_numbers_are_engineering_judgments"
+    ],
+    "nextRequiredBindings": [
+      "permitted_complete_DEV_calibration_inputs_and_actual_fixed_audited_coefficients",
+      "verified_reserved_metadata_membership_denominators",
+      "source_runtime_dependencies_and_execution_declaration"
+    ]
+  },
+  "policyHistoricalFlagsNote": "Embedded decision policy describes its earlier preparation state; current actual binding/access flags below supersede readiness fields, not rules.",
+  "fixedCalibration": {
+    "status": "actual_fixed_DEV_fit_independently_verified",
+    "fullDEVChildren": 119,
+    "selectedSourceTokens": 4539,
+    "fitTokens": 4534,
+    "preservedExcludedTokens": 5,
+    "calibration": {
+      "coefficients": {
+        "intercept": 0.055522024612545406,
+        "slope": 1.0674552534677246
+      },
+      "transform": {
+        "inputClip": 1e-06,
+        "logitMean": -2.3813541022646816,
+        "logitPopulationStd": 1.3644978036728528,
+        "logitScale": 1.3644978036728528
+      },
+      "boundaryApplied": false,
+      "recipe": {
+        "armijoCoefficient": 0.0001,
+        "backtrackingFactor": 0.5,
+        "gradientInfinityNormGate": 1e-08,
+        "inputClip": 1e-06,
+        "inputProbability": "retained_p0_plus_p1",
+        "interceptPenalty": 0.0,
+        "maximumBacktrackingSteps": 50,
+        "maximumNewtonSteps": 100,
+        "moments": "unweighted_row_float64_population",
+        "negativeSlopeBoundary": "zero_slope_clipped_weighted_prior_logit",
+        "negativeVotes": "rhotic_k",
+        "optimizer": "damped_newton_analytic_hessian_scipy_cholesky",
+        "outputProbabilityOrder": [
+          "derhotic",
+          "rhotic"
+        ],
+        "positiveVotes": "derhotic_n_minus_k",
+        "priorClip": 1e-06,
+        "roundoffEpsilonMultiplier": 16,
+        "roundoffRequiresStrictGradientDecrease": true,
+        "slopeRidge": 0.001,
+        "standardDeviationFloor": 1e-06,
+        "targetProbability": "positiveVotes/(positiveVotes+negativeVotes)",
+        "weightRule": "n_i/sum_child_n/child_count",
+        "zeroSlopeProjectedGradient": "min(slope_gradient,0)"
+      }
+    },
+    "auditOutcome": "verified",
+    "projectedGradientInfinityNorm": 1.1013601727664912e-10,
+    "numericTolerance": {
+      "absolute": 1e-10,
+      "relative": 1e-10
+    },
+    "fitCount": 1,
+    "candidateRefit": false,
+    "reservedOutcomeAccess": false,
+    "researchOnly": true,
+    "learnerFeedbackEligible": false,
+    "clinicalUseEligible": false,
+    "note": "control.selectedTokenDenominator denotes complete fitted rows; full source selected denominator and five exclusions remain in input-receipt."
+  },
+  "reservedStructuralCohort": {
+    "status": "verified_structural_projection_selection",
+    "sessions": 625,
+    "counts": {
+      "belowReaderMinimumTokens": 0,
+      "eligibleTokens": 23283,
+      "fullChildDenominator": 80,
+      "preAudioUnmappableTokens": 7,
+      "selectedTokens": 3066,
+      "suppliedTokens": 30077,
+      "unselectedEligibleTokens": 20217
+    },
+    "recordReconciliation": {
+      "annotationIneligibleRecords": 259,
+      "emptyTargetTierRecords": 0,
+      "missingTargetTierRecords": 259,
+      "selectorInputRecords": 30077,
+      "structuralRecords": 30336
+    },
+    "zeroSelectedChildren": 0,
+    "minimumSelectedPerChild": 18,
+    "maximumSelectedPerChild": 40,
+    "testStructuralMetadataRead": true,
+    "outcomeFieldsCoResidentInStreamedXML": true,
+    "testOutcomeValuesExtracted": false,
+    "testOutcomeValuesInterpreted": false,
+    "testAudioMembersOpened": false,
+    "modelInferencePerformed": false,
+    "selectedMembershipSha256": "bcb8205ad57acb5e932735fedb0adfedb3abc02b850125c6812a4b6e7c346077",
+    "previousAttempt": "metadata-v1 failed terminal and remains unchanged"
+  },
+  "runtimeVersions": {
+    "python": "3.13.14",
+    "dependencies": {
+      "numpy": "2.2.6",
+      "scipy": "1.17.1",
+      "torch": "2.8.0",
+      "transformers": "4.57.6"
+    },
+    "node": "v24.18.0",
+    "purpose": "version_metadata_only_no_model_loading"
+  },
+  "bindings": {
+    "research/audio-head/outputs/percept-r-binary-head-20261002/v1/final/complete.json": {
+      "sha256": "c6d05b849527b7e4cb89024876fc20556afebb52c22e7556bdc1e41907849dfa",
+      "bytes": 1034,
+      "role": "closed final completion receipt"
+    },
+    "research/audio-head/outputs/percept-r-binary-head-20261002/v1/final/final.json": {
+      "sha256": "9383042b50b790cd02a6108c869b75db50c6ae963589424fa9dc6e42850233ab",
+      "bytes": 6228,
+      "role": "closed final hash-bound artifact"
+    },
+    "research/audio-head/outputs/percept-r-binary-head-20261002/v1/final/full-dev-candidate.json": {
+      "sha256": "d434d8e1cdc2e7b2c69b80ebe45d6f00f90b2c629349b2ac228b198e2e2daf92",
+      "bytes": 3760,
+      "role": "closed final hash-bound artifact"
+    },
+    "research/audio-head/outputs/percept-r-binary-head-20261002/v1/final/full-dev-candidate.npz": {
+      "sha256": "7867466527c7f2edbeb2df12416c5b63b97bb66f9f95270f368b1a0d746a815d",
+      "bytes": 186480,
+      "role": "preserved full-DEV candidate checkpoint bytes"
+    },
+    "research/audio-head/outputs/percept-r-binary-head-20261002/v1/declare/declaration.json": {
+      "sha256": "acfc03efc1ed349f206e8e98be9500fb1232c9a9928b5400401956bc57502610",
+      "bytes": 4222237,
+      "role": "closed DEV declaration receipt"
+    },
+    "docs/model/percept-r-binary-head-protocol-20261002.md": {
+      "sha256": "b7ffa694df1b9ea76a929a5e89bc69d4c507f31f700f155feb5ed33b666354e0",
+      "bytes": 14428,
+      "role": "milestone preserved source/document"
+    },
+    "work/percept-r-binary-head-20261002/rhead_audit.py": {
+      "sha256": "a55db933838d48f82379c287fcebc1a2b3dffc9018148a6a303249d2abbaf24a",
+      "bytes": 24697,
+      "role": "preserved scientific source"
+    },
+    "work/percept-r-binary-head-20261002/rhead_core.py": {
+      "sha256": "7ad1b8143b299540bd409073ef2d7e1ba852a7028dae81f6f96393d8fec83632",
+      "bytes": 11681,
+      "role": "preserved scientific source"
+    },
+    "work/percept-r-binary-head-20261002/rhead_run.py": {
+      "sha256": "0e2718de837ffa36fd62153600b35a72620762924329cda8946591498879e3a9",
+      "bytes": 20088,
+      "role": "preserved scientific source"
+    },
+    "work/percept-r-binary-head-20261002/test_audit.py": {
+      "sha256": "5f4c34c8bbdd11fb269653db335a0a4887535a3f6be93203a00ab65db1b7ed9c",
+      "bytes": 4236,
+      "role": "preserved scientific source"
+    },
+    "work/percept-r-binary-head-20261002/test_rhead_core.py": {
+      "sha256": "a4089ea0c4c797eac1ea224b43e29d5d2db840c71d64148aa63f6be7e68eebc7",
+      "bytes": 7205,
+      "role": "preserved scientific source"
+    },
+    "work/percept-r-binary-head-20261002/test_rhead_pipeline.py": {
+      "sha256": "f71ba3cb64c1d21cef4a91ba3c0dd9d1eee9ebf406e20f3f325f4cc3e3182f5f",
+      "bytes": 4169,
+      "role": "preserved scientific source"
+    },
+    "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/manifest.json": {
+      "sha256": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf",
+      "bytes": 972,
+      "role": "retained bundle manifest"
+    },
+    "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/compact.pt": {
+      "sha256": "fa929c9975da040d17de0ec75e2cda38b52944a7c4d03c08105cc1066b8070e6",
+      "bytes": 164617,
+      "role": "retained bundle constituent"
+    },
+    "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/projection.pt": {
+      "sha256": "c42060e835d62b3be57fdf3ec3395b858af8e6f41406f2d455662aac1f03410d",
+      "bytes": 141029,
+      "role": "retained bundle constituent"
+    },
+    "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/provenance.json": {
+      "sha256": "add57a8118a940e2f83ecb19bcb6375224c6c56ef6b94e5c2ae01fec80b65f41",
+      "bytes": 187612,
+      "role": "retained bundle constituent"
+    },
+    "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/scalar.pt": {
+      "sha256": "7c001e387e165c1532450b833254cd527a6f072e7ee7892681484a86dd522e43",
+      "bytes": 156297,
+      "role": "retained bundle constituent"
+    },
+    "work/ages-6-12-bundle-20260927/portable/bundle/manifest.json": {
+      "sha256": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf",
+      "bytes": 972,
+      "role": "retained bundle manifest"
+    },
+    "work/ages-6-12-bundle-20260927/portable/bundle/compact.pt": {
+      "sha256": "fa929c9975da040d17de0ec75e2cda38b52944a7c4d03c08105cc1066b8070e6",
+      "bytes": 164617,
+      "role": "retained bundle constituent"
+    },
+    "work/ages-6-12-bundle-20260927/portable/bundle/projection.pt": {
+      "sha256": "c42060e835d62b3be57fdf3ec3395b858af8e6f41406f2d455662aac1f03410d",
+      "bytes": 141029,
+      "role": "retained bundle constituent"
+    },
+    "work/ages-6-12-bundle-20260927/portable/bundle/provenance.json": {
+      "sha256": "add57a8118a940e2f83ecb19bcb6375224c6c56ef6b94e5c2ae01fec80b65f41",
+      "bytes": 187612,
+      "role": "retained bundle constituent"
+    },
+    "work/ages-6-12-bundle-20260927/portable/bundle/scalar.pt": {
+      "sha256": "7c001e387e165c1532450b833254cd527a6f072e7ee7892681484a86dd522e43",
+      "bytes": 156297,
+      "role": "retained bundle constituent"
+    },
+    "research/audio-head/experiments/multiphone-research-audio-v1.json": {
+      "sha256": "c077e68e37fa68da36a44194094e5c07c40e1866148834c68b6fbd24a5da9782",
+      "bytes": 34458,
+      "role": "raw-audio extraction contract"
+    },
+    "research/audio-head/position_inference/contract-v2.json": {
+      "sha256": "f089324f893253f7dafb0b8920ed04eaf9d2e182e969645ccc7bcb1618d4d9ce",
+      "bytes": 694,
+      "role": "milestone preserved source/document"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/dist/transformers.node.mjs": {
+      "sha256": "4932ec78a6b136d97d09a12093afb476530d9aa099dbaf1f9822ad56bfe2bc3d",
+      "bytes": 1256499,
+      "role": "extractor source or pinned dependency file"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/package.json": {
+      "sha256": "9cf12901d934e5a0628c6f163484abade392ab2d3b369d458ed3dfdeaa7f9a39",
+      "bytes": 2673,
+      "role": "extractor source or pinned dependency file"
+    },
+    "packages/audio-model-adapter/src/adapter.ts": {
+      "sha256": "8682b5d4ec8941282e09ed585a1749af8527d806e7e2673463dbc9e7d859aad7",
+      "bytes": 3898,
+      "role": "extractor source or pinned dependency file"
+    },
+    "packages/audio-model-adapter/src/manifest.ts": {
+      "sha256": "1e07477079fa4425dacfbe271ba6c7ede472bf099d5f6914b8e4cc535053e148",
+      "bytes": 1940,
+      "role": "extractor source or pinned dependency file"
+    },
+    "packages/audio-model-adapter/src/model-cache.ts": {
+      "sha256": "005f728e99109c440b6deaac8996ae0c5023fd08b9a9447b5fd6301dca748830",
+      "bytes": 4949,
+      "role": "extractor source or pinned dependency file"
+    },
+    "packages/audio-model-adapter/src/posteriors.ts": {
+      "sha256": "0c4672fb8d132437b3d120812a5785cd2a2858d365cbec016523c0b5f3a57087",
+      "bytes": 3237,
+      "role": "extractor source or pinned dependency file"
+    },
+    "pnpm-lock.yaml": {
+      "sha256": "42066a0bf8c2fea1fa1baa8fd8e4ea5089a70cd5a8c1016404a27dbd7c47e129",
+      "bytes": 142313,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/alignment_pilot.py": {
+      "sha256": "850b0a3e836763700374fd9268d880501bad5af7c6f7217d3842b572c85f211c",
+      "bytes": 13280,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/encoders.py": {
+      "sha256": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+      "bytes": 6746,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/experiments/multiphone-local-features-v1.json": {
+      "sha256": "6ada55352a010f566ee3ebdcad36d90fd9c5a0da236cf2016bb2f6fc3d473eb0",
+      "bytes": 1917,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/experiments/multiphone-phonetic-features-v1.json": {
+      "sha256": "f534d5ed847e9b1c1e62e2b7e98322b5917b9becf91e3b89c9d07f159050343b",
+      "bytes": 3007,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_cache.py": {
+      "sha256": "15712352cc03bf03ff94dbd6f39f1e3891be10f91e5c138a01ee11a3ee177e4c",
+      "bytes": 7582,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_ctc_cache.ts": {
+      "sha256": "ccd56705693c38cd28ed3aa0e294ddb536eb8da781e44c4000d3964a2fe9119d",
+      "bytes": 17048,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_data.py": {
+      "sha256": "454c7bc9faaf65b1afac2706aea53acd277bd59393b9e704c4d24e7f0a28617e",
+      "bytes": 17767,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_local_features.py": {
+      "sha256": "c65d4aa921f024c313c555ea253b770dc43e89428f05003f59f1ca51918da09f",
+      "bytes": 26576,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_models.py": {
+      "sha256": "0e254f967b4c8dc5c5fe0a3bd2cbae05c62c480b6360cdb1912403271568987a",
+      "bytes": 6546,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_phonetic_features.py": {
+      "sha256": "34dbd9c91c56818de16fe27aa3019a3c0daa05c237cdc1e4929e25efef6c1074",
+      "bytes": 23746,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_research_inference.py": {
+      "sha256": "be97b7e693994363a1c212c21c3f838f78f5ef53c3339189dbf6a82172d684ce",
+      "bytes": 10267,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/requirements.lock.txt": {
+      "sha256": "fc43effd22f410ff3a60dc108facdd6ec94058a9d12d88139fcddfdb6dc06ade",
+      "bytes": 423,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/speechocean_audit.py": {
+      "sha256": "c0520d80f1d14fb8af746facff836ff78562835a9b8d187bbaa19d3ad7bcccdc",
+      "bytes": 16378,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/speechocean_r_label_audit.py": {
+      "sha256": "ed55cf91bd83ed8fecdce82841e321a51ec2ca4602613c0c5f150756ccccf422",
+      "bytes": 11502,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/speechocean_r_probe.py": {
+      "sha256": "5df3442033c98c972b19021b3e3d3adae9da34dc2bb38f05559e47591241a198",
+      "bytes": 29240,
+      "role": "extractor source or pinned dependency file"
+    },
+    "research/audio-head/multiphone_research_audio.py": {
+      "sha256": "9283d9d1d74436edc8314cf422d798d5f312e78c2659930b9c326e3f50954a5f",
+      "bytes": 16311,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/multiphone_research_ctc.ts": {
+      "sha256": "402228b84efb31045d5066e8b570fcc1c0ee5ff5e6286ca588d068ed13602ba2",
+      "bytes": 6474,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/position_inference/__init__.py": {
+      "sha256": "eb7b8fc571d89550ae65fc6a7b96043bd61dee75bb6b17903306ac793a3e9a0d",
+      "bytes": 71,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/position_inference/audio.py": {
+      "sha256": "99b042a2489ad49690ba0aad729a5f52a6a7470214a22dd371801e792b5e59ca",
+      "bytes": 14777,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/config.json": {
+      "sha256": "4609fb49b7e1d28aecb2840da1926c40bd915bc6f1120a940afacf7159bbfb13",
+      "bytes": 1856,
+      "role": "pinned phonetic encoder constituent"
+    },
+    "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/preprocessor_config.json": {
+      "sha256": "a2254a5b58f72cd4de3632f8eee64f3f098b7c1402128d2f419e7d00ae13e335",
+      "bytes": 212,
+      "role": "pinned phonetic encoder constituent"
+    },
+    "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/pytorch_model.bin": {
+      "sha256": "3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e",
+      "bytes": 1263535127,
+      "role": "pinned phonetic encoder constituent"
+    },
+    "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/vocab.json": {
+      "sha256": "d732ab2456c0c017930001dc9af0b41b3b93d25b2eb9740bf9d925508d7d87d0",
+      "bytes": 4637,
+      "role": "pinned phonetic encoder constituent"
+    },
+    "research/audio-head/ages_6_12_bundle/build.py": {
+      "sha256": "76169ab8b72aee7eb33bb8f5b59830a191ab701d1f4b1acd1e1c5d64b09e4fac",
+      "bytes": 11823,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/ages_6_12_bundle/test_inference.py": {
+      "sha256": "f1d5b58185f1c2f8800705d9bc7355ec68dcca8a2e764acfe1dd5ad55a2e0ddc",
+      "bytes": 10620,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/ages_6_12_bundle/__init__.py": {
+      "sha256": "cae696b6b14351155a0658eb38d910b584035ea78ac8e4d7766a7cac323a8b84",
+      "bytes": 65,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/ages_6_12_bundle/inference.py": {
+      "sha256": "dd3009f5b923cb64ce4a6ddf161fdc48480fd0b8bc7cd103d54239c258f41b94",
+      "bytes": 12829,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/position_inference/test_audio.py": {
+      "sha256": "5815ac05d0507b758b11b9821274242a071543998c9f46ecc4d25dafefd6bf0c",
+      "bytes": 16117,
+      "role": "milestone preserved source/document"
+    },
+    "research/audio-head/position_inference/verify.py": {
+      "sha256": "9fca3138832fe8411af3a1d5494c73de244ae7d6a0a19d2dac74ebb1a8395490",
+      "bytes": 12463,
+      "role": "milestone preserved source/document"
+    },
+    "docs/model/percept-r-binary-head-result-20261002.md": {
+      "sha256": "41d3767b7ea12c4faf833e5fae31420781b87a1e7d59473ff19678bbee5fe2c4",
+      "bytes": 11225,
+      "role": "milestone preserved source/document"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/.cache/onnx-community/wav2vec2-lv-60-espeak-cv-ft-ONNX/c69750f5043e5e1f8a71ab95dd3b98338c280c92/onnx/model_quantized.onnx": {
+      "sha256": "3d1479b5c70836645a4310902479f7f7e8bbc8c16c58745d918804f4f6f9d120",
+      "bytes": 317712852,
+      "role": "verified fixed CTC runtime constituent"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/.cache/onnx-community/wav2vec2-lv-60-espeak-cv-ft-ONNX/c69750f5043e5e1f8a71ab95dd3b98338c280c92/vocab.json": {
+      "sha256": "d732ab2456c0c017930001dc9af0b41b3b93d25b2eb9740bf9d925508d7d87d0",
+      "bytes": 4637,
+      "role": "verified fixed CTC runtime constituent"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/.cache/onnx-community/wav2vec2-lv-60-espeak-cv-ft-ONNX/c69750f5043e5e1f8a71ab95dd3b98338c280c92/config.json": {
+      "sha256": "428b7781d080ad9463dca0e17e5066073cb691bfc14a178a85e76ac79c1f4a0f",
+      "bytes": 2382,
+      "role": "verified fixed CTC runtime constituent"
+    },
+    "node_modules/.pnpm/@huggingface+transformers@4.2.0/node_modules/@huggingface/transformers/.cache/onnx-community/wav2vec2-lv-60-espeak-cv-ft-ONNX/c69750f5043e5e1f8a71ab95dd3b98338c280c92/preprocessor_config.json": {
+      "sha256": "a2254a5b58f72cd4de3632f8eee64f3f098b7c1402128d2f419e7d00ae13e335",
+      "bytes": 212,
+      "role": "verified fixed CTC runtime constituent"
+    },
+    "research/audio-head/r_confirmatory/dev_calibration_inputs.py": {
+      "sha256": "0a51306a243d45e67af9631b56d48f3905ce1ad36273c4011b78a5d86f94b925",
+      "bytes": 11477,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_metadata_stage.py": {
+      "sha256": "056c0455cd777123ecf2c7cf5cda96a37fcb356fdcd52a888d5e37c2db4104d0",
+      "bytes": 5468,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/structural_projection.py": {
+      "sha256": "1181fa2fc69f923495fb79096bc144c2bfacc9b11d6ccdfca38eed1756c6945f",
+      "bytes": 12885,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_calibration_stage.py": {
+      "sha256": "5eca5bdc5df287207ba93c7e6f3c50cc3dbe65b584bd462e6c773bd5cf9e75ab",
+      "bytes": 12041,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_evaluation_audit.py": {
+      "sha256": "e9aac61251e356db9a05cf9341e3564515085690254882bc5537f07bcca41dbd",
+      "bytes": 9490,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/structural_projection_v2.py": {
+      "sha256": "e133a4c11fcc4f604b40de48d6d8f782b507d42a4da911783aa54f352f517ab6",
+      "bytes": 13189,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_select.py": {
+      "sha256": "9b4c400e478f51ea81a8b94a00c5741acbb2ed9c39e80d93f870c592f066c731",
+      "bytes": 6109,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/metadata_stage_v2.py": {
+      "sha256": "7a32d52b67c4bead7f5d1079a5370b8bfc7d385508f467c5c42d0a26f124e49e",
+      "bytes": 11130,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/calibration_audit.py": {
+      "sha256": "7fb1980a02eba3834cfc0c533941a9af6930fab2b8b625d802f5022a773b3520",
+      "bytes": 15981,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/__init__.py": {
+      "sha256": "39d9c5a7b5949300ec8186483eba54b054258050cfb9aed68a80b47fe29f288a",
+      "bytes": 85,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_calibrate.py": {
+      "sha256": "2f16ccc07568fe396dfd227e814c110378531a0076d6fb53ca4ba805e384715f",
+      "bytes": 13487,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/evaluation_audit.py": {
+      "sha256": "006a4d98852859e0e6a2a6103a733fb7b301d75bf1a4b89641418d2a6118fb72",
+      "bytes": 17006,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_evaluate.py": {
+      "sha256": "fd32a54f581c91fcdf2e699d27f37748a3cc3094a9d73a805ae4f5b016c6f3ad",
+      "bytes": 16929,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/locking.py": {
+      "sha256": "4ab658c0f7c2f01d033ced4221cf6ead77bc9669a891aea69469efc66d6ed666",
+      "bytes": 18768,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/calibration_stage.py": {
+      "sha256": "14ac4c2bc17557d1727f02867fd743c180bdcc1e8224aededdd7ddad8674e09f",
+      "bytes": 15630,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_locking.py": {
+      "sha256": "7c357ea175762136fd99370b9ea2e45e3a36cf1f895a5e5e5cf9915e1b61b5a1",
+      "bytes": 26744,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_dev_calibration_inputs.py": {
+      "sha256": "5432d9bbbad756faab4f8ee22574da65f14409fb0bec2539d710b4366353b424",
+      "bytes": 17130,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_structural_projection_v2.py": {
+      "sha256": "367dac5a3b72b4e59d6ba0724ecf3881e8ee92600746b9ddca22d3539c0f4a55",
+      "bytes": 23581,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/evaluate.py": {
+      "sha256": "65362f9f9f38acd941daab739b51e36164335f6bc69d1394ed6b5b2b2a4ea264",
+      "bytes": 15264,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_metadata_stage_v2.py": {
+      "sha256": "2d710f6b669cf53dc46adaaf381c6e37eb16adf83dda66d10cb8f7ec64f32376",
+      "bytes": 8475,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/calibrate.py": {
+      "sha256": "d73dd06389d8652bf6dd23d7d1dbf2e438baa263d77de663b25bb12d6152538e",
+      "bytes": 15825,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/select.py": {
+      "sha256": "2713a5d511c7500baa75fc3717a3efbee9a4fd833fd291a9ea05c80263840857",
+      "bytes": 7487,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/metadata_stage.py": {
+      "sha256": "85d69ff6a876c078406c1d1cb2288181156ab8efc2e532d1f13cb234eb71a641",
+      "bytes": 9180,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_calibration_audit.py": {
+      "sha256": "42302fe18ca99dcf2029bd843ba7d2d1e60af4646fc268e94b45d4cfbd495305",
+      "bytes": 6006,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/r_confirmatory/test_structural_projection.py": {
+      "sha256": "b594fd3ceafe42241ceac9b5750316952841bc6821e3165bc186bf1ceb1569ae",
+      "bytes": 18028,
+      "role": "reviewed confirmatory preparation source or synthetic verification"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v1/declaration.json": {
+      "sha256": "bc291ac9cd6d46fd0b5aef353e3525e93cbc806dbb4b7826297e4a98a137d519",
+      "bytes": 19532,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/declaration.json": {
+      "sha256": "ca1246836e81a0288b4384d72d9c81fa675094a8d6824cc06b8d22c114372c31",
+      "bytes": 6222,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/payload.json": {
+      "sha256": "3ada172b156e951688bbd0c0e28149702cf54b682bc174eda71ec83d91cee9b3",
+      "bytes": 849034,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/input-receipt.json": {
+      "sha256": "73514e788b4554f61dd7bc3f21891ccdd5d6ddd6a90a7201ebf59e8db1bdfdb9",
+      "bytes": 246380,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/declaration.json": {
+      "sha256": "3fcb37b84b4c4181c7176c3e4f219f24746d3452789173702f7f56f097ae1cbc",
+      "bytes": 19945,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/projection/started.json": {
+      "sha256": "dcda942e1b5507c758ad418ef5906dabf4b2b87e252fa27ddf22460e868b92eb",
+      "bytes": 124,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/projection/selection.json": {
+      "sha256": "08193fa044b454172427ee32b155a8763830fd1f6cc2becd30fbe87392cb7242",
+      "bytes": 12351360,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/projection/selection-input.json": {
+      "sha256": "ec86ae716abb52db6d5af1b512d444ebed1649f2cc0a82161401f6619a9ade67",
+      "bytes": 5733221,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/projection/receipt.json": {
+      "sha256": "871a9363cc0b4842779272507e167230995483e5d34a800732e351d0175d65de",
+      "bytes": 83237,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v2/projection/structural-input.json": {
+      "sha256": "45c3a27402b4eb41440894aa8d5b3ee8f7e437069aaf0af3c8c4e6101f2a416f",
+      "bytes": 6816876,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/fit/started.json": {
+      "sha256": "37e2ed79ea017568f9c5d877b104ecaa318590cd1a6e6fe67f8f508efe906882",
+      "bytes": 406,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/fit/control.json": {
+      "sha256": "e158c286c6fd75c2044fea084be4246339ea6e1782640eda5afb62a790b1d903",
+      "bytes": 1638149,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/fit/completion.json": {
+      "sha256": "4c74f7361aa265e2b03915801cfe1d79be3c03a603c362ec95b561b5ca8b6aab",
+      "bytes": 2858,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/audit/audit.json": {
+      "sha256": "9b3cdeedcea4d468d91e6b785519e4956631be4bdf994e692893a5476c96c3f4",
+      "bytes": 87783,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/audit/started.json": {
+      "sha256": "7c4b940a1ae2e4cf7ea97fc05b1f58d8dbc29b6f101528f7aa451be8f9bdca60",
+      "bytes": 408,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/calibration-v1/audit/completion.json": {
+      "sha256": "0e83e13b58096642b2660cf2b6ef3ebf50ac840cf37475b1e1c12662f63c637d",
+      "bytes": 1406,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v1/projection/started.json": {
+      "sha256": "d73623ad10f519ad442372baa0baf50b63f38320c9c6e9a4747319a61848e79e",
+      "bytes": 124,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "research/audio-head/outputs/r-confirmatory-preparation-20261003/metadata-v1/projection/failure.json": {
+      "sha256": "32de4af3f95d45db056ad3c90e08f6cdb92c575d94d75e90c0bb8b9149c3aab5",
+      "bytes": 163,
+      "role": "private actual preparation artifact; failed v1 retained"
+    },
+    "docs/consumer-assessment/r-confirmatory-decisions-20261003.json": {
+      "sha256": "62b206d0e3f1d95d6c61d9a6a3a4cd6725851465ac9208bf5eaa386ced1b553d",
+      "bytes": 4117,
+      "role": "preserved research policy or methods record"
+    },
+    "docs/consumer-assessment/r-confirmatory-decisions-20261003.md": {
+      "sha256": "a0d50f755595dc3817790c1b85118d30247348098aaccf44e4f3584e11053a8e",
+      "bytes": 12046,
+      "role": "preserved research policy or methods record"
+    },
+    "docs/consumer-assessment/r-calibration-preparation.md": {
+      "sha256": "5233cf842f18bc85d0d6447df7fc463823bb79cca7756217287a1f98914022f7",
+      "bytes": 3253,
+      "role": "preserved research policy or methods record"
+    },
+    "docs/consumer-assessment/r-confirmatory-preparation.md": {
+      "sha256": "e82730fa931936ae5e224f27df63b02c291dd3236c59aa074a653c1b02f8a8a4",
+      "bytes": 14440,
+      "role": "preserved research policy or methods record"
+    },
+    "docs/consumer-assessment/r-confirmation-tooling-preparation.md": {
+      "sha256": "425935c441a7215865a704565f7fc7882f02b2266d94181aab5a08575d2fbb07",
+      "bytes": 9972,
+      "role": "preserved research policy or methods record"
+    },
+    "docs/consumer-assessment/r-confirmation-artifact-stages.md": {
+      "sha256": "e3fc22d6df0be3e05a36e8893c80f8908db64d2b7bb8bb87b482226477077630",
+      "bytes": 9314,
+      "role": "preserved research policy or methods record"
+    },
+    "work/assessment-freeze-20261003/actual-calibration-summary.json": {
+      "sha256": "07d0e103cb70fa1eb0e7b3ca826c4922a3644c4ab27bd0a4afc57aa426418a4a",
+      "bytes": 2031,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/actual-metadata-summary.json": {
+      "sha256": "41d5026d360b79665b4cf2c63802abfa0029949412513bb2571208046ac08680",
+      "bytes": 1036,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/actual-metadata-audit.json": {
+      "sha256": "9573f023c976125a9eef002605a94ddcf1016aac67f21d8ea3bccb1f8bd7a769",
+      "bytes": 1071,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/runtime-versions.json": {
+      "sha256": "9f79ee8ad0ba23a26184ab7a016d195678e500090652c4f95e5b97ed0c1d0b98",
+      "bytes": 224,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/preserved-verification.json": {
+      "sha256": "afabd1de306f9985daae367ce44de540d94fd4ff214dfac7a06b58b474d96f8d",
+      "bytes": 1546,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/combined-v2-final-tests.log": {
+      "sha256": "a52b7d8bb3ca2675efd448daff2d8c1c8d24a5e43d7a51142db43c31e2f31712",
+      "bytes": 25013,
+      "role": "current aggregate verification evidence"
+    },
+    "work/assessment-freeze-20261003/ctc-cache-bindings.json": {
+      "sha256": "e324c23b09cb07e0baccedf48e7146096e55b6d0cff2900adcd94085c8ec2e2a",
+      "bytes": 1701,
+      "role": "current aggregate verification evidence"
+    }
+  },
+  "executionSequence": [
+    "Verify every declared input/source/runtime binding; use new private exclusive run root. Any mismatch stops execution.",
+    "Use all 80 children and the frozen 3066 selected tokens. Keep seven post-cap unsupported tokens as explicit unavailable/failed rows; no replacements or new exclusions.",
+    "Use fixed occurrence extraction, unchanged retained p0+p1, preserved full-DEV candidate and saved fixed calibration only; no fit, threshold selection or parameter changes.",
+    "Save all three arms terminal states for every selected token. Create private canonical prediction lock and retain its SHA externally BEFORE any reserved outcome join.",
+    "Perform sole outcome join against externally anchored lock using complete token-vote inventory; failed/interrupted join is consumed, no retry.",
+    "Evaluate only saved joined bytes using declared evaluator; retain all failure/coverage denominators and shared paired intersections. Independently audit numerical results.",
+    "Apply frozen verdict order and exact unrounded gates. Proper-score results are descriptive. Preserve every result; no TEST-informed rescue or product/clinical rollout."
+  ],
+  "reservedStudyExecuted": false,
+  "reservedStudyExecutionAuthorizedByThisFreeze": false,
+  "testStructuralMetadataRead": true,
+  "outcomeFieldsCoResidentInStreamedXML": true,
+  "testOutcomeValuesExtracted": false,
+  "testOutcomeValuesInterpreted": false,
+  "testAudioMembersOpened": false,
+  "testAudioDecoded": false,
+  "reservedModelInferencePerformed": false,
+  "sealedOutcomesAndRecordingsRemainUnavailableForThisMilestone": true,
+  "remainingProductGates": [
+    "Qualified approval of prepared prompt/content worksheets and reference materials.",
+    "Separately authorized once-only reserved study with dedicated reviewed execution stage; this freeze is reviewable preparation, not an executed study.",
+    "Prospective product-domain calibration, abstention/false-correction evaluation, rights, subgroup and runtime validation before learner findings.",
+    "Physical device testing remains deferred by owner simulator-only instruction."
+  ],
+  "limitations": [
+    "Hash checks establish byte identity, not original training lineage, biological independence or global chronology.",
+    "Co-resident rating bytes passed through the XML stream; no rating values extracted, interpreted, retained or exposed.",
+    "One terminal metadata-v1 failure and bounded structure diagnostics were preserved; reviewed v2 fixes annotation accounting using historical eligibility, no outcome-informed changes.",
+    "No formal power/type-I, clinical minimum, age6/7-specific, or population/study uncertainty claim."
+  ]
+}

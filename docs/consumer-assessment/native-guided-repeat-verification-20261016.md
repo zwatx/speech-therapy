@@ -1,0 +1,33 @@
+# Repeat chosen words and largest-text search recovery
+
+The completed guided summary now offers **Review these five again**. It retains the same five ordered library entries and the open workflow/media owner, while creating a fresh first-review round and visit. Earlier observations and practice selections do not carry forward. Recording, playback and word checks still require explicit actions; repeating adds no participation record. Done keeps its existing Close behavior.
+
+The coordinator uses the existing clean-owner preparation contract. The completed summary stays visible until preparation succeeds. Exact pending visit identities survive revoked preparation; an explicit retry releases that visit through the same owner. Cancellation, Close or background during synchronous publication cannot commit a stale replacement ledger. DEBUG research configuration and known age remain with their existing owner; new rows cannot reference old operation-bound observations. No ownership reset, new persistence or scientific threshold was introduced.
+
+## Executed evidence and source boundaries
+
+| Check | Observed result | Source boundary |
+| --- | --- | --- |
+| Generated repeat coordinator checks plus two existing ledger checks | 11 passed; zero failures/skips | Nine new repeat cases and two ledger cases on the earlier bound view; coordinator/test logic remains unchanged |
+| V5 largest-text split letters/Return picker probe | One official pass, one run, zero failures/skips | Current view with search outside scrolling results |
+| V5 unchanged combined `baby` plus Return probe | One official pass, one run, zero failures/skips | Same Release build/products as split probe |
+| Original compact full repeat journey on V5 | One official pass, one run; 59.327 seconds | Current shared Release build |
+| Original largest-text full repeat journey on V5 | One official pass, one run; 122.130 seconds | Same build; original 240-second allowance unchanged |
+
+The official split case took 44.961 seconds and the combined case took 43.521 seconds. The split receipt records letters returning in 534 milliseconds, the exact `baby` field value and Return returning in 711 milliseconds. The unchanged combined-input receipt records typing returning in 783 milliseconds. Both require the exact canonical baby row, picker dismissal, updated setup slot and Home return. These are individual automated observations, not a latency distribution. Their official admissions bind the same source/product maps and confirm simulator Shutdown after each group.
+
+The V5 picker keeps Cancel and the unchanged search control in a fixed header, using an explicit VStack above an independently scrolling filter/result area. Search preserves Dynamic Type, its minimum height, three-line limit, query sanitation, Return/focus behavior, labels and identifiers. The existing 680-point maximum width and horizontal padding are retained. No font clamp, timeout extension, asynchronous delay or idling bypass was added.
+
+The two original full journeys change the first word to baby, reach the paired summary using explicit skips, choose Repeat, and visit the same five words in order with fresh empty observations and no selected practice. Close returns Home with unchanged exposed history identifiers. Across three current Release groups, all four selected methods passed exactly once, with zero failures or skips. The final flow command completed normally in 188.994 seconds and its enclosing root phase in 202.279 seconds, including cleanup. The dedicated simulator returned to Shutdown after every group without required signals or recorded errors.
+
+The original repeat run passed compact navigation but failed the largest-text journey before Repeat, during word search. The focused original-field V2 probe and a V3 single-line-only candidate also failed. V4 separated input: letters and value/geometry observation completed; Return was followed by a long idle wait and the test timed out. V5 passes both split and unchanged combined inputs after moving search out of the results scroll. This supports the layout repair for these cases; it does not establish a precise SwiftUI/UIKit root cause. The optional sampler failed its own deadline without an admitted sample; it provides no app-stack diagnosis.
+
+## Limits and retained artifacts
+
+Actual compiler arguments confirm the V5 app and UI module use ordinary Release optimization (`-O`), without DEBUG or testability, existing bundle IDs and default signing. All 149 source bindings and 68 generated/product bindings remained current through the final flow. The [verification aggregate](../../work/guided-word-search-20261016-v5/verification.json) records 247 bound artifacts and the three official result groups; source and metadata review cleared the execution inputs. Seven PNGs were collected: three split, two combined and two full-flow images. Five geometry attachments cover the three split and two combined checkpoints. Their existence does not constitute a complete visual or accessibility review. This is simulator execution, not a shipping archive or physical-device qualification.
+
+Earlier eleven-unit results remain historical evidence for the unchanged coordinator/test logic; they are not an eleven-test rerun against the later picker view. The historical source comparison preserves the coordinator and test logic, with the later picker view superseding its old binding. Scoped strict formatting still exits one for the same 19 prior line/column/message diagnostics, with zero new diagnostics, as recorded in the task's lint comparison. Original failures remain in `work/guided-repeat-five-20261016/` and the V2/V3/V4 search tasks, with their frozen inputs/results and failure audits. V5 source pins, official results and root admissions are retained in `work/guided-word-search-20261016-v5/`.
+
+These UI checks never activate recording, word/model inference, playback, mirror, permissions or history Clear. Home history comparison covers only exposed identifiers, not the complete stored history. Requested largest text and automated screenshots do not constitute a VoiceOver or full accessibility audit. No microphone/camera acquisition, recording upload, host audio change, account/signing change, clinical accuracy or improvement is established.
+
+The separately closed [combined native guided-media journey](native-playback-runtime-verification-20261016.md#combined-guided-word-checks-and-replay) exercised twelve actual word checks and three actual replays on its earlier frozen source. It was not rerun for these view/repeat changes. The broader app and independent pronunciation-validation work remain open.

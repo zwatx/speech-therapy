@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TheLab metadata (read by the `lab` CLI on publish; do not remove).
+     thelab:plan is the STABLE plan id — re-publishing this file updates the same
+     plan (bumping its version) even if the title changes. -->
+<meta name="thelab:project" content="speech-therapy">
+<meta name="thelab:title" content="Device grant capacity and rotation review">
+<meta name="thelab:plan" content="device-grant-capacity-and-rotation-review">
+<meta name="thelab:kind" content="review">
+<meta name="thelab:status" content="active">
+<meta name="thelab:tags" content="device-access,rotation,postgresql,security">
+<!-- Optional: issue numbers this plan closes on ship, e.g. content="3,7". They
+     auto-close when the plan is marked done (`lab done … --commit`). -->
+<meta name="thelab:addresses" content="">
+<meta name="thelab:version" content="1">
+<meta name="thelab:hosted-url" content="https://thelab.wilsonzach.com/project/speech-therapy/review/device-grant-capacity-and-rotation-review">
+<title>Device grant capacity and rotation review</title>
+<style>
+  /* Self-contained. Mirrors The Lab reader so the local file looks like the hosted
+     one. This block is NOT published: the hosted view uses The Lab's own reader
+     stylesheet, and only the article content below is published. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #0a0a0a; color: #a1a1a1;
+    font-size: 15px; line-height: 1.7; letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 24px 96px; }
+  a { color: #4e9bfa; text-decoration: none; } a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: #ededed; margin-bottom: 8px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: #ededed; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #222; }
+  h3 { font-size: 14px; font-weight: 600; color: #ededed; margin: 32px 0 12px; }
+  p { margin: 0 0 12px; } strong { color: #ededed; font-weight: 600; }
+  ul, ol { margin: 0 0 12px 22px; } li { margin: 4px 0; }
+  .lede { color: #ededed; font-size: 16px; margin: 4px 0 8px; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  pre.code { background: #0d0d0d; border: 1px solid #222; border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.65; color: #a1a1a1; tab-size: 2; margin: 16px 0; }
+  .callout { border: 1px solid #222; border-left: 2px solid #4e9bfa; border-radius: 0 6px 6px 0; padding: 14px 20px; margin: 20px 0; font-size: 13.5px; color: #a1a1a1; }
+  .callout strong { color: #ededed; }
+  figure { margin: 16px 0; } figcaption { font-size: 12px; color: #6b6b6b; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  .fig-scroll { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
+  .fig-scroll svg { display: block; width: 100%; height: auto; }
+  .tbl-scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  table.data th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; padding: 10px 14px; border-bottom: 1px solid #222; }
+  table.data td { padding: 10px 14px; border-bottom: 1px solid #222; color: #a1a1a1; vertical-align: top; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td:first-child { color: #ededed; white-space: nowrap; }
+  .plan-links { margin: 16px 0 8px; }
+  .plan-links table.data td:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; width: 90px; }
+  .plan-links table.data td:nth-child(2) { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; word-break: break-all; }
+  .status { display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+  .st-draft::before { border: 1px solid #6b6b6b; }
+  .st-active::before { background: #4e9bfa; }
+  .st-done::before { background: #ededed; }
+  .st-archived::before { background: #333; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<article>
+  <h1>Device grant capacity and rotation review</h1>
+
+  <!-- Plan meta: local-file chrome only — `lab publish` strips this whole section
+       from the published body (The Lab renders its own header + metadata rail). The
+       CLI fills the Version cell on publish (v1, v2, …). -->
+  <section class="plan-links">
+    <div class="tbl-scroll"><table class="data">
+      <tr><td>Project</td><td>speech-therapy</td></tr>
+      <tr><td>Version</td><td id="thelab-version">v1</td></tr>
+      <tr><td>Status</td><td><span class="status st-active">active</span> · 2026-07-11</td></tr>
+    </table></div>
+  </section>
+
+  <p class="lede">Approved locally after redesign: a database slot invariant—not an application count—now caps each learner at five live device grants, while atomic rotation replaces one token without opening a revoke/issue gap.</p>
+
+  <h2>Context</h2>
+  <p>The preceding milestone made every live grant visible and remotely revocable, but issuance remained unbounded and rotation required a manual revoke followed by issue. The first implementation tried to serialize a count under a learner <code>FOR UPDATE</code> lock. Independent review correctly rejected that design: a PostgreSQL statement can retain a stale MVCC snapshot after waiting for the row lock.</p>
+  <p>The corrected implementation moves the hard capacity invariant into migration 0023 and keeps replacement delivery one-time. This review covers the migration, issuance retry boundary, rotation/revocation slot lifecycle, all token-consuming gates, API/Server Actions, operator recovery copy, and local verification.</p>
+
+  <h2>Verdict</h2>
+  <div class="callout"><strong>Approve the code as a local foundation.</strong> Migration 0023 assigns slots 1–5 to existing current grants, aborts if any learner already has more than five, constrains the range, and creates a partial unique index over tenant, learner, and non-null slot. Issuance retries only that named unique-index collision with a fresh statement. Rotation clears and transfers the exact source slot inside the same revoke/insert/audit statement. Follow-up review found no remaining code blocker. Real PostgreSQL/Neon migration and concurrency evidence is unavailable and remains a release gate.</div>
+
+  <h2>Reviewed invariants</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Invariant</th><th>Evidence</th><th>Failure behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Hard five-grant ceiling</td><td><code>active_slot</code> is nullable, range-checked 1–5, and unique per tenant/learner whenever non-null.</td><td>A stale application snapshot can cause a named unique conflict, never a sixth live slot.</td></tr>
+      <tr><td>Safe populated migration</td><td>The migration identifies exact latest-consent, unrevoked, unexpired grants; it aborts above five and backfills deterministic slots only before the index exists.</td><td>No existing live token is silently dropped to make the migration fit.</td></tr>
+      <tr><td>Fresh collision retry</td><td>Issuance reclaims expired/revoked/consent-stale slots, selects a free slot, and retries only <code>23505</code> from the exact active-slot index.</td><td>Other ID/hash/constraint failures propagate; exhausted slot retries return a safe conflict.</td></tr>
+      <tr><td>Token-consuming gates</td><td>Assignment fetch, token resolution, attempt persistence, analysis persistence, and analysis lookup all require a non-null active slot in addition to consent, expiry, revocation, and learner state.</td><td>A manually anomalous null-slot current row fails closed.</td></tr>
+      <tr><td>Atomic rotation</td><td>The source must be current-consent, active, unexpired, and slotted. One CTE chain clears/revokes it, inserts the replacement with the same slot, and appends an old/new token-free audit.</td><td>Forced audit failure rolls back the old-token revoke and replacement insert.</td></tr>
+      <tr><td>Honest replacement delivery</td><td>The new raw token exists only in the response/action state and is shown once. Pre-submit copy explains that an interrupted response has uncertain outcome and directs refresh plus replace/revoke recovery.</td><td>No false rollback or old-token-validity claim is shown.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Risks &amp; mitigations</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>The partial index is created non-concurrently and may lock a populated table.</td><td>medium</td><td>Measure on a production-like snapshot, schedule the migration before app rollout, and define rollback/maintenance timing.</td></tr>
+      <tr><td>Neon's driver may report unique-index metadata differently.</td><td>medium</td><td>Run actual parallel issuance and verify <code>error.constraint</code> equals the named index before deployment.</td></tr>
+      <tr><td>A lost rotation response creates a live replacement whose raw token was not received.</td><td>medium</td><td>Refresh to reveal the newest active record, then rotate or revoke it again. A replayable encrypted-secret/idempotency design would be a separate reviewed change.</td></tr>
+      <tr><td>Consent can change immediately after a successful statement.</td><td>low</td><td>Issue/rotation performs a post-insert resolvability check and returns conflict if already stale; ordinary later consent changes continue to invalidate the grant by design.</td></tr>
+      <tr><td>No request-rate limiter exists.</td><td>high before deployment</td><td>Add actor/device/IP-aware provider-compatible throttling and abuse evidence without using it as the five-grant correctness boundary.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Verification</h2>
+  <ul>
+    <li><code>pnpm test</code> passed: platform-data 73/73, clinician web 41/41, shared packages, Swift contracts, and native iOS tests.</li>
+    <li><code>pnpm lint</code>, <code>pnpm typecheck</code>, <code>pnpm test:a11y</code>, and <code>pnpm build</code> passed.</li>
+    <li>Focused tests prove six concurrent calls yield five grants/one conflict, slots are exactly 1–5, the unique index rejects overflow directly, named collisions retry, rotation preserves capacity, and forced audit failure rolls back.</li>
+    <li>Independent review initially requested changes for MVCC and lost-response semantics; both were corrected, and the follow-up approved with no code blocker.</li>
+    <li>No real PostgreSQL binary, container runtime, <code>DATABASE_URL</code>, or Neon test URL was available. No managed-database claim is made.</li>
+  </ul>
+
+  <h2>Required deployment evidence</h2>
+  <ul>
+    <li>Run migration 0023 on staging snapshots containing 0–5 live grants and verify a deliberately over-cap snapshot aborts without partial change.</li>
+    <li>Measure lock duration and validate index/constraint/backfill state before deploying matching application code.</li>
+    <li>Run multi-connection Neon issuance, rotation, revocation, consent-change, deletion, and forced-audit-failure races.</li>
+    <li>Test an intentionally dropped rotation HTTP response and the complete clinician refresh/recovery flow.</li>
+    <li>Add request-rate limiting and deployed least-privilege database/identity-provider authorization tests.</li>
+  </ul>
+</article>
+</main>
+</body>
+</html>

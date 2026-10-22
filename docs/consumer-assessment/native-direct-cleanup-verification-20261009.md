@@ -1,0 +1,13 @@
+# Direct Practice acknowledged cleanup — controlled verification
+
+The revised Direct Practice session and view are applied. A serial run on the owned iPhone SE simulator passed **53 distinct tests: 50 Direct Practice cases and three inert-startup cases**, with zero failures or skips. The result summary and test tree agree. This verifies the controlled owner integration, not audible output or clinical feedback.
+
+The session keeps operation identity separate from callback generations, waits for actual playback release and producer deletion, and prevents failed Continue/Finish actions from advancing automatically after recovery. Close/background cleanup retains producer responsibility across hardware failure. A file-only second Close requires actual process-held recovery and no hardware ownership. Recovery uses exact positive receipts; original negative receipts remain unchanged.
+
+The initial run failed one test (52 passed) with four final assertions. Its test fixture copied one cleanup failure into every newly created driver, including a second playback intended to succeed. The repair clears that future-driver configuration only after every genuine first-operation recovery assertion. The production session and view were unchanged, and every original assertion remains. The first failure and both source versions are preserved.
+
+Evidence lives in `work/consumer-feedback-20261009/direct-owner-integration/`: `SOURCE-v2.json` freezes 148 inputs, `INPUTS-v2.json` freezes those plus the runner; `DIRECT_CHECKS-v2-EXIT.json`, `DIRECT_CHECKS-v2-SUMMARY.json`, and `DIRECT_CHECKS-v2-TESTS.json` record the actual result. All 149 guarded inputs matched after execution. The simulator was Shutdown before and after. Independent source and initial preexecution reviews cleared the production change; root reviewed the narrow test-only follow-up and unchanged execution scope.
+
+Full Debug application/test semantic compilation occurred. Weak-variable style warnings and an error-form compiler diagnostic reporting a zero command exit remain in the log; the enclosing second test invocation succeeded. Its cause was not established. A Release compile and rendered UI verification for this revision have not run. Other owner migrations applied after this frozen Direct run are outside its 148-row snapshot.
+
+The selected cases use controlled drivers, isolated gates/registries, generated temporary files and test-owned history. There was no physical microphone/camera/output, endpoint or acoustic-model execution, existing-user history access, latency measurement, pronunciation truth or diagnostic validation. Earlier capture/player/receipt component capsules and guides remain immutable. The overall app roadmap remains active.

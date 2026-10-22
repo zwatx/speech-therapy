@@ -1,0 +1,11 @@
+# Resampler dependency diagnostic — October 12, 2026
+
+The first fixed numerical run stopped after importing the numerical libraries and before any signal case. The selected-file guard rejected a real installed dependency missing from its inventory. That run remains failed; it did not establish a resampling defect or numerical acceptance.
+
+A separate observation-only diagnostic completed with host exit 0 (`db9ac1`). Independent collection also returned exit 0 (`a9ced3`), checking current source/runtime pins, confirmed cleanup, absence of both known processes and the original 150-second boundary. Collection finished after 11.808 seconds. It reported nine unlisted module origins, all within installed `charset_normalizer` 3.5.1. The original namespace predicate remained rejected; the complete bounded file observation did not inspect namespace paths. Zero numerical cases, research recordings, model calls or semantic labels were processed.
+
+The pinned NumPy source contains an optional `charset_normalizer` import in its Fortran support module. Root verified the installed package and its metadata, all 34 package/distribution files, 21 hashed distribution-record entries and 13 blank-hash cache/self entries. One distribution-record entry lies outside the selected import roots. The selected inventory now has 3,718 files and 127,652,559 bytes, preserving every original NumPy/SciPy file. It does not claim complete environment or system-library closure.
+
+The fresh inventory is `work/l2-resampler-runtime-v2/RUNTIME-INVENTORY-v2.json`, 874,650 bytes, SHA-256 `7b7d8646444ab4c75d0522689594686e75461ad3afe677854c1b451ae9f0481b`. Its creation and subsequent file recheck finished within 1.340 seconds of a 90-second boundary, without importing numerical frameworks. This inventory does not qualify the numerical behavior.
+
+A narrow successor runner will bind these exact files. The original namespace rule, thirteen fixed cases, scientific pass criteria, isolation and ownership checks remain unchanged. The subsequent fixed numerical qualification passed all eleven positive and two expected-negative cases, with independent original-clock collection; see `l2-whole-wave-numerical-qualification-20261013.md`. Prior failed outputs and source freezes are preserved; no research recording may be decoded on the basis of this diagnostic alone.

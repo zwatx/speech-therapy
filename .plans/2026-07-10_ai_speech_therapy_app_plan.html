@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TheLab metadata (read by the `lab` CLI on publish; do not remove).
+     thelab:plan is the STABLE plan id — re-publishing this file updates the same
+     plan (bumping its version) even if the title changes. -->
+<meta name="thelab:project" content="speech-therapy">
+<meta name="thelab:title" content="AI Speech Therapy App: Product, Clinical, and Technical Plan">
+<meta name="thelab:plan" content="ai-speech-therapy-app-product-clinical-and-technical-plan">
+<meta name="thelab:kind" content="plan">
+<meta name="thelab:status" content="active">
+<meta name="thelab:tags" content="speech-therapy,ai,computer-vision,roadmap,safety">
+<!-- Optional: issue numbers this plan closes on ship, e.g. content="3,7". They
+     auto-close when the plan is marked done with a commit reference. -->
+<meta name="thelab:addresses" content="">
+<meta name="thelab:version" content="13">
+<meta name="thelab:hosted-url" content="https://thelab.wilsonzach.com/project/speech-therapy/plan/ai-speech-therapy-app-product-clinical-and-technical-plan">
+<title>AI Speech Therapy App: Product, Clinical, and Technical Plan</title>
+<style>
+  /* Self-contained. Mirrors The Lab reader so the local file looks like the hosted
+     one. This block is NOT published: the hosted view uses The Lab's own reader
+     stylesheet, and only the article content below is published. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #0a0a0a; color: #a1a1a1;
+    font-size: 15px; line-height: 1.7; letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 24px 96px; }
+  a { color: #4e9bfa; text-decoration: none; } a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: #ededed; margin-bottom: 8px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: #ededed; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #222; }
+  h3 { font-size: 14px; font-weight: 600; color: #ededed; margin: 32px 0 12px; }
+  p { margin: 0 0 12px; } strong { color: #ededed; font-weight: 600; }
+  ul, ol { margin: 0 0 12px 22px; } li { margin: 4px 0; }
+  .lede { color: #ededed; font-size: 16px; margin: 4px 0 8px; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  pre.code { background: #0d0d0d; border: 1px solid #222; border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.65; color: #a1a1a1; tab-size: 2; margin: 16px 0; }
+  .callout { border: 1px solid #222; border-left: 2px solid #4e9bfa; border-radius: 0 6px 6px 0; padding: 14px 20px; margin: 20px 0; font-size: 13.5px; color: #a1a1a1; }
+  .callout strong { color: #ededed; }
+  figure { margin: 16px 0; } figcaption { font-size: 12px; color: #6b6b6b; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  .fig-scroll { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
+  .fig-scroll svg { display: block; width: 100%; height: auto; }
+  .tbl-scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  table.data th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; padding: 10px 14px; border-bottom: 1px solid #222; }
+  table.data td { padding: 10px 14px; border-bottom: 1px solid #222; color: #a1a1a1; vertical-align: top; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td:first-child { color: #ededed; white-space: nowrap; }
+  .plan-links { margin: 16px 0 8px; }
+  .plan-links table.data td:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; width: 90px; }
+  .plan-links table.data td:nth-child(2) { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; word-break: break-all; }
+  .status { display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+  .st-draft::before { border: 1px solid #6b6b6b; }
+  .st-active::before { background: #4e9bfa; }
+  .st-done::before { background: #ededed; }
+  .st-archived::before { background: #333; }
+  .control-row { display: grid; grid-template-columns: 180px 1fr 88px; gap: 14px; align-items: center; margin: 12px 0; }
+  .control-row label { color: #ededed; font-size: 13px; }
+  .control-row output { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12px; text-align: right; }
+  input[type="range"] { width: 100%; accent-color: #4e9bfa; }
+  button { background: #ededed; color: #0a0a0a; border: 0; border-radius: 5px; padding: 8px 12px; font: inherit; font-size: 12px; cursor: pointer; }
+  button:hover { background: #fff; }
+  .muted { color: #6b6b6b; font-size: 12px; }
+  @media (max-width: 620px) { .control-row { grid-template-columns: 1fr; gap: 4px; } .control-row output { text-align: left; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+<article>
+  <h1>AI Speech Therapy App: Product, Clinical, and Technical Plan</h1>
+
+  <!-- Plan meta: local-file chrome only — `lab publish` strips this whole section
+       from the published body (The Lab renders its own header + metadata rail). The
+       CLI fills the Version cell on publish (v1, v2, …). -->
+  <section class="plan-links">
+    <div class="tbl-scroll"><table class="data">
+      <tr><td>Project</td><td>speech-therapy</td></tr>
+      <tr><td>Version</td><td id="thelab-version">v13</td></tr>
+      <tr><td>Status</td><td><span class="status st-active">active</span> · 2026-07-11</td></tr>
+    </table></div>
+  </section>
+
+  <p class="lede">Build an SLP-guided home-practice app that combines strict phoneme-level audio scoring with selective, evidence-limited visual feedback—then earn broader claims through staged clinical validation.</p>
+
+  <div class="callout"><strong>Executive decision.</strong> Do not launch as an autonomous diagnostic product. Launch first as a clinician-configured practice assistant for children with selected speech sound errors. Treat audio as the primary signal, camera analysis as optional biofeedback, uncertainty as a first-class outcome, and every physical-cause statement as a claim that must be supported by an observable cue and clinical evidence.</div>
+
+  <h2>Implementation checkpoint · 2026-07-11</h2>
+  <p>The repository now contains a locally verified research prototype and governance foundation, not a clinically validated or production-deployed product. The clinician-to-learner vertical slice carries one bounded silent-practice exercise from an immutable, consent-bound assignment through authenticated device fetch, authoritative server-side dose progress, slot-bound upload, and a persisted clinician evidence queue. Attempt detail is visible only when it is bound to the learner's exact current consent snapshot with clinician review enabled; even benign consent renewal redacts older evidence. Owners and clinicians can inspect every active learner-device grant, atomically replace or revoke it, and never receive stored token/hash material; a database slot invariant caps current grants at five. Issuance and replacement share database-backed fixed UTC-hour limits of 10 generations per learner and 30 per clinician actor, while emergency revocation remains exempt. Valid enrolled devices now also have independent 120-per-hour database budgets for assignment reads and attempt uploads; private 429 responses carry Retry-After into calm native retry guidance without clearing enrollment. Reviewers retain read-only visibility. The operational trust chain separates scheduler, runner, registered provider, and alert-delivery authority. Gate 1 also includes an executable research-only open-model bake-off, owned-adaptation lineage verifier, and automated web/native accessibility foundation; Gate 2 has a bounded selective-routing evaluator plus a candidate feedback-policy simulator. None can mint learner or production eligibility.</p>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Area</th><th>Current evidence</th><th>Release meaning</th></tr></thead>
+    <tbody>
+      <tr><td>Product surfaces</td><td>iOS learner flow and clinician web portal compile. An owner or clinician can append an immutable assignment for the one candidate-silent foundation exercise; it binds the exact consent snapshot, registry and definition hashes, protocol, prompt, target, accepted-repetition dose, retry ceiling, and camera-off posture. The enrolled device fetches that assignment without supplying a learner ID. The server derives and serializes the next legal repetition/retry slot, rejects out-of-order or duplicate-new uploads, advances only on accepted-silent evidence, stops explicitly when retries are exhausted, and reconstructs progress after restart or an ambiguous response. Valid device assignment reads and attempt uploads now pass through operation-aware authorization; an exhausted private response preserves bounded Retry-After and calm native retry copy without discarding enrollment. The former static attempt-review demo is now an audited tenant query over derived capture evidence. It requires the exact current clinician-review consent snapshot, redacts on renewal or withdrawal, orders deterministically, retains no media, and labels capture acceptance as quality-only rather than correct pronunciation. The learner workspace lists every active device-access grant plus the newest 25 inactive records, derives consent/expiry/revocation status from database state, and requires explicit confirmation before an owner/clinician revokes or replaces access. Replacement revokes the old token and returns the new token once; interrupted-response recovery tells the clinician to refresh and act on the newest live record. The portal explains both token-generation limits and that revocation stays available. Assignment history is exported and retained as disclosed deletion evidence. Four axe WCAG checks plus keyboard/mobile/system-setting checks pass; the fixture includes dense review-table and device-management states, and native XCTest audits cover enrollment, assignment loading, no-assignment, assignment-error, and ready-practice states.</td><td>Functional vertical slice and automated accessibility foundation only. It does not yet include clinically approved content, production scoring or feedback, trusted invalid-token/IP provider-edge throttling, authenticated real-route browser coverage, real PostgreSQL/Neon migration and collision proof, physical-device assistive-technology validation, disabled-participant usability, managed identity, or a deployed clinical environment.</td></tr>
+      <tr><td>Audio, vision, and feedback policy</td><td>Constrained phoneme scoring, abstention/calibration, an open-model adapter, a five-candidate minimum bake-off contract, Apple Vision feasibility, selective audio-versus-fused evaluation, and a candidate-only feedback research simulator are implemented. The bake-off locks complete dataset metadata, candidate manifests/roles, labels/subgroups, numeric thresholds and common recipes; Ed25519 attestations bind the rubric/scorer and the complete run, calibration, container, device, cost and deployment evidence. Owned adaptation requires a top-two parent, signed time-bounded authorization, current consent/deletion hashes, exact label policy, and speaker/household-disjoint training, calibration and evaluation manifests.</td><td>All positive evidence, keys, hashes, measurements and winners are synthetic and simulation-only. Release flags remain hard false. Real SLP labels, authenticated legal/data lineage, representative child/SSD cohorts, actual model runs, physical-device profiling, blinded review, clinical utility, and prospective validation remain open.</td></tr>
+      <tr><td>Privacy and research operations</td><td>Tenant-scoped consent, ephemeral-media boundaries, hashed short-lived device grants, a database-enforced five-slot ceiling, atomic one-time token rotation, idempotent remote revocation, and fixed UTC-hour database rate buckets scoped to tenant/actor and tenant/learner are locally tested. Capacity conflicts consume generation budget, internal slot retries count once, blocked issue/rotation responses return private 429 plus Retry-After, unauthorized requests create no bucket, learner buckets are deleted with the learner, and revocation never consumes or consults a generation budget. A separate composite-FK table now enforces frozen in-window budgets per tenant/device session/operation: 120 assignment reads and 120 attempt uploads. Authorization rechecks live slot, expiry, learner, exact current consent, audio permission and assent in the consuming statement; invalid tokens and the internal resolver create no bucket, and session deletion cascades buckets. Artifact lineage, deletion/quarantine outbox, workload keys, signed dispatch/launch/claim/heartbeat/cancellation/termination/terminal evidence, database-clock leases, liveness snapshots, and immutable alert-delivery receipts are also locally tested.</td><td>Trusted invalid-token/IP and provider-edge throttling remain absent, and inactive aggregate rate-bucket retention still needs an operations-owned job. Every HTTP retry or idempotent replay consumes device budget by design; 120 uploads allow one replay for each maximum-dose slot. Revocation does not claim cancellation of already-authorized in-flight work, and rotation cannot replay a lost raw replacement; the UI provides a fail-safe refresh/re-rotate/revoke recovery. Migrations 0023–0025 have not run against real PostgreSQL/Neon. Registered-key evidence does not prove provider-native custody or a real cloud action. Managed migration/concurrency, KMS/HSM custody, least-privilege roles, provider adapters, alert operations, and incident drills remain open.</td></tr>
+      <tr><td>Verification</td><td>Repository lint, typechecking, the full JavaScript/Swift/iOS test command, web accessibility audit, clinician-web production build, and native iOS simulator build pass. Platform-data passes 76/76, clinician web passes 44/44, and clinical-domain passes 30/30. Learner-device request coverage includes invalid-token and plain-resolver no-mutation, runtime operation rejection, non-UTC UTC alignment, actual limit accumulation, operation/session separation, frozen live-window policy, Retry-After, revoke denial, and cascade deletion. Assignment and upload handlers each return private 429; native tests cover both endpoints and valid, absent, malformed, zero, oversized, and overflowing Retry-After. Independent review approved atomicity, lock order, consent/session rechecks, privacy, HTTP semantics, and enrollment preservation with no code blocker. Earlier rate-limit review blocked session-time-zone truncation and an unordered pruning CTE; explicit UTC calculation and removal of request-path pruning resolved both. Device-capacity coverage still includes concurrent issuance, unique slots, direct unique-index rejection, exact audits, targeted slot-collision retry, atomic rotation, post-insert resolvability, and forced rollback. Real PostgreSQL tooling and a test URL were unavailable, so managed migration/driver/contention evidence is explicitly not claimed. Earlier independent reviews approved capacity/rotation, revocation visibility, assignment flow, consent-bound evidence review, scheduler dispatch, launch, external termination, alert delivery, selective vision, and feedback governance.</td><td>Local verification does not satisfy prospective clinical, security penetration, managed-database concurrency, populated-schema migration, authenticated browser-route, device-matrix, subgroup, regulatory, privacy, accessibility, or pilot release gates.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>Deployment status.</strong> The updated plan is hosted in The Lab. The application itself has not been deployed to a production or clinical environment, because the plan’s evidence gates explicitly prohibit that claim. Gate 2 remains open until a real locked prospective cohort, authenticated exports, approved SLP protocol, physical-device study, subgroup evidence, and independent privacy/security/accessibility review pass the new evaluator’s predeclared thresholds. Infrastructure also still requires provider-native managed identity/KMS, least-privilege database roles, real cloud adapters, approved alert delivery with retry/escalation, managed-PostgreSQL concurrency tests, and populated-schema migration rehearsal.</div>
+
+  <h2>1. Product thesis and boundaries</h2>
+  <p>The opportunity is not “speech-to-text for children.” Generic recognition systems are intentionally tolerant of accents, noisy speech, and likely intent; that makes them poorly suited to deciding whether a target phoneme was produced. The app should instead compare a short, known prompt against a constrained set of expected and clinically relevant alternate pronunciations, align the utterance at the phoneme level, and use video only when it can add reliable evidence.</p>
+
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Dimension</th><th>Initial position</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Primary user</td><td>Children roughly 6–12 practicing an SLP-selected target, with caregiver support as needed</td><td>Controlled assignments and adult supervision improve safety, consent, data quality, and adherence.</td></tr>
+      <tr><td>Buyer</td><td>Speech-language pathology practices, schools, and health systems; direct-to-consumer later</td><td>B2B2C creates a responsible clinical feedback loop before broad self-service use.</td></tr>
+      <tr><td>Initial condition</td><td>Selected idiopathic speech sound errors; one validated language/dialect population at a time</td><td>Apraxia, dysarthria, structural differences, hearing-related issues, and broad language disorders need different assessment and treatment logic.</td></tr>
+      <tr><td>Product claim</td><td>Supports assigned practice and provides feedback on a recorded attempt</td><td>“Diagnoses the reason for a speech impediment” is both clinically overbroad and more likely to create medical-device obligations.</td></tr>
+      <tr><td>Platform</td><td>iOS-first learner app; responsive web clinician portal</td><td>A narrower device matrix makes audio/video synchronization and model validation tractable. Add Android after the capture pipeline is stable.</td></tr>
+      <tr><td>Data posture</td><td>Raw audio/video ephemeral by default; retain attempt metrics and derived features; separate opt-in research consent</td><td>Children’s voice and face data are unusually sensitive and may be treated as biometric or health data.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Success definition</h3>
+  <ul>
+    <li>A learner can complete a 5–8 minute assigned session without a caregiver troubleshooting the technology.</li>
+    <li>The system correctly passes clear productions, catches clinically meaningful target errors, and abstains when signal quality or model certainty is inadequate.</li>
+    <li>Feedback is actionable, brief, age-appropriate, and never more specific than the evidence supports.</li>
+    <li>An SLP can assign targets, review trends and representative attempts, correct model labels, and decide the next clinical step.</li>
+    <li>No subgroup is silently subjected to materially worse false-rejection or false-acceptance rates.</li>
+  </ul>
+
+  <h3>Explicit non-goals for the first release</h3>
+  <ul>
+    <li>No diagnosis, disorder classification, treatment-plan generation, or replacement for an SLP.</li>
+    <li>No analysis of free conversation, real-time surveillance, emotion inference, or facial identity recognition.</li>
+    <li>No confident inference about articulators the front camera cannot see, such as tongue-to-palate contact for many productions.</li>
+    <li>No open-ended generative clinical advice. Feedback comes from an SLP-authored, versioned library with model-selected parameters.</li>
+    <li>No advertising, data brokerage, third-party behavioral tracking, or secondary model training without separate informed consent.</li>
+  </ul>
+
+  <h2>2. Clinical model</h2>
+  <p>Speech sound disorders can involve perception, motor production, phonological representation, or a combination. A single observed error does not establish its cause. The product therefore separates <strong>attempt scoring</strong> from <strong>clinical interpretation</strong>: the app reports what it observed and offers a practice cue; the SLP owns diagnosis, target selection, and treatment decisions.</p>
+
+  <h3>Clinical governance</h3>
+  <ul>
+    <li>Form a paid clinical advisory group with at least three practicing pediatric SLPs, one speech motor/acoustics researcher, one multilingual/multidialectal specialist, and one caregiver advocate.</li>
+    <li>Name a clinical safety lead with release-blocking authority over feedback content, target eligibility, and model performance thresholds.</li>
+    <li>Maintain a “claim ledger” mapping every user-facing statement to its supporting sensor evidence, validation result, intended population, and contraindications.</li>
+    <li>Require two-SLP approval for new cue templates and target-sound protocols; measure inter-rater agreement on annotation tasks.</li>
+    <li>Use establishment → generalization → maintenance as the practice progression, with SLP-configured mastery criteria rather than a universal gamified score.</li>
+  </ul>
+
+  <h3>Observable versus inferred articulation</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Sound/cue family</th><th>Phone-camera evidence</th><th>MVP treatment</th><th>Allowed feedback language</th></tr></thead>
+    <tbody>
+      <tr><td>/p, b, m/</td><td>Bilabial closure and release timing are usually externally visible.</td><td>Good early visual targets, paired with acoustic evidence.</td><td>“Close both lips before the sound.”</td></tr>
+      <tr><td>/f, v/</td><td>Lower-lip/front-teeth relationship may be visible; voicing remains primarily acoustic.</td><td>Good early visual targets if framing and lighting pass quality checks.</td><td>“Bring your top teeth gently toward your lower lip.”</td></tr>
+      <tr><td>/θ, ð/ (“th”)</td><td>Tongue protrusion between or near the teeth may be visible; exact contact is not.</td><td>Promising early target with explicit abstention when occluded.</td><td>“Let the tongue tip peek out slightly.”</td></tr>
+      <tr><td>/l/</td><td>Tongue-tip visibility varies by anatomy, camera angle, vowel context, and speaking style; alveolar contact is not directly visible.</td><td>R&amp;D target only until a dedicated study supports it.</td><td>“I couldn’t confirm tongue-tip lift” rather than “Your tongue did not touch the roof.”</td></tr>
+      <tr><td>/s, z, ʃ, tʃ, r/</td><td>Important constrictions are largely internal; lip rounding may be supportive but not causal proof.</td><td>Audio/spectral feedback first. Video may coach framing or lip shape only.</td><td>Describe the sound contrast; do not claim hidden tongue placement.</td></tr>
+      <tr><td>/k, g, ŋ/</td><td>Velar tongue contact is not visible from a front camera.</td><td>Audio-only in the consumer app.</td><td>No camera-derived placement statement.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><strong>Clinical language rule.</strong> The app may say “I heard…,” “I saw…,” “try…,” or “I couldn’t get a clear read.” It may not say “you have…,” “the cause is…,” or assert invisible anatomy. Repeated mismatches trigger clinician review, not increasingly confident automated diagnosis.</div>
+
+  <h2>3. Core user experience</h2>
+  <h3>Clinician setup</h3>
+  <ol>
+    <li>Create or import a learner profile using the minimum necessary information; record language/dialect context, age band, target inventory, cue preferences, and accessibility needs.</li>
+    <li>Select an evidence-based practice structure and assign targets by sound, word position, complexity, and context. The initial content library is curated, not generated on demand.</li>
+    <li>Set the session dose, retry limit, whether video is enabled for each target, and which attempts may be saved for review.</li>
+    <li>Share a caregiver invitation with verifiable consent and a plain-language explanation of microphone, camera, storage, and research choices.</li>
+  </ol>
+
+  <h3>Learner session</h3>
+  <ol>
+    <li><strong>Warm-up:</strong> check microphone, background noise, face framing, and permission state without recording to the server.</li>
+    <li><strong>Prompt:</strong> show a culturally reviewed image, play an optional SLP-recorded model, and highlight the target sound without requiring reading.</li>
+    <li><strong>Attempt:</strong> capture a short utterance with a visible recording state and immediate stop control.</li>
+    <li><strong>Quality decision:</strong> if noise, clipping, occlusion, multiple speakers, or poor framing prevents a fair assessment, ask for a neutral retry and do not count it as an error.</li>
+    <li><strong>Fast path:</strong> a confidently correct target receives brief positive feedback; skip deep video analysis and advance.</li>
+    <li><strong>Uncertain path:</strong> an ambiguous score receives one specific capture suggestion. After two uncertain attempts, offer a model/rehearsal or move on.</li>
+    <li><strong>Analysis path:</strong> a confident target mismatch invokes only the sound-specific visual feature extractor that has been validated for that prompt.</li>
+    <li><strong>Feedback:</strong> give one cue at a time, demonstrate it visually, and allow a comparison attempt. Stop after the configured retry budget to prevent frustration.</li>
+    <li><strong>Close:</strong> celebrate effort and consistency, not “perfect speech,” and show a short caregiver summary without clinical overinterpretation.</li>
+  </ol>
+
+  <h3>Required UX states</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>State</th><th>Behavior</th><th>Example copy</th></tr></thead>
+    <tbody>
+      <tr><td>Correct</td><td>Immediate, calm reinforcement; no unnecessary camera processing.</td><td>“Nice work—you made the ending sound clearly.”</td></tr>
+      <tr><td>Likely mismatch</td><td>One cue tied to the target and available evidence.</td><td>“I heard the ending differently. Close both lips before you finish: ba-ll → ball.”</td></tr>
+      <tr><td>Uncertain</td><td>Abstain, explain the capture issue, and retry without penalty.</td><td>“I couldn’t get a clear read. Move a little closer and try once more.”</td></tr>
+      <tr><td>Camera unavailable</td><td>Continue with audio-only practice where clinically allowed.</td><td>“Camera feedback is off. You can still practice the sound.”</td></tr>
+      <tr><td>Repeated difficulty</td><td>End retries, offer the model, and flag the trend for the SLP.</td><td>“Let’s save this one for your speech teacher and try the next word.”</td></tr>
+      <tr><td>Offline</td><td>Run local quality checks and cached exercises; queue only consented derived results.</td><td>“You’re offline. Today’s downloaded practice still works.”</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>4. Intelligent processing pipeline</h2>
+  <figure>
+    <div class="fig-scroll">
+      <svg viewBox="0 0 1040 370" role="img" aria-labelledby="pipeline-title pipeline-desc" xmlns="http://www.w3.org/2000/svg">
+        <title id="pipeline-title">Selective multimodal pronunciation analysis pipeline</title>
+        <desc id="pipeline-desc">Audio and optional video enter a quality gate. Phoneme scoring sends correct attempts directly to feedback, uncertain attempts to retry, and likely mismatches to sound-specific visual analysis. Calibrated fusion selects an approved feedback template or abstains.</desc>
+        <rect width="1040" height="370" fill="#0d0d0d"/>
+        <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" fill="#ededed">
+          <g fill="#111" stroke="#333">
+            <rect x="35" y="130" width="135" height="74" rx="6"/><rect x="215" y="130" width="150" height="74" rx="6"/>
+            <rect x="410" y="130" width="170" height="74" rx="6"/><rect x="635" y="32" width="165" height="64" rx="6"/>
+            <rect x="635" y="145" width="165" height="74" rx="6"/><rect x="635" y="282" width="165" height="56" rx="6"/>
+            <rect x="850" y="145" width="155" height="74" rx="6"/>
+          </g>
+          <text x="102" y="158" text-anchor="middle">Capture</text><text x="102" y="180" text-anchor="middle" fill="#a1a1a1">audio + optional video</text>
+          <text x="290" y="158" text-anchor="middle">Quality gate</text><text x="290" y="180" text-anchor="middle" fill="#a1a1a1">noise · framing · VAD</text>
+          <text x="495" y="158" text-anchor="middle">Constrained audio</text><text x="495" y="180" text-anchor="middle" fill="#a1a1a1">alignment + error set</text>
+          <text x="717" y="59" text-anchor="middle">Confident correct</text><text x="717" y="80" text-anchor="middle" fill="#a1a1a1">skip deep vision</text>
+          <text x="717" y="173" text-anchor="middle">Likely mismatch</text><text x="717" y="195" text-anchor="middle" fill="#a1a1a1">sound-specific vision</text>
+          <text x="717" y="316" text-anchor="middle">Uncertain → retry</text>
+          <text x="927" y="173" text-anchor="middle">Calibrated fusion</text><text x="927" y="195" text-anchor="middle" fill="#a1a1a1">template or abstain</text>
+        </g>
+        <g stroke="#4e9bfa" stroke-width="2" fill="none" marker-end="url(#arrow)">
+          <path d="M170 167H215"/><path d="M365 167H410"/><path d="M580 155C610 145 610 72 635 64"/>
+          <path d="M580 167H635"/><path d="M580 180C610 200 610 310 635 310"/><path d="M800 182H850"/>
+        </g>
+        <path d="M290 204V252H102V204" stroke="#6b6b6b" stroke-width="1.5" fill="none" stroke-dasharray="5 5"/>
+        <text x="196" y="273" fill="#6b6b6b" font-family="ui-monospace,Menlo,monospace" font-size="12" text-anchor="middle">capture failure → neutral retry</text>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#4e9bfa"/></marker></defs>
+      </svg>
+    </div>
+    <figcaption>Default routing: deep articulation analysis runs only after a high-quality, likely mismatch on a supported sound.</figcaption>
+  </figure>
+
+  <h3>Why ordinary speech-to-text is not the gate</h3>
+  <p>The first model should be a constrained pronunciation scorer. It receives the expected word, target phoneme, word position, acceptable language/dialect variants, and a curated list of plausible substitutions, omissions, and distortions. It produces phoneme timings, posterior scores, quality measures, and a calibrated outcome—not merely a transcript. A general ASR transcript can be retained as a weak supporting feature, never as the sole correctness decision.</p>
+
+  <pre class="code">if capture_quality &lt; quality_floor:
+    return RETRY_CAPTURE(reason)
+
+audio = score_expected_pronunciation(
+    signal,
+    expected_phonemes,
+    allowed_variants,
+    clinically_relevant_error_set
+)
+
+if audio.p_correct &gt;= pass_threshold and audio.is_calibrated:
+    return CORRECT(skip_deep_vision=True)
+
+if audio.is_ambiguous or audio.p_error &lt; analysis_threshold:
+    return RETRY_OR_ABSTAIN
+
+if not target.visual_protocol_validated or not video_consent:
+    return AUDIO_CUE_OR_CLINICIAN_REVIEW
+
+visual = analyze_supported_cues(video_features, target.protocol)
+result = calibrated_fusion(audio, visual)
+return APPROVED_TEMPLATE(result) if result.confident else ABSTAIN</pre>
+
+  <h3>Threshold philosophy</h3>
+  <ul>
+    <li>Optimize separately for <strong>false passes</strong> (a true target error marked correct) and <strong>false rejects</strong> (an acceptable production marked wrong). A single “accuracy” number hides the tradeoff.</li>
+    <li>Use a three-way decision—pass, analyze, abstain—not a forced binary. The ambiguous middle band protects learners from arbitrary correction.</li>
+    <li>Calibrate by target sound, word position, age band, device family, and validated language/dialect. Do not copy one threshold across all contexts.</li>
+    <li>Set launch thresholds with SLPs from held-out, speaker-independent data. Product managers cannot loosen them to improve completion metrics without clinical approval.</li>
+    <li>Measure the routing rate. The deep path should be uncommon because success, poor capture, and uncertainty do not need an expensive multimodal model.</li>
+  </ul>
+
+  <h3>Expected service budgets</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Stage</th><th>Target</th><th>Cost/privacy posture</th></tr></thead>
+    <tbody>
+      <tr><td>Capture quality</td><td>Continuous local feedback; under 100 ms perceptual response</td><td>On-device landmarks/VAD; no upload.</td></tr>
+      <tr><td>Audio decision</td><td>p95 under 700 ms after utterance end</td><td>Prefer on-device or a short encrypted audio segment with no default retention.</td></tr>
+      <tr><td>Deep analysis</td><td>p95 end-to-feedback under 2 seconds</td><td>Upload derived temporal features where possible; raw video only under a separate, explicit protocol.</td></tr>
+      <tr><td>Average inference cost</td><td>Plan toward less than $0.01 per completed attempt and instrument actual cost</td><td>Routing, caching static models, batching offline research jobs, and model distillation.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>5. Model and data strategy</h2>
+  <h3>Build-versus-buy recommendation</h3>
+  <p>Buy commodity infrastructure—secure storage, authentication, notifications, observability—and prototype acoustic encoders or landmark extraction with reputable existing models. Build the clinically meaningful layers: prompt lexicon, phoneme alignment and error hypotheses, calibration, sound-specific visual protocols, multimodal fusion, feedback policy, and evaluation harness. The differentiated asset is the consented, expertly annotated attempt dataset and the evidence linking signals to safe feedback.</p>
+
+  <h3>Dataset program</h3>
+  <ol>
+    <li><strong>Define the sampling frame.</strong> For every target, balance correct productions and clinically relevant errors across word positions, vowel contexts, severity, age band, device, lighting/noise, skin tone, facial characteristics, and the validated language/dialect population.</li>
+    <li><strong>Collect ethically.</strong> Use IRB review when the work is human-subjects research or intended for publication/generalizable knowledge. Obtain parental permission and age-appropriate assent. Separate product consent from optional research contribution.</li>
+    <li><strong>Annotate in layers.</strong> Capture prompt, phoneme boundaries, perceptual correctness, error type, confidence, audio quality, visual observability, visible cue states, and “cannot determine.” Never force annotators to infer hidden anatomy.</li>
+    <li><strong>Measure label quality.</strong> Double-label high-risk samples, adjudicate disagreements, report inter-rater reliability by target and subgroup, and preserve the original ratings.</li>
+    <li><strong>Split by speaker and household.</strong> Prevent the same child, sibling, session, or near-duplicate clip from leaking across train, calibration, and test sets.</li>
+    <li><strong>Maintain challenge sets.</strong> Include background voices, whispering, braces, missing teeth, face coverings, low light, head turn, fast speech, emotional speech, and acceptable dialectal variants.</li>
+    <li><strong>Version everything.</strong> Dataset cards record consent scope, provenance, collection protocol, exclusions, transformations, label policy, subgroup coverage, known limitations, and deletion lineage.</li>
+  </ol>
+
+  <h3>Model stack</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Layer</th><th>Candidate approach</th><th>Output</th><th>Validation focus</th></tr></thead>
+    <tbody>
+      <tr><td>Signal quality</td><td>VAD, SNR/clipping estimates, speaker-count guard, face/landmark confidence, pose and occlusion checks</td><td>Usable / retry with reason</td><td>Failure detection recall; no demographic performance cliff.</td></tr>
+      <tr><td>Phoneme alignment</td><td>Child-speech-adapted acoustic encoder with forced alignment against expected and alternate phone sequences</td><td>Phone spans and likelihoods</td><td>Boundary error, deletion/substitution recall, robustness to device/noise.</td></tr>
+      <tr><td>Pronunciation decision</td><td>Cost-sensitive calibrated classifier over acoustic, alignment, and prompt features</td><td>Pass / analyze / abstain</td><td>False pass, false reject, expected calibration error, abstention.</td></tr>
+      <tr><td>Visual cues</td><td>On-device face/lip landmarks plus short temporal classifier per validated sound family</td><td>Visible closure, protrusion, lip-teeth proximity, timing, or unobservable</td><td>Cue precision against SLP labels; device/appearance/pose robustness.</td></tr>
+      <tr><td>Fusion</td><td>Small interpretable model or rule-constrained calibrated classifier</td><td>Evidence bundle and confidence</td><td>Incremental value over audio alone; contradiction handling.</td></tr>
+      <tr><td>Feedback policy</td><td>Deterministic eligibility rules + versioned SLP-authored templates</td><td>One cue, retry, or clinician flag</td><td>Unsupported-claim rate must be zero in audited release samples.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Model release controls</h3>
+  <ul>
+    <li>Model registry with dataset, code, hyperparameters, intended use, exclusions, metrics, subgroup slices, reviewer, and rollback target.</li>
+    <li>Shadow evaluation before user-facing rollout; feature flag by target protocol and population.</li>
+    <li>Drift monitoring on capture quality, score distributions, routing, abstention, SLP overrides, devices, and subgroup deltas—never on raw media dashboards.</li>
+    <li>No unsupervised online learning from children’s attempts. Corrections enter a governed labeling queue and a later versioned training run.</li>
+    <li>Every result stores the model, lexicon, threshold, and feedback-template versions needed to reproduce the decision.</li>
+  </ul>
+
+  <h2>5A. Open-source model landscape and train-your-own decision</h2>
+  <div class="callout"><strong>Recommendation: open-source foundation, proprietary clinical layer.</strong> Do not train a speech foundation model from scratch and do not ship an off-the-shelf pronunciation score. Benchmark several permissively licensed encoders, fine-tune the best one on consented child speech, train target-specific scoring/calibration heads and small visual-cue models, and distill the winning path for the phone. This captures most of the benefit of open research while keeping the clinically meaningful behavior under your control.</div>
+
+  <h3>How candidates are judged</h3>
+  <p>A model’s general word-error rate is not the deciding metric. Score each codebase, checkpoint, and dataset separately; “open-source code” does not guarantee commercially usable weights or training data.</p>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Criterion</th><th>Weight</th><th>Question</th></tr></thead>
+    <tbody>
+      <tr><td>Clinical/task fit</td><td>25%</td><td>Can it distinguish target phones and error types, expose timing/evidence, calibrate uncertainty, and avoid language-model guessing?</td></tr>
+      <tr><td>Child/SSD domain fit</td><td>20%</td><td>Was it trained or validated on children, disordered speech, the intended dialect/language, short prompted words, and phone microphones?</td></tr>
+      <tr><td>Safety/equity evidence</td><td>15%</td><td>Are subgroup results, limitations, abstention behavior, and false-pass/reject tradeoffs documented?</td></tr>
+      <tr><td>Commercial/legal fit</td><td>15%</td><td>Are code, weights, dictionaries, and every training dataset usable for the intended commercial and health context?</td></tr>
+      <tr><td>Deployment fit</td><td>10%</td><td>Can it meet latency, memory, battery, offline, and privacy requirements after quantization/distillation?</td></tr>
+      <tr><td>Interpretability</td><td>10%</td><td>Can the system produce target-aligned evidence that maps to an approved cue rather than an opaque global score?</td></tr>
+      <tr><td>Maintenance</td><td>5%</td><td>Is the project active, reproducible, testable, versioned, and supported by a healthy ecosystem?</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Audio, alignment, and pronunciation candidates</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Candidate</th><th>License posture</th><th>What it offers</th><th>Fit for this app</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://github.com/openai/whisper">OpenAI Whisper</a></td><td>MIT code and weights</td><td>39M–1.55B-parameter general ASR family trained with large-scale weak supervision; multilingual transcription, translation, language detection, and VAD-like behavior.</td><td>Excellent robustness baseline and useful secondary transcript. The model card warns about hallucinated text and uneven accent/dialect performance. Its intent-aware decoder is exactly the behavior that can “correct” a mispronunciation into the prompted word.</td><td><strong>Benchmark only for the gate.</strong> Keep as a transcript/quality comparison; do not use its word output as pronunciation truth.</td></tr>
+      <tr><td><a href="https://github.com/facebookresearch/fairseq/tree/main/examples/wav2vec">wav2vec 2.0 / XLSR</a></td><td>Official fairseq code and released checkpoints are MIT; still audit each downstream checkpoint and data lineage.</td><td>Self-supervised frame representations, CTC fine-tuning, released base/large and multilingual phoneme models; works with low labeled-data adaptation.</td><td>Strong match for constrained phone classification and forced alignment. Frame-level outputs are easier to inspect and constrain than autoregressive text. Adult read-speech pretraining creates a child/domain gap.</td><td><strong>Primary audio baseline.</strong> Fine-tune a base-size encoder or use frozen/partially frozen features with a custom phone/error head.</td></tr>
+      <tr><td><a href="https://github.com/microsoft/unilm/tree/master/wavlm">Microsoft WavLM</a></td><td>MIT repository; verify checkpoint and upstream-data terms in the release inventory.</td><td>Base, Base+, and Large self-supervised representations trained from 960 to roughly 94k hours, designed for broad speech tasks and noise robustness.</td><td>Potentially stronger noisy-speech embeddings than a plain ASR encoder. It does not provide clinical pronunciation decisions; the larger checkpoints are not naturally mobile.</td><td><strong>Primary challenger.</strong> Benchmark Base/Base+ frozen and lightly fine-tuned; distill only if it beats wav2vec 2.0 on clinical metrics.</td></tr>
+      <tr><td><a href="https://docs.nvidia.com/nemo/speech/nightly/">NVIDIA NeMo Speech</a></td><td>Apache 2.0 toolkit; model-card/license review required per checkpoint.</td><td>Conformer-CTC and other ASR recipes, forced-alignment tools, training/evaluation infrastructure, export and production paths.</td><td>Good server-side engineering framework for a compact Conformer and reproducible alignment. It is a toolkit, not a validated child pronunciation model.</td><td><strong>Framework finalist.</strong> Compare a small Conformer-CTC with the wav2vec/WavLM feature approach.</td></tr>
+      <tr><td><a href="https://github.com/speechbrain/speechbrain">SpeechBrain</a></td><td>Apache 2.0 framework; individual pretrained assets can differ.</td><td>Active PyTorch toolkit with ASR, phoneme alignment, grapheme-to-phoneme, enhancement, and reproducible recipes.</td><td>Useful experiment harness and an easier modern baseline than maintaining bespoke research scripts. No off-the-shelf clinical SSD scorer.</td><td><strong>Use as tooling if the team prefers it.</strong> Avoid adopting both SpeechBrain and NeMo for the same role.</td></tr>
+      <tr><td><a href="https://montreal-forced-aligner.readthedocs.io/">Montreal Forced Aligner</a></td><td>MIT application; inspect acoustic-model/dictionary licenses separately.</td><td>Mature Kaldi-based dataset alignment, pretrained/adaptable acoustic models, dictionaries, evaluation, phone-level timing, and batch workflows.</td><td>Excellent for corpus preparation, annotation prefill, and gold-alignment QA. Its batch-oriented stack is too heavy and indirect for the learner-app decision path.</td><td><strong>Adopt for offline data operations.</strong> Do not make it the mobile runtime.</td></tr>
+      <tr><td><a href="https://github.com/YuanGongND/gopt">GOPT</a></td><td>BSD-3 code; SpeechOcean762 is CC BY 4.0; underlying ASR assets must be audited.</td><td>Goodness-of-Pronunciation transformer producing phone, word, and utterance scores; reproducible SpeechOcean762 benchmark and released models.</td><td>Highly relevant research baseline, but it evaluates Mandarin-L1 non-native English at sentence scale, not pediatric SSD treatment. Its contributed own-data path should be reproduced and tested before it is trusted.</td><td><strong>Reproduce as a research baseline.</strong> Do not ship its scores or assume correlations transfer to clinical error detection.</td></tr>
+      <tr><td><a href="https://github.com/xinjli/allosaurus">Allosaurus</a></td><td>GPL-3.0 code</td><td>Universal narrow-phone recognizer with inventories for more than 2,000 languages.</td><td>Useful for discovery in low-resource languages and as an unconstrained phone-sequence comparator. GPL obligations, an old single release, broad rather than child-clinical training, and limited calibration make product embedding unattractive.</td><td><strong>Optional isolated R&amp;D benchmark.</strong> Legal review before any distribution; do not make it a core dependency.</td></tr>
+      <tr><td><a href="https://huggingface.co/lijialudew/wav2vec_children_ASR">Community child wav2vec2 checkpoints</a></td><td>Varies; one example uses OpenRAIL and mixes MyST/Providence lineage.</td><td>Evidence that staged adult → school-age → younger-child phoneme fine-tuning can reduce age mismatch.</td><td>Useful hypothesis and initialization experiment, but community model cards often omit the release rigor, intended-use tests, commercial data rights, and clinical error evaluation needed here.</td><td><strong>Research only.</strong> Reproduce the adaptation recipe on approved data instead of trusting a community checkpoint as product truth.</td></tr>
+      <tr><td><a href="https://huggingface.co/ZFTurbo/wav2vec2-lv-60-Children-Phonetic">Competition child phonetic checkpoints</a></td><td>Example card lists MIT; data/challenge terms still require review.</td><td>Child-focused CTC phonetic recognition; one published card reports a 0.2899 local character error rate and roughly 300M parameters.</td><td>Closer domain than adult ASR, but leaderboard phonetic transcription is not calibrated target-error classification, and the checkpoint is large for a first mobile runtime.</td><td><strong>Bake-off candidate.</strong> Use only after reproducing metrics on your locked SSD set and clearing lineage.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Vision and audio-visual candidates</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Candidate</th><th>License posture</th><th>What it offers</th><th>Fit for this app</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://developers.google.com/edge/mediapipe/solutions/vision/face_landmarker">MediaPipe Face Landmarker</a></td><td>Apache 2.0 repository/code samples; record the exact model-bundle card and terms.</td><td>Mobile-optimized detection, 478 estimated 3D face landmarks, 52 blendshape scores, pose transformations, and live-stream support.</td><td>Best starting point for framing, head pose, external lip geometry, closure, and timing. It does not produce clinical articulation labels and does not add landmarks for hidden palate contact; teeth/tongue visibility needs separate evidence.</td><td><strong>Adopt as the on-device feature extractor.</strong> Train a small normalized temporal cue model on top.</td></tr>
+      <tr><td><a href="https://facebookresearch.github.io/av_hubert/">Meta AV-HuBERT</a></td><td>Official custom license is non-commercial research only and prohibits commercial/production use and biometric processing.</td><td>Powerful self-supervised audio-visual speech representations from LRS3/VoxCeleb2; useful lip-reading and noisy-ASR research benchmark.</td><td>The task and data are adult sentence recognition, not child articulatory explanation. The official license alone disqualifies it for the intended commercial production path.</td><td><strong>Research comparison only, if counsel permits the study.</strong> Never build the production roadmap around these assets.</td></tr>
+      <tr><td><a href="https://github.com/mpc001/auto_avsr">Auto-AVSR</a></td><td>Apache 2.0 code; authors explicitly warn that pretrained-model terms derive from training datasets.</td><td>Reproducible audio/visual recognition framework, mouth-crop tutorials, 243M–250M-parameter models, and LRS benchmark checkpoints trained on hundreds to thousands of hours.</td><td>Useful upper-bound feature experiment. Adult broadcast/talking-head data, recognition objective, large runtime, and weight/data terms make it a poor direct product component.</td><td><strong>Offline benchmark or teacher model.</strong> Do not send it to the phone; only distill knowledge if lineage permits and clinical lift is proven.</td></tr>
+      <tr><td>Custom landmark temporal model</td><td>Owned weights; depends on MediaPipe and your consented dataset</td><td>Normalized lip/face geometry, derivatives, symmetry, closure, protrusion proxies, head pose, and audio-aligned timing fed to a tiny TCN/1D-CNN or gradient-boosted baseline.</td><td>Small, explainable, sound-specific, privacy-preserving, and directly aligned to observable cues. Requires your own synchronized child labels, calibration, and subgroup validation.</td><td><strong>Recommended production visual path.</strong> Start with simple features/rules; graduate to a small learned temporal head only when it adds validated value.</td></tr>
+      <tr><td>Custom pixel/tongue/teeth model</td><td>Owned weights and dataset; higher biometric/privacy burden</td><td>Segmentation or temporal classification from mouth crops for features landmarks do not encode.</td><td>Could support visible tongue protrusion or lip–teeth relationships, but data annotation, lighting, anatomy, device, privacy, and spurious-correlation risks are high.</td><td><strong>Deferred R&amp;D.</strong> Pursue one cue at a time only after the landmark baseline plateaus and prospective consented data justify it.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Open and accessible data inventory</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Resource</th><th>What it contains</th><th>Use in this program</th><th>Limitations / rights</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://www.openslr.org/101/">SpeechOcean762</a></td><td>5,000 English sentences from 250 Mandarin-L1 speakers, half children, independently scored by five experts at multiple levels.</td><td>Reproduce GOP/GOPT and test pronunciation-score plumbing.</td><td>CC BY 4.0, but non-native English ratings are not SSD labels and should not define clinical thresholds.</td></tr>
+      <tr><td><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12510240/">PERCEPT corpora</a></td><td>More than 36 hours and 125,000+ syllable/word/phrase utterances from ages 6–24 with SSD—primarily residual /r/—and matched peers.</td><td>High-value SSD acoustic research, annotation-method reference, and held-out external evaluation where permissions fit.</td><td>Target coverage is concentrated; review OSF/TalkBank access, consent, and commercial/retraining permissions before use.</td></tr>
+      <tr><td><a href="https://pedzstarlab.soc.northwestern.edu/datasets/">SEED / SPROUT</a></td><td>Credentialed child speech resources; SEED includes speech disorders and expert classifications. SPROUT describes roughly 300 children across diverse backgrounds and became available in 2026.</td><td>Potential child-ASR adaptation and benchmark partnership; especially valuable for representation and subgroup work.</td><td>Application/governance controlled. Availability does not imply commercial product training rights.</td></tr>
+      <tr><td><a href="https://www.isca-archive.org/interspeech_2025/eads25_interspeech.html">PERCEPT-US</a></td><td>Synchronized audio and ultrasound from 126 children ages 8–17, including 46 with residual SSD.</td><td>Research articulatory representations and understand the gap between true tongue imaging and a front camera.</td><td>Ultrasound is not the product sensor; it may serve as research ground truth only under approved access.</td></tr>
+      <tr><td><a href="https://talkbank.org/childes/access/Eng-NA/0docs/OCSC.pdf">Ohio Child Speech Corpus</a></td><td>Speech from 303 children ages 4–9 across seven elicitation tasks, available through TalkBank/CHILDES.</td><td>Child-speech robustness, quality, and representation pre-adaptation.</td><td>Public-access rules and the paper’s CC BY-NC posture require counsel; not an SSD error corpus or phone-video dataset.</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2309.13347">My Science Tutor (MyST)</a></td><td>About 400 hours, 230k utterances, and 1,300 third- through fifth-grade students in tutoring conversations.</td><td>Valuable school-age acoustic domain adaptation and child-ASR baselines.</td><td>Free version is non-commercial; commercial use is separately licensed. Conversational science tutoring is not articulation assessment.</td></tr>
+      <tr><td><a href="https://catalog.ldc.upenn.edu/LDC97S63">CMU Kids Corpus</a></td><td>Read child speech, including 32-speaker Fort Pitt subset and dialect variation; built for SPHINX/LISTEN.</td><td>Historical child-ASR robustness comparison.</td><td>LDC license and fees, older recordings, limited scale, reading focus, and no clinical target-error labels.</td></tr>
+      <tr><td>Your consented target corpus</td><td>Phone audio/video, exact prompts, target/error labels, visibility labels, device/context, SLP ratings, and outcome links from the intended population.</td><td>Required for product scoring heads, calibration, visual cues, equity evaluation, and claim evidence.</td><td>Expensive and slow, but no public corpus matches the complete sensor, population, task, error taxonomy, consent, and commercial-use requirements.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Off-the-shelf versus adaptation versus training from scratch</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Strategy</th><th>Data/compute</th><th>Advantages</th><th>Failure modes</th><th>Recommendation</th></tr></thead>
+    <tbody>
+      <tr><td>Ship an open checkpoint unchanged</td><td>Lowest upfront; evaluation still substantial</td><td>Fast prototype, reproducible baseline, little ML infrastructure.</td><td>Wrong objective/population, forgiving decoder, opaque calibration, unknown subgroup behavior, and checkpoint/data license surprises.</td><td><strong>No for clinical decisions.</strong> Appropriate only for feasibility and baseline measurements.</td></tr>
+      <tr><td>Frozen open encoder + custom head</td><td>Thousands to tens of thousands of labeled attempts can support an initial narrow target study; modest training</td><td>Fastest safe path to task-specific evidence; less overfitting; easy encoder bake-off.</td><td>Representation may miss child/SSD cues; still too large for mobile; domain shift remains.</td><td><strong>Phase 1 default.</strong> Start here for audio and for any research AV embedding.</td></tr>
+      <tr><td>Parameter-efficient or partial fine-tuning</td><td>More consented child audio and careful regularization; moderate GPU budget</td><td>Adapts adult representation while retaining generalization; can specialize target phones.</td><td>Catastrophic forgetting, label leakage, overfitting to speakers/devices, harder reproducibility.</td><td><strong>Phase 2 default</strong> after learning curves show the frozen encoder has plateaued.</td></tr>
+      <tr><td>Full fine-tune + distill/quantize</td><td>Tens to hundreds of thousands of high-quality attempts, robust holdouts, teacher/student training, device QA</td><td>Best chance at strong child-domain performance and a small private on-device runtime.</td><td>Higher MLOps and validation burden; distillation can alter calibration and subgroup behavior.</td><td><strong>Production optimization path</strong> only after a server model clears clinical gates.</td></tr>
+      <tr><td>Train a small task model from engineered features</td><td>Lower compute; still needs representative labels</td><td>Interpretable, mobile-friendly, easy to audit; ideal for sound-specific landmark sequences and acoustic baselines.</td><td>May cap accuracy or miss nuanced distortions; feature definitions can encode expert assumptions.</td><td><strong>Always include.</strong> A complex model must beat it on prospective clinical utility, not just benchmark loss.</td></tr>
+      <tr><td>Train a foundation model from scratch</td><td>Thousands to hundreds of thousands of hours and large distributed compute; wav2vec recipes describe 64–128-GPU configurations, while Whisper reports 680k training hours</td><td>Maximum architectural and data control; potentially valuable only at very large multi-language scale.</td><td>Enormous cost, uncertain gain, scarce child/SSD data, privacy burden, long validation cycle, and likely worse results than adapting mature representations.</td><td><strong>Reject for the first product.</strong> Revisit only after proprietary data reaches large scale and adaptation has a demonstrated ceiling.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Recommended hybrid model architecture</h3>
+  <ol>
+    <li><strong>Audio encoder bake-off:</strong> wav2vec 2.0 Base/XLSR, WavLM Base/Base+, and a compact NeMo Conformer-CTC. Freeze encoders first; compare target-aligned embeddings and CTC posteriors. Include Whisper and GOPT only as reference baselines.</li>
+    <li><strong>Constrained hypothesis layer:</strong> compile expected, acceptable-variant, deletion, and substitution phone paths from a versioned clinical lexicon. Score those paths without a broad word language model.</li>
+    <li><strong>Owned clinical heads:</strong> train a small target/error classifier, capture-quality classifier, and calibrator on your consented child data. Produce pass/analyze/abstain plus an evidence vector.</li>
+    <li><strong>Owned visual path:</strong> normalize MediaPipe landmarks by head pose and facial scale; compute external mouth features; align them to audio phone spans; train a separate tiny temporal head per cue family.</li>
+    <li><strong>Rule-constrained fusion:</strong> visual evidence can strengthen or weaken only claims approved for that target. It cannot override poor capture or manufacture evidence about an invisible articulator.</li>
+    <li><strong>Distillation:</strong> after the server model passes, distill into a compact CTC/embedding student and quantize to Core ML. Revalidate calibration, target metrics, and subgroup slices on real devices.</li>
+  </ol>
+
+  <h3>Six-week open-source bake-off</h3>
+  <div class="callout"><strong>Infrastructure checkpoint.</strong> The canonical charter, candidate/result/selection schemas, signed full-run and scorecard attestations, strict CLI, pairwise subgroup gates, and signed owned-adaptation lineage are implemented and independently reviewed. Synthetic tests pass, but Weeks 1–6 remain operational work: no real candidate has been legally cleared, executed, ranked, adapted, or clinically approved.</div>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Week</th><th>Work</th><th>Output / decision</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Freeze prompts, phone set, allowed variants, error taxonomy, split policy, metrics, license inventory, and representative SSD evaluation sample.</td><td>Signed benchmark charter; models cannot be selected by a convenient public metric.</td></tr>
+      <tr><td>2</td><td>Containerize Whisper, wav2vec 2.0, WavLM, compact NeMo Conformer, MFA alignment, GOPT, and the simple acoustic-feature baseline.</td><td>Reproducible inference manifests with exact code/weight hashes and provenance.</td></tr>
+      <tr><td>3</td><td>Extract phone-aligned features; train identical lightweight heads on frozen encoders; run speaker-held-out evaluation.</td><td>First clinical error/quality/calibration table, latency, memory, and cost results.</td></tr>
+      <tr><td>4</td><td>Build MediaPipe geometry baseline and compare a rule model, gradient-boosted model, and tiny temporal network on one visible cue family.</td><td>Evidence whether vision adds anything beyond audio and capture coaching.</td></tr>
+      <tr><td>5</td><td>Partial fine-tune the top two audio encoders; evaluate robustness, subgroup slices, learning curves, and contradiction behavior.</td><td>Pick one teacher and one fallback; reject improvements that trade away calibration or equity.</td></tr>
+      <tr><td>6</td><td>Profile on target iPhones, draft distillation plan, complete legal/data review, and present blinded examples to SLPs.</td><td>Architecture decision record and go/no-go for production adaptation.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Data and compute planning assumptions</h3>
+  <ul>
+    <li>Do not promise model quality from a universal sample-size heuristic. Construct learning curves per target and stop collecting when the confidence interval and subgroup coverage—not merely loss—support the intended claim.</li>
+    <li>For a narrow frozen-encoder feasibility study, plan on roughly 10k–30k adjudicated attempts across at least 200 children, with enough true examples of each clinically relevant error; this is a collection target to test, not a guarantee of adequacy.</li>
+    <li>Full encoder adaptation and robust multi-target calibration will likely require tens to hundreds of thousands of attempts plus additional consented unlabeled child audio. Rare distortions and subgroup coverage, not overall clip count, will be the bottleneck.</li>
+    <li>Every target needs independent speakers in train, calibration, and locked test sets. Reserve a prospective clinic/device cohort that is never used for model or threshold selection.</li>
+    <li>Budget annotation as a first-class expense: SLP double labels, adjudication, visibility labels, disagreement retention, and clinical-content review will cost more than many initial GPU runs.</li>
+  </ul>
+
+  <h3>Open-source intake checklist</h3>
+  <ul>
+    <li>Record repository commit, package version, checkpoint hash, model card, code license, weight license, training datasets, dataset licenses, acceptable-use terms, and any click-through agreement.</li>
+    <li>Distinguish research access from commercial training, embedding, redistribution, mobile bundling, and production inference rights.</li>
+    <li>Scan dependencies and transitive native libraries; generate an SBOM and attribution file; isolate copyleft research tools from shipped proprietary code.</li>
+    <li>Do not upload child media to public model hubs, hosted demos, issue trackers, or third-party telemetry while evaluating open models.</li>
+    <li>Treat checkpoint conversion, quantization, fine-tuning, and distillation as derivative-work questions requiring counsel, not as automatic ways around source terms.</li>
+    <li>Re-review licenses and model cards at every upgrade. A familiar project name can publish checkpoints under different terms.</li>
+  </ul>
+
+  <h2>6. Technical architecture</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>System</th><th>Responsibilities</th><th>Key constraints</th></tr></thead>
+    <tbody>
+      <tr><td>iOS learner app</td><td>Assignments, cached content, consent/permissions, synchronized short capture, local quality and landmarks, accessible feedback</td><td>Native capture/inference path first; encrypted local cache; camera never required for unsupported targets.</td></tr>
+      <tr><td>Clinician web portal</td><td>Roster, consent state, target plans, trend review, representative samples, overrides, exports, audit history</td><td>Role-based access, tenant isolation, no third-party tracking in authenticated areas.</td></tr>
+      <tr><td>API boundary</td><td>Authentication, authorization, assignments, attempt metadata, signed upload grants, feedback results</td><td>Schema validation, idempotency, rate limits, audit logs, child-safe deletion workflows.</td></tr>
+      <tr><td>Inference service</td><td>Audio scoring, optional supported-cue analysis, calibrated fusion, model-version routing</td><td>Separate PHI plane, no vendor retention/training, regional controls, graceful abstention.</td></tr>
+      <tr><td>Clinical content service</td><td>Words, images, audio models, phoneme lexicon, language/dialect variants, cue templates, contraindications</td><td>Versioned publishing with clinical approval and rollback.</td></tr>
+      <tr><td>Data and MLOps</td><td>De-identified analytics, consent ledger, labeling workspace, dataset/model registry, evaluation reports</td><td>Product data cannot silently become research/training data; deletion propagates to derived datasets.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Minimal attempt record</h3>
+  <pre class="code">Attempt {
+  id, learner_pseudonym, assignment_id, prompt_version,
+  target_phoneme, word_position, locale_protocol,
+  started_at, duration_ms, device_class,
+  consent_snapshot_id,
+  quality: { audio, video?, reason_codes[] },
+  routing: { outcome, threshold_version },
+  evidence: { audio_scores, visual_cues?, uncertainty },
+  feedback: { template_version, parameters, shown_at },
+  model_versions: { quality, acoustic, visual?, fusion? },
+  clinician_label?: { label, confidence, reviewer, timestamp },
+  retention: { media_policy, expires_at, research_scope? }
+}</pre>
+  <p>Keep names, contact details, and caregiver identity outside the inference record. Use opaque IDs; encrypt transport and storage; rotate signed media URLs quickly; log every privileged read; and make deletion status inspectable. Store derived features only when they are necessary and covered by the consent purpose.</p>
+
+  <h3>Repository shape once implementation begins</h3>
+  <pre class="code">apps/
+  ios-learner/          # native capture, local inference, practice UX
+  clinician-web/        # assignment and review portal
+services/
+  api/                  # authz, assignments, attempts, consent, deletion
+  inference/            # versioned audio/visual routing and fusion
+packages/
+  clinical-content/     # lexicon, protocols, approved feedback templates
+  contracts/            # schemas and generated clients
+ml/
+  evaluation/           # immutable test manifests and metric reports
+  training/             # reproducible governed pipelines
+docs/
+  clinical-safety/      # claim ledger, target protocols, release evidence</pre>
+  <p>This is a target boundary, not a mandate to create empty packages on day one. Start with the smallest deployable vertical slice and extract shared packages only when two real consumers exist.</p>
+
+  <h2>7. Privacy, security, accessibility, and regulatory workstream</h2>
+  <h3>Regulatory claim strategy</h3>
+  <p>Commission U.S. regulatory counsel during discovery. FDA’s January 2026 general-wellness guidance distinguishes low-risk lifestyle functions from software intended to diagnose, cure, mitigate, prevent, or treat a disease or condition; this concept is explicitly therapeutic, so marketing language alone may not keep it outside device oversight. FDA’s January 2026 clinical decision support guidance also notes that policies for patient/caregiver software functions still apply. Produce a documented intended-use and classification assessment before the pilot, then repeat it whenever claims, population, or autonomy expand.</p>
+  <ul>
+    <li>Phase 1 claim: helps users practice clinician-selected speech targets and records progress; not a diagnosis or substitute for professional care.</li>
+    <li>Do not use “detects the cause,” “treats speech disorders,” “clinical-grade,” or accuracy claims until counsel and supporting evidence approve them.</li>
+    <li>Maintain design history, hazards, verification evidence, model change controls, complaint handling, and incident procedures from the start, even if the initial conclusion is non-device.</li>
+    <li>If the product later independently recommends treatment or claims to diagnose/mitigate a disorder, initiate the appropriate medical-device quality and submission strategy before release.</li>
+  </ul>
+
+  <h3>Child and health data</h3>
+  <ul>
+    <li>The initial pilot is U.S.-only. Complete separate GDPR, UK children’s code, and other local child/health/biometric analyses before international expansion.</li>
+    <li>COPPA analysis is mandatory for under-13 users. The FTC’s 2025 final amendments expand personal information to include biometric identifiers and add protections around children’s data disclosures.</li>
+    <li>HIPAA depends on relationships and use cases, not whether data “feels medical.” A direct-to-consumer app may not be a HIPAA covered entity, while an app operating on behalf of a clinic may be a business associate requiring BAAs and HIPAA safeguards.</li>
+    <li>For non-HIPAA health apps, assess the FTC Health Breach Notification Rule, which was updated to clarify coverage of health apps and similar technologies.</li>
+    <li>Map FERPA, COPPA school-consent mechanics, and applicable state student-record, biometric, consumer-health, breach, retention, and consent laws before selecting pilot states or school partners.</li>
+  </ul>
+
+  <h3>Privacy-by-design requirements</h3>
+  <ul>
+    <li>Just-in-time camera and microphone explanations; separate toggles for practice processing, clinician review, and research contribution.</li>
+    <li>Video off by default when it cannot improve a validated target. No background capture and no facial templates used for identity.</li>
+    <li>Ephemeral raw video by default. If a clinician sample is saved, show the exact retention period and who can view it.</li>
+    <li>Self-service caregiver access, export, revocation, and deletion; operational deletion SLA plus model/dataset lineage review.</li>
+    <li>No advertising SDKs, session replay, cross-app identifiers, or analytics tools that receive health/context data.</li>
+    <li>Vendor contracts prohibit secondary use and model training, specify breach notice, deletion, subprocessors, geography, and audit rights.</li>
+  </ul>
+
+  <h3>Security and accessibility baseline</h3>
+  <ul>
+    <li>Threat-model child account takeover, clinic tenant leakage, media URL leakage, insecure device storage, prompt/content tampering, model extraction, consent mismatch, and insider access.</li>
+    <li>Use passkeys or strong MFA for clinicians, least-privilege roles, short sessions for privileged actions, tenant-scoped authorization tests, encryption, key management, immutable audit events, dependency scanning, secrets scanning, and incident drills.</li>
+    <li>Verify the mobile client against relevant OWASP MASVS groups and remote services against a web/API security standard; commission independent penetration testing before a clinical pilot.</li>
+    <li>Target WCAG 2.2 AA for the portal and equivalent native accessibility: VoiceOver, Dynamic Type, reduced motion, high contrast, captions, non-audio instructions, large targets, switch access, and plain-language caregiver content.</li>
+    <li>Because users have speech disabilities, never make speech the only way to navigate, request help, authenticate, or correct the system.</li>
+  </ul>
+
+  <h2>8. Measurement and validation</h2>
+  <h3>Metric hierarchy</h3>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Layer</th><th>Primary measures</th><th>Initial advancement gate</th></tr></thead>
+    <tbody>
+      <tr><td>Capture reliability</td><td>Usable-attempt rate, false quality rejection, camera-off completion, device failure rate</td><td>At least 95% of supported, protocol-compliant attempts usable in the pilot device set.</td></tr>
+      <tr><td>Audio decision</td><td>False pass, false reject, error-type precision/recall, calibration, abstention, per-target confusion matrix</td><td>Targets approved individually; no aggregate average may hide a failing sound or subgroup.</td></tr>
+      <tr><td>Visual evidence</td><td>Visible-cue precision/recall, incremental lift over audio, contradiction rate, unobservable detection</td><td>Ship a cue only if it improves the relevant decision or feedback utility without increasing unsupported claims.</td></tr>
+      <tr><td>Equity</td><td>Performance and quality-gate gaps by age, dialect/language, device, environment, skin tone, facial characteristics, dental/orthodontic context, and disability</td><td>Predeclared maximum gaps; a missed gate narrows scope or triggers remediation, not silent averaging.</td></tr>
+      <tr><td>UX</td><td>Session completion, retry burden, time to feedback, frustration/stop signals, caregiver help rate, accessibility task success</td><td>Median session 5–8 minutes; no target induces excessive retries; usability findings addressed.</td></tr>
+      <tr><td>Clinical utility</td><td>SLP agreement, override rate, home-practice adherence, target-probe change, generalization, adverse or misleading feedback reports</td><td>SLPs judge the feedback actionable and safe; prospective outcomes justify expansion.</td></tr>
+      <tr><td>Operations</td><td>Latency, inference cost, crash-free sessions, deletion SLA, access anomalies, complaints, incident closure</td><td>SLOs and incident response proven before broader release.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Evaluation design</h3>
+  <ol>
+    <li><strong>Offline analytic validation:</strong> locked, speaker-held-out test set; compare audio-only, visual-only, and fused systems. Report confidence intervals and full target/subgroup slices.</li>
+    <li><strong>Wizard-of-Oz formative study:</strong> 12–20 learner/caregiver dyads and 5–8 SLPs test capture instructions, cue comprehension, retry behavior, consent, and emotional response before model automation.</li>
+    <li><strong>Prospective silent pilot:</strong> models score attempts but do not show corrective feedback; SLPs independently label a sample to measure real-world agreement and drift.</li>
+    <li><strong>Controlled usability/feasibility pilot:</strong> approximately 30–60 learners across several clinicians for 6–8 weeks, with adverse-feedback review and weekly model-safety monitoring.</li>
+    <li><strong>Clinical utility study:</strong> pre-register a protocol comparing standard home practice with app-assisted practice, use blinded outcome scoring where possible, and distinguish target-word improvement from generalization to untrained speech.</li>
+  </ol>
+  <p>Sample sizes above are planning ranges, not statistical commitments. A biostatistician should power each study from the chosen primary endpoint, clustering, baseline variability, expected attrition, and clinically meaningful effect.</p>
+
+  <h3>Safety indicators that override growth metrics</h3>
+  <ul>
+    <li>Unsupported physical-cause statement shown to a learner.</li>
+    <li>Acceptable dialectal or multilingual production repeatedly labeled as an error.</li>
+    <li>Material subgroup disparity in pass, reject, quality, or abstention behavior.</li>
+    <li>Repeated correction loop beyond the configured retry budget.</li>
+    <li>Raw child media retained, viewed, or used outside the captured consent purpose.</li>
+    <li>Clinician override or complaint cluster tied to a model, target, prompt, or device version.</li>
+  </ul>
+
+  <h2>9. Delivery roadmap</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Phase</th><th>Duration</th><th>Deliverables</th><th>Exit gate</th></tr></thead>
+    <tbody>
+      <tr><td>0 · De-risk</td><td>4–6 weeks</td><td>Clinical advisory group; intended-use memo; target-sound matrix; consent/data map; 20+ discovery interviews; prototype capture study; threat model; evaluation protocol</td><td>SLP, privacy, regulatory, and engineering leads approve a narrow pilot scope and claim boundary.</td></tr>
+      <tr><td>1 · Audio-first vertical slice</td><td>8–10 weeks</td><td>iOS prompt/record/retry flow; constrained scorer for 1–2 targets; clinician assignment portal; consent ledger; ephemeral media path; evaluation harness</td><td>Offline gates pass on a locked dataset; usability study shows learners understand every state.</td></tr>
+      <tr><td>2 · Supported visual feedback</td><td>10–14 weeks</td><td>Local face/lip quality; /p,b,m/ and /f,v/ cue prototypes; selective routing; approved feedback library; model registry; SLP review/override</td><td>Visual features add measurable utility over audio and unsupported-claim audit is zero.</td></tr>
+      <tr><td>3 · Silent clinical pilot</td><td>8–12 weeks</td><td>Multi-clinic deployment; silent predictions; labeling/adjudication; operations runbooks; deletion and incident drills; security test</td><td>Real-world performance, subgroup, reliability, and privacy gates pass target by target.</td></tr>
+      <tr><td>4 · Feedback pilot</td><td>12–16 weeks</td><td>Limited corrective feedback; caregiver onboarding; adherence tools; clinician analytics; prospective safety monitoring</td><td>Feasibility and safety endpoints met; regulatory classification and claims reconfirmed.</td></tr>
+      <tr><td>5 · Clinical utility and scale</td><td>6–12 months</td><td>Controlled study; Android/device expansion; more sounds/language protocols; enterprise integrations; support and quality system maturity</td><td>Evidence supports the next claim and population; economics and operating controls are sustainable.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>First-release backlog, in order</h3>
+  <ol>
+    <li>Clinical target protocol and content schema.</li>
+    <li>Consent, assent, identity, roles, retention, export, and deletion.</li>
+    <li>Capture-quality coaching with no scoring.</li>
+    <li>Audio-only prompt, attempt, alignment, pass/analyze/abstain, and reproducible evaluation.</li>
+    <li>Clinician assignment and review with overrides.</li>
+    <li>One externally visible cue family behind a research flag.</li>
+    <li>Selective routing, approved feedback templates, and retry safeguards.</li>
+    <li>Safety, equity, security, accessibility, and operations gates.</li>
+  </ol>
+
+  <h3>What not to build early</h3>
+  <ul>
+    <li>A large game world, avatar marketplace, streak pressure, social leaderboard, or parent growth dashboard.</li>
+    <li>A broad word library before the phonetic contexts and annotations are validated.</li>
+    <li>A general conversational agent that invents exercises or clinical explanations.</li>
+    <li>School/EHR integrations before consent, tenancy, exports, and deletion are dependable.</li>
+    <li>Android parity before the synchronized capture and test harness work reliably on a controlled iOS device set.</li>
+  </ul>
+
+  <h2>10. Team and operating model</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Capability</th><th>Core need</th><th>Responsibility</th></tr></thead>
+    <tbody>
+      <tr><td>Product</td><td>1 product lead</td><td>Scope, partner discovery, roadmap, economics, and outcome definition.</td></tr>
+      <tr><td>Clinical</td><td>1 clinical product lead + paid advisory group</td><td>Target protocols, content, claim ledger, annotations, safety gates, and study design.</td></tr>
+      <tr><td>Mobile</td><td>1–2 iOS engineers</td><td>Capture, on-device inference, offline behavior, accessibility, and learner experience.</td></tr>
+      <tr><td>Platform/web</td><td>1–2 engineers</td><td>Portal, APIs, consent, authz, data lifecycle, operations, and integrations.</td></tr>
+      <tr><td>ML/audio</td><td>1 speech ML scientist/engineer</td><td>Alignment, pronunciation scoring, calibration, error analysis, and evaluation.</td></tr>
+      <tr><td>ML/vision</td><td>0.5–1 vision/edge ML engineer after Phase 1</td><td>Observable cues, temporal landmarks, on-device optimization, and visual validation.</td></tr>
+      <tr><td>Design/research</td><td>1 product designer/researcher</td><td>Child/caregiver/clinician UX, study facilitation, accessibility, and content presentation.</td></tr>
+      <tr><td>Specialists</td><td>Fractional privacy, regulatory, security, biostatistics, QA</td><td>Classification, contracts, threat model, test strategy, study power, audits, and release evidence.</td></tr>
+    </tbody>
+  </table></div>
+  <p>A practical core team is 7–9 people during the build/pilot period. Clinical, privacy, and model-quality sign-off must be independent of growth ownership. Weekly operations should include model-error review, safety incidents, consent/deletion exceptions, subgroup metrics, and partner feedback—not just engagement.</p>
+
+  <h2>11. Budget and capacity model</h2>
+  <p>Use the local controls to explore a planning envelope. The hosted plan remains readable with the default scenario; controls run only in the local file. “Loaded monthly cost” includes salary, benefits, taxes, equipment, and normal overhead. Fixed program cost includes clinical participant compensation, data collection, legal/regulatory advice, security testing, devices, and cloud/model experimentation.</p>
+  <div class="callout" id="budget-model">
+    <div class="control-row"><label for="team-size">Average core team</label><input id="team-size" type="range" min="4" max="14" step="1" value="8"><output id="team-size-out">8 people</output></div>
+    <div class="control-row"><label for="months">Program duration</label><input id="months" type="range" min="6" max="24" step="1" value="15"><output id="months-out">15 months</output></div>
+    <div class="control-row"><label for="monthly-cost">Loaded cost/person</label><input id="monthly-cost" type="range" min="14000" max="30000" step="1000" value="22000"><output id="monthly-cost-out">$22k/mo</output></div>
+    <div class="control-row"><label for="fixed-cost">Research + assurance</label><input id="fixed-cost" type="range" min="100000" max="1200000" step="50000" value="500000"><output id="fixed-cost-out">$500k</output></div>
+    <p><strong>Default modeled envelope: <span id="budget-total">$3.14M</span></strong></p>
+    <p class="muted">Planning estimate only; excludes large pivotal trials, broad localization, and enterprise sales/support expansion.</p>
+    <button type="button" id="copy-budget">Copy scenario as JSON</button> <span class="muted" id="copy-status" aria-live="polite"></span>
+  </div>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Envelope</th><th>Typical scope</th><th>Planning range</th></tr></thead>
+    <tbody>
+      <tr><td>De-risk + prototype</td><td>Phase 0 and audio-first vertical slice; no clinical claims</td><td>Approximately $500k–$1.0M</td></tr>
+      <tr><td>Pilot-ready product</td><td>Phases 0–3, secure clinician workflow, selected visual cues, silent pilot</td><td>Approximately $1.8M–$3.5M</td></tr>
+      <tr><td>Validated commercial path</td><td>Feedback pilot, prospective study, Android expansion, enterprise controls</td><td>Approximately $3M–$6M+, driven heavily by study and regulatory strategy</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>12. Risk register</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Risk</th><th>Severity</th><th>Early warning</th><th>Mitigation / stop rule</th></tr></thead>
+    <tbody>
+      <tr><td>Camera cannot support the intended causal feedback</td><td>High</td><td>Low agreement on visual cues; no lift over audio; frequent “unobservable” labels</td><td>Keep audio-first product; restrict video to capture coaching or remove it for that target. Do not invent precision.</td></tr>
+      <tr><td>Recognizer is too forgiving</td><td>High</td><td>True error clips pass because the expected word is inferred</td><td>Use constrained phone hypotheses, cost-sensitive thresholds, challenge sets, and a false-pass launch gate.</td></tr>
+      <tr><td>Recognizer is too strict</td><td>High</td><td>Correct productions generate repeated corrections; sessions end early</td><td>Three-way decision, allowed variants, calibration, retry budget, subgroup audits, and SLP overrides.</td></tr>
+      <tr><td>Dialect/language difference labeled as disorder</td><td>Critical</td><td>Performance gaps or clinician overrides concentrated by language/dialect</td><td>Validate one defined protocol at a time, support acceptable variants, require clinician context, pause affected targets.</td></tr>
+      <tr><td>Misleading physical explanation</td><td>Critical</td><td>Claim ledger lacks direct evidence; SLP disputes explanation</td><td>Evidence-bound templates, “observed” language, zero-tolerance audit, rollback, and incident review.</td></tr>
+      <tr><td>Child biometric/health privacy breach</td><td>Critical</td><td>Raw media retained unexpectedly, vendor secondary use, access anomaly</td><td>Minimize collection, isolate consent purposes, prohibit tracking, encrypt, audit, rehearse notification/deletion, stop collection on control failure.</td></tr>
+      <tr><td>Regulatory scope expands unintentionally</td><td>High</td><td>Marketing or features claim diagnosis/treatment autonomy</td><td>Intended-use review at every milestone; claims approval workflow; counsel before release.</td></tr>
+      <tr><td>Overcorrection harms confidence or adherence</td><td>High</td><td>Retry loops, frustration signals, caregiver complaints, declining session completion</td><td>Effort-based tone, retry cap, move-on state, child usability studies, clinician escalation.</td></tr>
+      <tr><td>Dataset leakage or label instability</td><td>High</td><td>Offline metrics collapse prospectively; large annotator disagreement</td><td>Speaker/household split, duplicate detection, locked test set, adjudication, silent pilot.</td></tr>
+      <tr><td>Unit economics fail despite gating</td><td>Medium</td><td>Deep path runs often; long clips or third-party calls dominate cost</td><td>Instrument cost per attempt, improve routing, use derived features/on-device models, narrow unsupported cases.</td></tr>
+      <tr><td>SLP workflow adds burden</td><td>High</td><td>Assignments take too long; dashboards are ignored; overrides backlog</td><td>Design with clinicians, default to short actionable summaries, batch review, integrate only after value is proven.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>13. Verification and release gates</h2>
+  <h3>Engineering</h3>
+  <ul>
+    <li>Automated unit, schema, authorization, tenant-isolation, consent-policy, deletion, model-routing, threshold-version, and feedback-template tests.</li>
+    <li>Golden synchronized audio/video fixtures across supported devices; deterministic replay through every released model.</li>
+    <li>Offline/slow-network, interrupted upload, permission denial, camera disabled, multiple speakers, background noise, long content, and accessibility flows.</li>
+    <li>Load, latency, cost, rollback, data-restoration, disaster-recovery, audit-log integrity, dependency, static, dynamic, and penetration tests.</li>
+  </ul>
+
+  <h3>Clinical and model</h3>
+  <ul>
+    <li>Locked evaluation report per target with false-pass/reject, calibration, abstention, error confusion, confidence intervals, and subgroup slices.</li>
+    <li>Evidence that fused analysis adds value over the audio baseline; otherwise keep the simpler model.</li>
+    <li>Clinical review of every prompt, image, model recording, cue, reinforcement message, contraindication, and escalation route.</li>
+    <li>Audit a statistically justified sample of complete result-to-feedback traces; no unsupported claim reaches release.</li>
+  </ul>
+
+  <h3>Privacy, safety, and operations</h3>
+  <ul>
+    <li>Data protection impact assessment, data-flow map, vendor inventory, consent records, retention schedule, deletion proof, incident and breach playbooks.</li>
+    <li>Regulatory intended-use/classification memo and approved claim set.</li>
+    <li>WCAG 2.2 AA audit for the portal plus native assistive-technology testing with disabled users.</li>
+    <li>Clinical safety case signed by the clinical lead; privacy/security sign-off; support and complaint owners trained.</li>
+    <li>Feature flags, target-level kill switches, last-known-good model, and a tested rollback that does not corrupt attempt history.</li>
+  </ul>
+
+  <div class="callout"><strong>Go/no-go rule.</strong> A phase advances only when its evidence package passes. Schedule pressure, model novelty, partner enthusiasm, or aggregate accuracy cannot waive a failed target, safety, consent, security, accessibility, or subgroup gate.</div>
+
+  <h2>14. The first 30 days</h2>
+  <ol>
+    <li>Appoint product, clinical safety, technical, and privacy owners; execute advisor agreements.</li>
+    <li>Interview 8–10 SLPs, 6–8 caregivers, and 4–6 learners; observe current home-practice handoffs and breakdowns.</li>
+    <li>Write the intended-use statement, excluded populations, pilot claim set, and initial regulatory questions for counsel.</li>
+    <li>Select two audio targets and one visually observable cue family using clinical value, observability, data feasibility, and equity risk—not demo appeal.</li>
+    <li>Draft the prompt/variant/error lexicon, annotation guide, claim ledger, retry policy, and SLP-authored feedback examples.</li>
+    <li>Prototype on-device capture-quality coaching and run a small device/lighting/noise feasibility session before training a visual model.</li>
+    <li>Define the consent/data lifecycle and vendor requirements; decide what never leaves the phone.</li>
+    <li>Specify the locked evaluation sets, advancement metrics, subgroup plan, and prospective silent-pilot protocol.</li>
+    <li>Build a clickable learner flow and clinician assignment/review flow; test comprehension and emotional tone.</li>
+    <li>At day 30, hold a go/no-go review on the narrow vertical slice and publish the approved target protocol.</li>
+  </ol>
+
+  <h2>15. Decisions needed from the owner</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Decision</th><th>Recommended default</th><th>Consequence</th></tr></thead>
+    <tbody>
+      <tr><td>Launch channel</td><td>SLP/clinic-guided B2B2C pilot</td><td>Slower reach, much stronger safety loop and evidence quality.</td></tr>
+      <tr><td>Initial population</td><td>One age band and one explicitly defined English language/dialect protocol</td><td>Narrower market; avoids pretending one norm applies universally.</td></tr>
+      <tr><td>Platform</td><td>iOS first</td><td>Better capture control; Android follows after validation.</td></tr>
+      <tr><td>Media retention</td><td>Ephemeral by default; short clinician-review retention only when explicitly enabled</td><td>Less debugging convenience; substantially lower privacy exposure.</td></tr>
+      <tr><td>Visual MVP</td><td>Externally visible lip/teeth cue family; /l/ remains research-only</td><td>Less dramatic demo; more defensible product behavior.</td></tr>
+      <tr><td>Clinical claim</td><td>Practice support and observed feedback, not diagnosis</td><td>Requires careful marketing but preserves an evidence-led path.</td></tr>
+      <tr><td>Timeline</td><td>12–18 months to a responsibly validated limited release</td><td>A shorter timeline can produce a prototype, not a trustworthy clinical product.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>16. Authoritative references</h2>
+  <ul>
+    <li><a href="https://www.asha.org/practice-portal/clinical-topics/articulation-and-phonology/">ASHA Practice Portal: Speech Sound Disorders—Articulation and Phonology</a> — scope of SLP roles, culturally and linguistically relevant assessment, treatment progression, and biofeedback techniques.</li>
+    <li><a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/general-wellness-policy-low-risk-devices">FDA: General Wellness—Policy for Low Risk Devices (January 2026)</a> — boundary between low-risk wellness and diagnosis/treatment-related functions.</li>
+    <li><a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/clinical-decision-support-software">FDA: Clinical Decision Support Software (January 2026)</a> — current final guidance and examples for device/non-device CDS functions.</li>
+    <li><a href="https://www.ftc.gov/news-events/news/press-releases/2025/01/ftc-finalizes-changes-childrens-privacy-rule-limiting-companies-ability-monetize-kids-data">FTC: 2025 COPPA Rule amendments</a> — children’s data protections and biometric identifier treatment.</li>
+    <li><a href="https://www.ftc.gov/business-guidance/resources/complying-ftcs-health-breach-notification-rule-0">FTC: Complying with the Health Breach Notification Rule</a> — coverage considerations for health apps not governed by HIPAA.</li>
+    <li><a href="https://www.hhs.gov/hipaa/for-professionals/special-topics/health-apps/index.html">HHS: Resources for Mobile Health Apps Developers</a> — how HIPAA, FTC, FDA, COPPA, and related obligations can depend on the app’s function and relationships.</li>
+    <li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI Risk Management Framework</a> — governance, mapping, measurement, and management of AI risks.</li>
+    <li><a href="https://mas.owasp.org/MASVS/">OWASP Mobile Application Security Verification Standard</a> — mobile storage, crypto, authentication, network, platform, code, resilience, and privacy controls.</li>
+    <li><a href="https://www.w3.org/TR/WCAG22/">W3C Web Content Accessibility Guidelines 2.2</a> — current web accessibility recommendation.</li>
+  </ul>
+  <p class="muted">This plan is product and engineering guidance, not medical or legal advice. Regulatory, privacy, research, and clinical decisions require qualified professionals in the jurisdictions and populations involved.</p>
+</article>
+</main>
+<script>
+  (() => {
+    const controls = {
+      team: document.getElementById('team-size'),
+      months: document.getElementById('months'),
+      monthly: document.getElementById('monthly-cost'),
+      fixed: document.getElementById('fixed-cost')
+    };
+    const compact = value => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 2 }).format(value);
+    const scenario = () => {
+      const team = Number(controls.team.value);
+      const months = Number(controls.months.value);
+      const loaded_monthly_cost_per_person = Number(controls.monthly.value);
+      const research_legal_security_and_fixed_costs = Number(controls.fixed.value);
+      const total = team * months * loaded_monthly_cost_per_person + research_legal_security_and_fixed_costs;
+      return { team, months, loaded_monthly_cost_per_person, research_legal_security_and_fixed_costs, total };
+    };
+    const update = () => {
+      const value = scenario();
+      document.getElementById('team-size-out').textContent = `${value.team} people`;
+      document.getElementById('months-out').textContent = `${value.months} months`;
+      document.getElementById('monthly-cost-out').textContent = `${compact(value.loaded_monthly_cost_per_person)}/mo`;
+      document.getElementById('fixed-cost-out').textContent = compact(value.research_legal_security_and_fixed_costs);
+      document.getElementById('budget-total').textContent = compact(value.total);
+    };
+    Object.values(controls).forEach(control => control.addEventListener('input', update));
+    document.getElementById('copy-budget').addEventListener('click', async () => {
+      const status = document.getElementById('copy-status');
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(scenario(), null, 2));
+        status.textContent = 'Copied.';
+      } catch (_) {
+        status.textContent = 'Copy unavailable; select the values manually.';
+      }
+    });
+    update();
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,579 @@
+{
+  "catalogSourceHashes" : [
+    {
+      "path" : "apps/ios-learner/Sources/DirectPractice/PracticeLibrary.swift",
+      "sha256" : "d01be2fdfb9cc5cc178b419af5eb944a52c81c4d4a0f1fe5f28c5ae8af81bb7b"
+    },
+    {
+      "path" : "apps/ios-learner/Sources/DirectPractice/PracticeVocabulary.swift",
+      "sha256" : "43fc136592553d88991e6917af3cf33bc1069564987e47f2c3051ea0ae4e888c"
+    },
+    {
+      "path" : "docs/consumer-assessment/catalog-audit.swift",
+      "sha256" : "9c1dcc7b5ae636261204328e84a5452c2ced1b4a6c5f8cb02953218478a7f76b"
+    }
+  ],
+  "prompts" : [
+    {
+      "id" : "r-beginning-rabbit",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 16,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "R",
+          "AE",
+          "B",
+          "AH",
+          "T"
+        ],
+        [
+          "R",
+          "AE",
+          "B",
+          "IH",
+          "T"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "soundID" : "r",
+      "sourceWord" : "rabbit",
+      "targetIndexesByVariant" : [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "targetPhone" : "R",
+      "variantCount" : 2,
+      "word" : "rabbit"
+    },
+    {
+      "id" : "r-middle-bread",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 16,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "R",
+          "EH",
+          "D"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          1
+        ]
+      ],
+      "soundID" : "r",
+      "sourceWord" : "bread",
+      "targetIndexesByVariant" : [
+        [
+          1
+        ]
+      ],
+      "targetPhone" : "R",
+      "variantCount" : 1,
+      "word" : "bread"
+    },
+    {
+      "id" : "r-end-door",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 16,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "end",
+      "pronunciationVariants" : [
+        [
+          "D",
+          "AO",
+          "R"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "soundID" : "r",
+      "sourceWord" : "door",
+      "targetIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "targetPhone" : "R",
+      "variantCount" : 1,
+      "word" : "door"
+    },
+    {
+      "id" : "b-beginning-baby",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 0,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "EY",
+          "B",
+          "IY"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "soundID" : "b",
+      "sourceWord" : "baby",
+      "targetIndexesByVariant" : [
+        [
+          0,
+          2
+        ]
+      ],
+      "targetPhone" : "B",
+      "variantCount" : 1,
+      "word" : "baby"
+    },
+    {
+      "id" : "b-middle-baby",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 0,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "EY",
+          "B",
+          "IY"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "soundID" : "b",
+      "sourceWord" : "baby",
+      "targetIndexesByVariant" : [
+        [
+          0,
+          2
+        ]
+      ],
+      "targetPhone" : "B",
+      "variantCount" : 1,
+      "word" : "baby"
+    },
+    {
+      "id" : "n-middle-banana",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 5,
+      "multipleOccurrencesAtSelectedPosition" : true,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "AH",
+          "N",
+          "AE",
+          "N",
+          "AH"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2,
+          4
+        ]
+      ],
+      "soundID" : "n",
+      "sourceWord" : "banana",
+      "targetIndexesByVariant" : [
+        [
+          2,
+          4
+        ]
+      ],
+      "targetPhone" : "N",
+      "variantCount" : 1,
+      "word" : "banana"
+    },
+    {
+      "id" : "k-middle-backpack",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 6,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "AE",
+          "K",
+          "P",
+          "AE",
+          "K"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "soundID" : "k",
+      "sourceWord" : "backpack",
+      "targetIndexesByVariant" : [
+        [
+          2,
+          5
+        ]
+      ],
+      "targetPhone" : "K",
+      "variantCount" : 1,
+      "word" : "backpack"
+    },
+    {
+      "id" : "k-end-backpack",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 6,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "end",
+      "pronunciationVariants" : [
+        [
+          "B",
+          "AE",
+          "K",
+          "P",
+          "AE",
+          "K"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          5
+        ]
+      ],
+      "soundID" : "k",
+      "sourceWord" : "backpack",
+      "targetIndexesByVariant" : [
+        [
+          2,
+          5
+        ]
+      ],
+      "targetPhone" : "K",
+      "variantCount" : 1,
+      "word" : "backpack"
+    },
+    {
+      "id" : "s-beginning-sky",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 10,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "S",
+          "K",
+          "AY"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "soundID" : "s",
+      "sourceWord" : "sky",
+      "targetIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "targetPhone" : "S",
+      "variantCount" : 1,
+      "word" : "sky"
+    },
+    {
+      "id" : "v-beginning-vase",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 9,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "V",
+          "EY",
+          "S"
+        ],
+        [
+          "V",
+          "AA",
+          "Z"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "soundID" : "v",
+      "sourceWord" : "vase",
+      "targetIndexesByVariant" : [
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "targetPhone" : "V",
+      "variantCount" : 2,
+      "word" : "vase"
+    },
+    {
+      "id" : "y-beginning-yo-yo",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 18,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "Y",
+          "OW",
+          "Y",
+          "OW"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : true,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "soundID" : "y",
+      "sourceWord" : "yoyo",
+      "targetIndexesByVariant" : [
+        [
+          0,
+          2
+        ]
+      ],
+      "targetPhone" : "Y",
+      "variantCount" : 1,
+      "word" : "yo-yo"
+    },
+    {
+      "id" : "th-beginning-thumb",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 20,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "beginning",
+      "pronunciationVariants" : [
+        [
+          "TH",
+          "AH",
+          "M"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "soundID" : "th",
+      "sourceWord" : "thumb",
+      "targetIndexesByVariant" : [
+        [
+          0
+        ]
+      ],
+      "targetPhone" : "TH",
+      "variantCount" : 1,
+      "word" : "thumb"
+    },
+    {
+      "id" : "voiced-th-middle-feather",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 21,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "F",
+          "EH",
+          "DH",
+          "ER"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "soundID" : "voiced-th",
+      "sourceWord" : "feather",
+      "targetIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "targetPhone" : "DH",
+      "variantCount" : 1,
+      "word" : "feather"
+    },
+    {
+      "id" : "ng-end-ring",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : true,
+      "modelTargetID" : 22,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "end",
+      "pronunciationVariants" : [
+        [
+          "R",
+          "IH",
+          "NG"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "soundID" : "ng",
+      "sourceWord" : "ring",
+      "targetIndexesByVariant" : [
+        [
+          2
+        ]
+      ],
+      "targetPhone" : "NG",
+      "variantCount" : 1,
+      "word" : "ring"
+    },
+    {
+      "id" : "zh-middle-treasure",
+      "intendedUse" : "internal engineering exercise only",
+      "learnerFindingEligible" : false,
+      "modelInventorySupported" : false,
+      "modelTargetID" : null,
+      "multipleOccurrencesAtSelectedPosition" : false,
+      "position" : "middle",
+      "pronunciationVariants" : [
+        [
+          "T",
+          "R",
+          "EH",
+          "ZH",
+          "ER"
+        ]
+      ],
+      "repeatedTargetInAnyVariant" : false,
+      "reviewStatus" : "pending",
+      "selectedIndexesDifferAcrossVariants" : false,
+      "selectedPositionIndexesByVariant" : [
+        [
+          3
+        ]
+      ],
+      "soundID" : "zh",
+      "sourceWord" : "treasure",
+      "targetIndexesByVariant" : [
+        [
+          3
+        ]
+      ],
+      "targetPhone" : "ZH",
+      "variantCount" : 1,
+      "word" : "treasure"
+    }
+  ],
+  "schemaVersion" : 1,
+  "status" : "PROPOSED / ALL REVIEW PENDING"
+}

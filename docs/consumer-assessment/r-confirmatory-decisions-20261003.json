@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "policyId": "r-confirmatory-ai-decisions-20261003",
+  "decisionDate": "2026-10-03",
+  "status": "selected_research_policy_not_executable_study_declaration",
+  "authority": "owner_delegated_technical_research_choices_to_models",
+  "reviewKind": "AI_research_design_engineering",
+  "independentReviewModel": "gpt-6-astra",
+  "humanExpertSignoffClaimed": false,
+  "researchOnly": true,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "productionUseEligible": false,
+  "primary": {
+    "metric": "unweighted_mean_paired_within_child_vote_weighted_auroc_gain",
+    "comparison": "candidate_minus_unchanged_retained_p0_plus_p1",
+    "positiveVotes": "derhotic_n_minus_k",
+    "negativeVotes": "rhotic_k",
+    "mixedVotesAndSelfTieHalfCredit": true,
+    "rankingProbabilityClip": null,
+    "meanGainTarget": 0.02,
+    "meanGainOperator": ">=",
+    "bootstrapLowerTarget": 0,
+    "bootstrapLowerOperator": ">",
+    "targetIsClinicalMinimum": false,
+    "passProvesTrueGainExceedsMeanTarget": false
+  },
+  "coverage": {
+    "fullChildDenominator": 80,
+    "requiredDefinedPairedChildren": 80,
+    "selectedDenominator": "all_capped_selected_tokens_before_post_cap_exclusions_or_processing_rating_failures",
+    "overallSharedPercentMinimum": 95,
+    "perChildSharedPercentMinimum": 90,
+    "integerComparison": "100*paired_shared_count>=minimum_percent*capped_selected_count",
+    "positiveSelectionRequiredForEveryChild": true,
+    "substitutionAllowed": false
+  },
+  "bootstrap": {
+    "population": "paired_defined_numeric_children_fixed_models",
+    "generator": "numpy_default_rng_PCG64",
+    "seed": 20261002,
+    "draws": 2000,
+    "quantiles": [
+      0.025,
+      0.975
+    ],
+    "quantileMethod": "linear",
+    "resamplingUnit": "whole_child",
+    "undefinedSubsetCanYieldDecisiveVerdict": false,
+    "thresholdComparisonsUse": "unrounded_saved_values_no_audit_tolerance_adjustment"
+  },
+  "verdictOrder": [
+    {
+      "verdict": "invalid",
+      "when": "integrity_failure"
+    },
+    {
+      "verdict": "inconclusive_coverage",
+      "when": "any_coverage_gate_fails"
+    },
+    {
+      "verdict": "pass_ranking",
+      "when": "mean_gain>=0.02_and_lower95>0"
+    },
+    {
+      "verdict": "fail_below_target",
+      "when": "not_pass_and_upper95<0.02"
+    },
+    {
+      "verdict": "inconclusive_precision",
+      "when": "otherwise"
+    }
+  ],
+  "secondary": {
+    "comparison": "candidate_vs_fixed_full_DEV_monotonic_calibration",
+    "metrics": [
+      "child_balanced_log_loss",
+      "child_balanced_expected_per_vote_brier"
+    ],
+    "probabilityClip": 1e-06,
+    "role": "descriptive_only",
+    "rescuesPrimary": false,
+    "independentConfirmatoryClaimAllowed": false,
+    "simultaneousIntervalCoverageClaimed": false
+  },
+  "preservedRecipes": {
+    "candidate": "preserved_full_DEV_candidate_ridge_0.01_no_refit",
+    "retained": "unchanged_ages_6_12_bundle",
+    "selectionSalt": "percept-r-external-v1",
+    "perChildCap": 40,
+    "postCapExclusionsCounted": true,
+    "calibrationRecipe": "r-calibration-preparation.md_plus_reviewed_calibrate.py",
+    "closedStudyChangesAllowed": false
+  },
+  "retryPolicy": "no_TEST_informed_tuning_checkpoint_replacement_or_rescue_run_after_once_only_outcome",
+  "executionPerformed": false,
+  "testPartitionTouched": false,
+  "sealedDataAccessAuthorized": false,
+  "actualCalibrationBytesPresent": false,
+  "actualReservedMembershipBound": false,
+  "powerClaimed": false,
+  "populationOrStudyLevelUncertaintyClaimed": false,
+  "limitations": [
+    "numeric_ID_not_established_biological_household_independence",
+    "no_study_or_word_holdout",
+    "child_bootstrap_conditional_on_fixed_models",
+    "token_missingness_bias_not_removed",
+    "no_clinical_product_or_treatment_claim",
+    "no_independent_age6_age7_claim",
+    "policy_numbers_are_engineering_judgments"
+  ],
+  "nextRequiredBindings": [
+    "permitted_complete_DEV_calibration_inputs_and_actual_fixed_audited_coefficients",
+    "verified_reserved_metadata_membership_denominators",
+    "source_runtime_dependencies_and_execution_declaration"
+  ]
+}

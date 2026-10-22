@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TheLab metadata (read by the `lab` CLI on publish; do not remove).
+     thelab:plan is the STABLE plan id — re-publishing this file updates the same
+     plan (bumping its version) even if the title changes. -->
+<meta name="thelab:project" content="speech-therapy">
+<meta name="thelab:title" content="Device token generation rate limit review">
+<meta name="thelab:plan" content="device-token-generation-rate-limit-review">
+<meta name="thelab:kind" content="review">
+<meta name="thelab:status" content="active">
+<meta name="thelab:tags" content="rate-limit,device-access,security,postgresql">
+<!-- Optional: issue numbers this plan closes on ship, e.g. content="3,7". They
+     auto-close when the plan is marked done (`lab done … --commit`). -->
+<meta name="thelab:addresses" content="">
+<meta name="thelab:version" content="1">
+<meta name="thelab:hosted-url" content="https://thelab.wilsonzach.com/project/speech-therapy/review/device-token-generation-rate-limit-review">
+<title>Device token generation rate limit review</title>
+<style>
+  /* Self-contained. Mirrors The Lab reader so the local file looks like the hosted
+     one. This block is NOT published: the hosted view uses The Lab's own reader
+     stylesheet, and only the article content below is published. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #0a0a0a; color: #a1a1a1;
+    font-size: 15px; line-height: 1.7; letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 24px 96px; }
+  a { color: #4e9bfa; text-decoration: none; } a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: #ededed; margin-bottom: 8px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: #ededed; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #222; }
+  h3 { font-size: 14px; font-weight: 600; color: #ededed; margin: 32px 0 12px; }
+  p { margin: 0 0 12px; } strong { color: #ededed; font-weight: 600; }
+  ul, ol { margin: 0 0 12px 22px; } li { margin: 4px 0; }
+  .lede { color: #ededed; font-size: 16px; margin: 4px 0 8px; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  pre.code { background: #0d0d0d; border: 1px solid #222; border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.65; color: #a1a1a1; tab-size: 2; margin: 16px 0; }
+  .callout { border: 1px solid #222; border-left: 2px solid #4e9bfa; border-radius: 0 6px 6px 0; padding: 14px 20px; margin: 20px 0; font-size: 13.5px; color: #a1a1a1; }
+  .callout strong { color: #ededed; }
+  figure { margin: 16px 0; } figcaption { font-size: 12px; color: #6b6b6b; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  .fig-scroll { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
+  .fig-scroll svg { display: block; width: 100%; height: auto; }
+  .tbl-scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  table.data th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; padding: 10px 14px; border-bottom: 1px solid #222; }
+  table.data td { padding: 10px 14px; border-bottom: 1px solid #222; color: #a1a1a1; vertical-align: top; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td:first-child { color: #ededed; white-space: nowrap; }
+  .plan-links { margin: 16px 0 8px; }
+  .plan-links table.data td:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; width: 90px; }
+  .plan-links table.data td:nth-child(2) { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; word-break: break-all; }
+  .status { display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+  .st-draft::before { border: 1px solid #6b6b6b; }
+  .st-active::before { background: #4e9bfa; }
+  .st-done::before { background: #ededed; }
+  .st-archived::before { background: #333; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<article>
+  <h1>Device token generation rate limit review</h1>
+
+  <!-- Plan meta: local-file chrome only — `lab publish` strips this whole section
+       from the published body (The Lab renders its own header + metadata rail). The
+       CLI fills the Version cell on publish (v1, v2, …). -->
+  <section class="plan-links">
+    <div class="tbl-scroll"><table class="data">
+      <tr><td>Project</td><td>speech-therapy</td></tr>
+      <tr><td>Version</td><td id="thelab-version">v1</td></tr>
+      <tr><td>Status</td><td><span class="status st-active">active</span> · 2026-07-11</td></tr>
+    </table></div>
+  </section>
+
+  <p class="lede">Approved security review of durable, privacy-minimized clinician token-generation limits that preserve emergency device revocation.</p>
+
+  <h2>Context</h2>
+  <p>The five-slot learner-device ceiling prevents unlimited active grants, but it does not bound repeated issuance or replacement attempts. This milestone adds a database-enforced abuse boundary before raw token generation without throttling the safety-critical revocation path. The implementation remains a local foundation: no managed PostgreSQL/Neon contention evidence, provider-edge control, or learner-device invalid-token/IP throttling is claimed.</p>
+
+  <h2>Decision</h2>
+  <p><strong>Approved with no remaining code blocker.</strong> Issue and rotation consume one fixed UTC-hour budget at two scopes: 30 attempts per tenant/clinician actor and 10 attempts per tenant/learner. The ordered actor-then-learner upsert is atomic; a denial in either scope fails the request. Capacity conflicts count as attempts, while internal active-slot retries happen after a single budget consumption. Revocation does not call the limiter.</p>
+  <p>The API maps a blocked request to a private <code>429</code> response with database-derived <code>Retry-After</code>. The clinician UI states both limits and explicitly preserves revocation availability. Buckets retain only opaque internal scope IDs, aggregate counts, a request UUID, and timestamps—never raw tokens, token hashes, IP addresses, or clinical content. Learner-scoped buckets are deleted with the learner.</p>
+
+  <h2>Independent review findings</h2>
+  <p>The first review correctly blocked two details:</p>
+  <ol>
+    <li><code>date_trunc</code> on <code>TIMESTAMPTZ</code> followed the database session timezone, so a non-UTC session could misalign windows and make UTC copy false. The final query explicitly converts to UTC before truncation and converts the boundary back to <code>TIMESTAMPTZ</code>.</li>
+    <li>An opportunistic deletion CTE for old buckets had no guaranteed ordering relative to the upsert and could create an avoidable lock-order cycle. It was removed from the request path. Retention is now an explicit operations requirement instead of an unsafe inline side effect.</li>
+  </ol>
+  <p>Re-review approved the corrected query. It also confirmed fail-closed partial consumption, one-count internal retries, counted capacity conflicts, and the revocation exemption.</p>
+
+  <h2>Risks &amp; mitigations</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Session timezone changes split one real UTC hour into multiple buckets</td><td>medium without fix</td><td>Explicit UTC conversion plus an <code>Asia/Kathmandu</code> regression test proving minute-zero UTC alignment.</td></tr>
+      <tr><td>Concurrent actor/learner counters permit excess generations</td><td>low locally; unproven managed</td><td>One ordered PostgreSQL upsert and fail-closed <code>BOOL_AND</code>; require real Neon contention testing before deployment.</td></tr>
+      <tr><td>Rate limiting blocks response to a compromised device</td><td>low</td><td>Revocation is a separate, audited path with no limiter call and is covered after learner-limit exhaustion.</td></tr>
+      <tr><td>Operational bucket data grows indefinitely</td><td>medium</td><td>Learner deletion removes subject-scoped rows now; add a bounded, independently scheduled retention job before deployment.</td></tr>
+      <tr><td>Attackers target learner-device endpoints instead</td><td>high for internet exposure</td><td>Do not deploy clinically until invalid-token/IP and provider-edge controls are implemented and tested.</td></tr>
+      <tr><td>Policy constants decrease during a live window</td><td>low</td><td>Deploy policy changes at a UTC window boundary or migrate live buckets safely; current runtime constants are fixed.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Verification</h2>
+  <ul>
+    <li><code>pnpm test</code>: platform-data 75/75, clinician web 42/42, shared JavaScript suites, Swift contracts, and iPhone 17 Pro simulator tests pass.</li>
+    <li><code>pnpm lint</code> and <code>pnpm typecheck</code> pass repository-wide.</li>
+    <li><code>pnpm test:a11y</code>: four clinician portal checks pass for desktop, representative states, keyboard navigation, mobile, and forced colors.</li>
+    <li><code>pnpm build</code>: optimized Next.js and native iOS simulator builds pass.</li>
+    <li>Focused database evidence covers unauthorized no-mutation, non-UTC alignment, learner exhaustion, actual cross-learner actor accumulation, fail-closed partial consumption, capacity conflicts, internal retries, revocation exemption, and learner deletion.</li>
+    <li>HTTP evidence covers issuance and rotation <code>429</code>, <code>Retry-After</code>, and private no-store responses.</li>
+  </ul>
+
+  <h2>Required before deployment</h2>
+  <ul>
+    <li>Run migration 0024 and high-contention same/different actor/learner tests on the actual managed PostgreSQL/Neon driver, including UTC-boundary rollover and deadlock monitoring.</li>
+    <li>Add provider-edge and learner-device invalid-token/IP throttling without making valid emergency revocation unavailable.</li>
+    <li>Implement and verify bounded inactive-bucket retention under an operations-owned schedule.</li>
+    <li>Verify least-privilege application roles cannot bypass the service boundary with direct writes.</li>
+  </ul>
+</article>
+</main>
+</body>
+</html>

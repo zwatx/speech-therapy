@@ -1,0 +1,17 @@
+# Apple on-device recognition verification
+
+Apple English speech assets were installed in the dedicated iOS simulator. The separate legacy capability check established an available en-US recognizer with on-device support; it did not request authorization or perform recognition. The modern SpeechAnalyzer probe remained a typed no-model observation. These are separate results.
+
+The first copied legacy recognition attempt built successfully, then stopped before boot, authorization or a recognition task. Its strict metadata validator expected the research permission text in the unused UI runner, where Xcode supplies its fixed automation text instead. The actual host and the two test bundles contained the intended research text. No recognition result follows from this build.
+
+Actual attempt: session22714, terminal exit1 (`613c5a`). The immediate original collector exited1 (`ee57fa`) because the unrun boot, bootstatus and unit stages had no receipts. That failure is preserved. A separate actual early-failure collection (session70998, exit0, `25ed3b`) verified current source guards, all five known stage groups and the outer group absent, and the exact dedicated simulator Shutdown, within105.281 seconds of the original1800-second boundary. Missing stage ownership was not invented.
+
+V2 changed only the unused runner permission-text check to require Xcode’s exact observed default. Its independent review passed. The actual check completed all stages but reported `authorizationUnresolved`: one permission request, no callback within30,021 milliseconds, and no recognition task. This is neither permission denial nor failed recognition. The selected host retained the exact research purpose; the Swift case, licensed complete public bread recording, forced on-device request, empty hints and budgets were unchanged.
+
+Actual V2: session29038, exit1 (`310a5b`). The independent collector session34943 exited0 (`a8bf3a`) and retained the failed observation. Root independently qualified its terminal within143.316 seconds of the original1800-second boundary. Current source guards passed, all eight native groups and the outer group were absent, and the exact simulator was Shutdown. Collector success means the negative result and cleanup were collected; recognition did not pass.
+
+The installed Xcode exposes simulators through Device Hub; the old Simulator application path is absent. Root opened Device Hub normally and selected the dedicated Cadence Sound Compact Verification simulator, without starting another device or changing privacy settings.
+
+V3 used the same recognition case with this frontend already selected. It observed speech authorization as denied before the case started, made no new permission request and created no recognition task. No prompt or Allow action occurred; the cause of that denied state was not established. Actual session70258 exited1 (`ab1107`); collector18102 exited0 (`abd3e2`), preserving `authorizationRejected`. Independent terminal qualification completed within101.010 seconds of the original1800-second boundary, with source guards, all owned groups absent and exact Shutdown. Further unchanged Apple attempts are deferred; the bundled recognizer remains the app’s working route.
+
+No signing/account settings were changed. This case requests no microphone or camera and provides no recording-upload route. Word recognition remains separate from individual-sound correctness and clinical diagnosis.

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TheLab metadata (read by the `lab` CLI on publish; do not remove).
+     thelab:plan is the STABLE plan id — re-publishing this file updates the same
+     plan (bumping its version) even if the title changes. -->
+<meta name="thelab:project" content="speech-therapy">
+<meta name="thelab:title" content="Learner device request rate limit review">
+<meta name="thelab:plan" content="learner-device-request-rate-limit-review">
+<meta name="thelab:kind" content="review">
+<meta name="thelab:status" content="active">
+<meta name="thelab:tags" content="rate-limit,learner-device,security,postgresql,ios">
+<!-- Optional: issue numbers this plan closes on ship, e.g. content="3,7". They
+     auto-close when the plan is marked done (`lab done … --commit`). -->
+<meta name="thelab:addresses" content="">
+<meta name="thelab:version" content="1">
+<meta name="thelab:hosted-url" content="https://thelab.wilsonzach.com/project/speech-therapy/review/learner-device-request-rate-limit-review">
+<title>Learner device request rate limit review</title>
+<style>
+  /* Self-contained. Mirrors The Lab reader so the local file looks like the hosted
+     one. This block is NOT published: the hosted view uses The Lab's own reader
+     stylesheet, and only the article content below is published. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: #0a0a0a; color: #a1a1a1;
+    font-size: 15px; line-height: 1.7; letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; padding: 40px 24px 96px; }
+  a { color: #4e9bfa; text-decoration: none; } a:hover { text-decoration: underline; }
+  img { max-width: 100%; height: auto; }
+  h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: #ededed; margin-bottom: 8px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.015em; color: #ededed; margin: 56px 0 16px; padding-top: 24px; border-top: 1px solid #222; }
+  h3 { font-size: 14px; font-weight: 600; color: #ededed; margin: 32px 0 12px; }
+  p { margin: 0 0 12px; } strong { color: #ededed; font-weight: 600; }
+  ul, ol { margin: 0 0 12px 22px; } li { margin: 4px 0; }
+  .lede { color: #ededed; font-size: 16px; margin: 4px 0 8px; }
+  code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+  pre.code { background: #0d0d0d; border: 1px solid #222; border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.65; color: #a1a1a1; tab-size: 2; margin: 16px 0; }
+  .callout { border: 1px solid #222; border-left: 2px solid #4e9bfa; border-radius: 0 6px 6px 0; padding: 14px 20px; margin: 20px 0; font-size: 13.5px; color: #a1a1a1; }
+  .callout strong { color: #ededed; }
+  figure { margin: 16px 0; } figcaption { font-size: 12px; color: #6b6b6b; padding-top: 8px; font-family: ui-monospace, Menlo, monospace; }
+  .fig-scroll { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
+  .fig-scroll svg { display: block; width: 100%; height: auto; }
+  .tbl-scroll { overflow-x: auto; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  table.data th { text-align: left; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; padding: 10px 14px; border-bottom: 1px solid #222; }
+  table.data td { padding: 10px 14px; border-bottom: 1px solid #222; color: #a1a1a1; vertical-align: top; }
+  table.data tr:last-child td { border-bottom: 0; }
+  table.data td:first-child { color: #ededed; white-space: nowrap; }
+  .plan-links { margin: 16px 0 8px; }
+  .plan-links table.data td:first-child { font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: #6b6b6b; width: 90px; }
+  .plan-links table.data td:nth-child(2) { color: #ededed; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; word-break: break-all; }
+  .status { display: inline-flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; }
+  .st-draft::before { border: 1px solid #6b6b6b; }
+  .st-active::before { background: #4e9bfa; }
+  .st-done::before { background: #ededed; }
+  .st-archived::before { background: #333; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<article>
+  <h1>Learner device request rate limit review</h1>
+
+  <!-- Plan meta: local-file chrome only — `lab publish` strips this whole section
+       from the published body (The Lab renders its own header + metadata rail). The
+       CLI fills the Version cell on publish (v1, v2, …). -->
+  <section class="plan-links">
+    <div class="tbl-scroll"><table class="data">
+      <tr><td>Project</td><td>speech-therapy</td></tr>
+      <tr><td>Version</td><td id="thelab-version">v1</td></tr>
+      <tr><td>Status</td><td><span class="status st-active">active</span> · 2026-07-11</td></tr>
+    </table></div>
+  </section>
+
+  <p class="lede">Approved review of durable valid-device request budgets for assignment reads and audio uploads, including native Retry-After behavior.</p>
+
+  <h2>Context</h2>
+  <p>Clinician token generation is bounded, but a valid enrolled token previously allowed unmetered assignment polling and audio-upload requests. The milestone adds a database abuse boundary after valid-device authentication. It intentionally does not claim invalid-token or IP protection because trustworthy client address attribution depends on the eventual deployment provider.</p>
+
+  <h2>Verdict</h2>
+  <p><strong>Approved with no blocking security or correctness finding.</strong> Migration 0025 creates a dedicated table keyed by tenant, device session, operation, and UTC-hour window. Assignment reads and attempt uploads each receive 120 requests per valid session per hour. One statement rechecks the live slot, expiry, learner deletion, exact current consent, audio permission, and assent before atomically consuming the relevant bucket.</p>
+
+  <h2>Behavior reviewed</h2>
+  <ul>
+    <li>Invalid tokens and the explicit internal resolver create no request bucket.</li>
+    <li>Every current learner assignment/upload handler calls operation-aware authorization with a hard-coded operation; runtime-unknown operations fail before database access.</li>
+    <li>One operation cannot consume the other's capacity, and two device sessions remain independent.</li>
+    <li>The first policy stored in a live window is frozen until the next UTC boundary, avoiding unsafe mid-window limit changes.</li>
+    <li>Every HTTP retry or idempotent replay consumes another request. The 120-upload budget equals twice the maximum 20 × 3 attempt dose, allowing one replay per slot.</li>
+    <li>A composite foreign key cascades buckets with session deletion. Revoked-session aggregates remain until retention or learner deletion.</li>
+    <li>Private 429 responses include database-derived Retry-After. iOS accepts only numeric 1–3600 second values, preserves enrollment, rounds conservatively, and falls back to generic rejection for unsafe headers.</li>
+  </ul>
+
+  <h2>Risks &amp; mitigations</h2>
+  <div class="tbl-scroll"><table class="data">
+    <thead><tr><th>Risk</th><th>Likelihood</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td>Concurrent requests exceed a bucket</td><td>low locally; managed unproven</td><td>Atomic PostgreSQL upsert serializes one session/operation/window row; require managed contention testing.</td></tr>
+      <tr><td>Revocation or deletion races authorization</td><td>low</td><td>KEY SHARE protects parent identity; downstream assignment/attempt writes recheck live state. No cancellation of already-authorized in-flight work is claimed.</td></tr>
+      <tr><td>Malformed Retry-After creates unsafe native delay</td><td>low</td><td>Accept integer 1–3600 only; missing, malformed, zero, oversized, and overflow inputs remain generic 429 errors.</td></tr>
+      <tr><td>Valid-token limits are mistaken for edge abuse protection</td><td>medium</td><td>Docs and release posture explicitly keep trusted invalid-token/IP provider-edge controls open.</td></tr>
+      <tr><td>Request aggregates outlive revocation</td><td>medium</td><td>No token/hash/IP/content is stored; session/learner deletion cascades. Add bounded operational retention before deployment.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Verification</h2>
+  <ul>
+    <li><code>pnpm test</code>: platform-data 76/76, clinician web 44/44, shared suites, Swift contracts, and full iPhone 17 Pro simulator tests pass.</li>
+    <li><code>pnpm lint</code>, <code>pnpm typecheck</code>, <code>pnpm test:a11y</code>, and <code>pnpm build</code> pass.</li>
+    <li>Focused database evidence covers invalid-token/plain-resolver no-mutation, runtime operation denial, non-UTC alignment, actual exhaustion, scope separation, policy freezing, Retry-After, revocation, and cascade deletion.</li>
+    <li>Focused web and native evidence covers both endpoints, private no-store 429 responses, enrollment preservation, calm copy, and strict Retry-After parsing.</li>
+    <li>Two independent read-only review passes approved the database/HTTP implementation and the runtime/native delta.</li>
+  </ul>
+
+  <h2>Required before deployment</h2>
+  <ul>
+    <li>Rehearse migration 0025's table lock, unique constraint, and composite foreign key on the target managed PostgreSQL/Neon environment.</li>
+    <li>Stress same-bucket boundary contention, two operations, authorization versus revoke/rotate/delete/consent changes, and exact UTC rollover.</li>
+    <li>Add trusted provider-edge invalid-token/IP throttling and network/log privacy evidence.</li>
+    <li>Deploy an operations-owned bounded retention workflow for inactive aggregate buckets.</li>
+  </ul>
+</article>
+</main>
+</body>
+</html>

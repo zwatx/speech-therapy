@@ -1,0 +1,25 @@
+# MyST research access and model role
+
+Checked September 27, 2026. The user clarified that this project is **strictly non-commercial research**. MyST is therefore worth pursuing through its research access route; it was not rejected for scientific unsuitability. No corpus download, agreement submission, signature, contact or purchase has occurred.
+
+## Why it is useful
+
+The LDC release describes roughly 470 hours from 1,371 children in grades 3–5, with word transcripts for about 45% of utterances. Its existing train/development/test partitions keep each student in one partition. This could support adapting the encoder to children's speech and evaluating child speech recognition, while the existing pronunciation-rating task remains separate. Benefit to pronunciation ratings is a hypothesis to test, not an established outcome. [LDC catalog](https://catalog.ldc.upenn.edu/LDC2021S05), [release README](https://catalog.ldc.upenn.edu/docs/LDC2021S05/MyST-corpus-README.txt).
+
+A word transcript or pronunciation dictionary is not a verified transcript of every produced phone and must not become a synthetic correctness label. The README says transcription attempted to retain mispronounced words, but that does not establish complete phone-level error annotations. [Transcription documentation](https://catalog.ldc.upenn.edu/docs/LDC2021S05/MyST-corpus-README.txt).
+
+## Verified access route
+
+The authors' 2024 paper describes free non-commercial access after a data-use agreement. The paper's `myst.cemantix.org` link currently fails DNS resolution from this Mac; that is a specific endpoint failure, not proof that the corpus is unavailable. The author's main site still serves a three-page **Boulder Learning research agreement**. It requests full name, official email, a Google account if different, research-group/institution details, signature and date. It explains that Google authentication is used to share the corpus. [Author paper](https://aclanthology.org/2024.lrec-main.1052/), [research agreement](https://cemantix.org/documents/bli/MyST-Corpus-Research-Agreement.pdf).
+
+The author paper labels the release CC BY-NC-SA 4.0, while the accessible agreement contains bespoke research-only terms. We have not assumed that the paper's license shorthand overrides those terms or establishes today's download entitlement. The agreement limits sharing and includes location restrictions; a research request should explicitly mention private Colab processing and ask whether it is covered. Individual/independent-research eligibility remains to be confirmed if no institution or group applies. [Research agreement](https://cemantix.org/documents/bli/MyST-Corpus-Research-Agreement.pdf).
+
+LDC offers a separate catalog route requiring a signed non-commercial agreement. The catalog browser displayed $0.00 for non-members before login. After the user signed in, the account was confirmed as Guest, and the catalog exposed no ordering/download control. LDC explicitly says Guest users must register an organization or affiliate with an existing organization to license data; nonmember organizations can license corpora. Independent-research eligibility and account conversion remain unresolved. No purchase or account change was made. [Account roles](https://catalog.ldc.upenn.edu/signup), [obtaining data](https://www.ldc.upenn.edu/language-resources/data/obtaining). [LDC agreement](https://catalog.ldc.upenn.edu/license/myst-childrens-conversational-speech-agreement.pdf), [catalog](https://catalog.ldc.upenn.edu/LDC2021S05).
+
+## Current next step
+
+The user supplied name, contact email and independent-research status. An editable unsigned author agreement has been prepared and verified locally; private fields and the contact draft stay in the ignored access-work private directory. Google account ID remains unconfirmed; Google ID, signature, date and initials are blank. All three rendered pages and canonical/widget field values were checked. The existing LDC account was inspected after the user signed in; it is a Guest account. Confirm the current free research delivery route and permission for private Colab processing with the provider; do not send a message or submit an agreement without explicit authorization. This is an access dependency for MyST only, not a pause of the broader model goal.
+
+If access is granted, inspect release checksums, metadata, student grouping and actual training audio before declaring one bounded child-domain adaptation experiment. Keep MyST development/test partitions separate and keep the pronunciation benchmark speaker/word exclusions intact. Benchmark the chosen Colab GPU and record setup, throughput, memory and compute cost before scaling; no MyST training or GPU speed advantage has yet been measured.
+
+Public agreement and README snapshots, URLs and SHA-256 values are retained in [sources.json](../../work/myst-access-20260927/sources.json). The source [research agreement](../../work/myst-access-20260927/research-agreement.pdf) is ready for the user's review.
