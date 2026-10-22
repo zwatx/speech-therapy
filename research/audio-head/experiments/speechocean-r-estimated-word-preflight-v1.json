@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-estimated-word-preflight-v1",
+  "purpose": "Private label-free integration check of model-estimated canonical target-word positions",
+  "authorPartition": "train",
+  "sampleCount": 40,
+  "sampleManifestSha256": "ed13865de83e727e1d4da157b6119989df70d3ddf285cc74b3a7ccc3aa4b6b36",
+  "sampleQueueSha256": "122246e2a032e411bdd4e02dd9fe85b0b94f354a4049e95ded273a6a26424733",
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "alignmentEncoder": "wavlm-base-plus",
+  "poolingEncoder": "wav2vec2-base",
+  "frameCacheSha256": {
+    "wavlm-base-plus": {
+      "index": "a7c96c9ba791f4f315c2a9cb605fdcedcc3edf92175952598fb7dbea44e837a7",
+      "frames": "0df76d271a7655a5d2fb6dce797d8451994ba80fa1cce6f676a32a1298ae03bf"
+    },
+    "wav2vec2-base": {
+      "index": "88259bf8493b0d03481856fa6945f3c27057a3dc5c2343cba4260f4ed9716414",
+      "frames": "77073774bef63683dbb3c4c030cc0b207336c8e89a1c8016d578ae55dcf0a9f2"
+    }
+  },
+  "headSeeds": [7, 17, 29],
+  "headSteps": 800,
+  "headCheckpointSha256": {
+    "7": "6a37ceefd744e058df7bf6f0bd4f3912722d827b20e812d640b09a05a997107c",
+    "17": "927b48cae253d442c4ecb76126e3afd872b1bb01ebc3cc89e127775b367e2fea",
+    "29": "fa27403052e78c544b202cebbf5903a96d7ebe02f608ab3e07c5ac7c0074c9ff"
+  },
+  "primaryWordSpanHeadSeed": 7,
+  "wordSpanRule": "From first frame of target word's first canonical phone state through last frame of its last phone state, half-open; includes intervening blanks",
+  "offWordRule": "Equal frame count at the farther clip edge wholly outside the estimated word; tie selects left when SHA-256 of opaque clip ID has even first byte",
+  "flags": {
+    "minimumRArgmaxFraction": 0.5,
+    "minimumRMeanPosterior": 0.25,
+    "minimumRDurationSeconds": 0.04,
+    "maximumRDurationSeconds": 0.5,
+    "maximumCenterSpreadSeconds": 0.15,
+    "minimumPairwiseIntervalIou": 0.25
+  },
+  "noRatings": true,
+  "noFit": true,
+  "noAccuracyClaim": true,
+  "outputDirectory": "outputs/speechocean-r-estimated-word-preflight-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "trainingEligible": false
+}

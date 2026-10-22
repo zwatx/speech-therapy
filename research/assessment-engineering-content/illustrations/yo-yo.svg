@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="yo-yo-title yo-yo-desc">
+  <title id="yo-yo-title">Yo-yo</title>
+  <desc id="yo-yo-desc">A toy yo-yo made of two round discs joined in the middle, hanging from a string with a finger loop at the top.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <ellipse cx="124" cy="184" rx="52" ry="6" fill="#D9D9D9"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="120" cy="17" r="7" fill="none" stroke-width="3"/>
+    <path d="M120 24 C122 40 126 58 127 80" fill="none" stroke-width="3"/>
+    <circle cx="132" cy="120" r="44" fill="#D9D9D9"/>
+    <circle cx="120" cy="128" r="44" fill="#FFFFFF"/>
+    <circle cx="120" cy="128" r="20" fill="none" stroke-width="3"/>
+  </g>
+  <circle cx="120" cy="128" r="6" fill="#1A1A1A"/>
+</svg>

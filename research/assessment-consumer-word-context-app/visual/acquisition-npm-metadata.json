@@ -1,0 +1,26 @@
+{
+  "sourceUrl": "https://registry.npmjs.org/@mediapipe/tasks-vision/-/tasks-vision-1.0.1.tgz",
+  "registryUrl": "https://registry.npmjs.org/@mediapipe%2ftasks-vision/1.0.1",
+  "package": "@mediapipe/tasks-vision",
+  "version": "1.0.1",
+  "license": "Apache-2.0",
+  "tarballSha256": "ee318eaa3d42230aa10910d114faf2a488c577c4e4d33c7cb04126924aca505f",
+  "verifiedIntegrity": "sha512-rvRE2FmAZ6ZxKSw7wq+e+jQDpN3t1B/tD2mJz9SmAzb1msoDkd4dMoE4wAh8Z30Um0PQwLiHr9QtomhmXk3aUQ==",
+  "compressedBytes": 10728587,
+  "exportedModule": "vision_bundle.mjs",
+  "exports": {
+    ".": {
+      "types": "./vision.d.ts",
+      "import": "./vision_bundle.mjs",
+      "default": "./vision_bundle.mjs",
+      "require": "./vision_bundle.cjs"
+    },
+    "./vision_bundle.js": "./vision_bundle.js",
+    "./vision_wasm_internal.js": "./wasm/vision_wasm_internal.js",
+    "./vision_wasm_internal.wasm": "./wasm/vision_wasm_internal.wasm",
+    "./vision_wasm_module_internal.js": "./wasm/vision_wasm_module_internal.js",
+    "./vision_wasm_nosimd_internal.js": "./wasm/vision_wasm_nosimd_internal.js",
+    "./vision_wasm_module_internal.wasm": "./wasm/vision_wasm_module_internal.wasm",
+    "./vision_wasm_nosimd_internal.wasm": "./wasm/vision_wasm_nosimd_internal.wasm"
+  }
+}

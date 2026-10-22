@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; media-src 'self' blob:; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Speech practice · Record and listen</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/recorder.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#practice">Skip to practice</a>
+  <header class="site">
+    <div class="wrap site-inner">
+      <p class="site-title">Speech practice</p>
+      <p class="quiet small">Local research preview</p>
+    </div>
+  </header>
+  <main id="practice" class="wrap" tabindex="-1">
+    <div class="intro">
+      <p class="eyebrow">Words and phrases</p>
+      <h1>A word at a time. A little practice.</h1>
+      <p class="quiet measure">Choose a word or phrase, record it, and listen back. Explore the library on your own, or work through a short review, practice, and recheck.</p>
+    </div>
+    <p id="load-status" class="notice" role="status">Loading the practice library…</p>
+    <div id="practice-body" hidden>
+      <section class="phrase-section" aria-labelledby="phrase-heading">
+          <div class="library-filters">
+            <div><label for="prompt-kind">Practice material</label><select id="prompt-kind"><option value="word">Words</option><option value="phrase">Phrases</option></select></div>
+            <div id="word-filters">
+              <div><label for="sound-filter">Sound group</label><select id="sound-filter"><option value="">All sound groups</option></select></div>
+              <div><label for="position-filter">Sound position</label><select id="position-filter"><option value="">Any position</option><option value="beginning">Beginning</option><option value="middle">Middle</option><option value="end">End</option></select></div>
+              <div><label for="word-search">Find a word</label><input id="word-search" type="search" placeholder="Search the library" autocomplete="off"></div>
+            </div>
+          </div>
+        <div class="phrase-picker">
+          <label for="phrase" id="prompt-list-label">Choose a word</label>
+          <select id="phrase" size="5" aria-describedby="library-count phrase-note"></select>
+          <p id="library-count" class="quiet small" role="status"></p>
+          <p id="phrase-note" class="quiet small">Say the selected word or whole phrase.</p>
+        </div>
+        <div class="phrase-copy">
+          <h2 id="phrase-heading"></h2>
+          <p id="phrase-focus" class="focus-text"></p>
+          <p id="phrase-cue" class="quiet measure"></p>
+          <p class="quiet small">This cue describes the selected sound. It does not identify an error in your recording.</p>
+          <p id="prompt-availability" class="small"></p>
+          <div id="session-intro" class="session-start">
+            <button id="start-session" class="button" type="button">Start a short word review</button>
+            <p class="quiet small">Up to five words from this selection. Choose your own practice words afterward.</p>
+          </div>
+        </div>
+      </section>
+      <section id="guided-session" class="guided-session" aria-labelledby="session-heading" hidden>
+        <div class="session-heading-row"><div><p class="eyebrow">This session</p><h2 id="session-heading">Word review</h2></div><button id="end-session" class="button" type="button">End session</button></div>
+        <p id="session-status" class="quiet" role="status"></p>
+        <div id="session-summary" hidden></div>
+        <div class="session-actions">
+          <button id="next-word" class="button" type="button">Next word</button>
+          <button id="practice-selected" class="button primary" type="button" hidden>Practice selected words</button>
+          <button id="recheck-selected" class="button primary" type="button" hidden>Recheck these words</button>
+        </div>
+        <p class="quiet small">This review records which words the recognizer matched. Choose practice words yourself; a mismatch does not identify a speech difficulty. Session notes stay in this tab.</p>
+      </section>
+      <div id="recording-workspace" class="workspace">
+        <section class="panel" aria-labelledby="recording-heading">
+          <p class="eyebrow">1 · Record and listen</p>
+          <h2 id="recording-heading">Your recording</h2>
+          <p class="quiet">Say the selected word or phrase in one recording, up to 4 seconds.</p>
+          <div class="record-actions" role="group" aria-label="Record your speech">
+            <button id="record" class="button primary" type="button" aria-describedby="record-note record-status" disabled>Record</button>
+            <button id="stop-recording" class="button primary" type="button" hidden disabled>Stop and keep</button>
+            <button id="discard-recording" class="button" type="button" hidden disabled>Discard</button>
+          </div>
+          <p id="record-note" class="quiet small">Record asks for microphone access. Stop keeps the recording for you to listen to; it does not start a check.</p>
+          <p id="record-status" class="small status-line" role="status" aria-live="polite">Microphone access starts only when you choose Record.</p>
+          <div id="record-progress" class="record-progress" hidden>
+            <p class="small"><span id="record-time">0.0</span> / 4.0 seconds captured</p>
+            <label for="record-level" class="small quiet">Microphone input</label>
+            <meter id="record-level" min="0" max="1" value="0">0</meter>
+          </div>
+          <label for="audio-file" class="file-label">Or choose a WAV recording</label>
+          <input id="audio-file" type="file" accept=".wav,audio/wav,audio/x-wav" aria-describedby="file-requirements file-status">
+          <p id="file-requirements" class="quiet small">Mono · 16 kHz · 16-bit PCM · 0.1–4 seconds. Other formats need to be converted before use.</p>
+          <p id="file-status" class="small status-line" role="status">No recording chosen.</p>
+          <div id="playback" class="playback" hidden>
+            <p id="audio-label" class="audio-label">Listen to your recording</p>
+            <audio id="audio" aria-labelledby="audio-label" controls preload="metadata"></audio>
+            <p class="quiet small">Playback starts only when you press Play. You can listen without entering an age or agreeing to a check.</p>
+          </div>
+          <button id="clear" class="button" type="button" disabled>Clear recording and result</button>
+          <p class="quiet small retention">Recording or choosing a file keeps it in this tab. Choosing Check sends a temporary copy to the local service on this computer.</p>
+        </section>
+        <section class="panel" aria-labelledby="check-heading">
+          <p class="eyebrow">2 · Check, if you choose</p>
+          <h2 id="check-heading">Check the recording</h2>
+          <p class="quiet">Word recognition looks for the selected word. It does not judge how you pronounced individual sounds.</p>
+          <form id="check-form">
+          <div class="context-field">
+            <label for="context">Type of check</label>
+            <select id="context" aria-describedby="context-note"><option value="recognition">Word recognition · any age</option><option value="child-research">Child sound research · ages 6–12</option></select>
+            <p id="context-note" class="quiet small">For adults or an unknown age, use word recognition. No age is supplied to that check.</p>
+          </div>
+          <div id="age-field" class="age-field" hidden>
+            <label for="age">Age of the person in the recording</label>
+            <select id="age" aria-describedby="age-note">
+              <option value="">Choose age</option>
+              <option value="6">6 years</option><option value="7">7 years</option>
+              <option value="8">8 years</option><option value="9">9 years</option>
+              <option value="10">10 years</option><option value="11">11 years</option>
+              <option value="12">12 years</option>
+            </select>
+            <p id="age-note" class="quiet small">Enter the actual age only. Child sound research supports known ages 6–12; individual sound results remain uncertain.</p>
+          </div>
+          <div class="consent-field">
+            <input id="consent" type="checkbox" aria-describedby="consent-note">
+            <label for="consent">I agree to check this recording on this computer.</label>
+          </div>
+          <p id="consent-note" class="quiet small">The service attempts to remove its temporary copy after the check. If cleanup cannot be confirmed, further checks pause.</p>
+          <div class="actions">
+            <button id="check" class="button primary" type="submit" aria-describedby="check-status" disabled>Check this recording</button>
+            <button id="cancel" class="button" type="button" hidden>Cancel check</button>
+            <button id="refresh-status" class="button" type="button" hidden>Check service status</button>
+          </div>
+          <p id="check-status" class="small status-line" role="status" aria-live="polite">Choose a recording to begin.</p>
+          </form>
+        </section>
+      </div>
+      <section id="result" class="result" aria-labelledby="result-heading" hidden>
+        <p class="eyebrow">This recording</p>
+        <h2 id="result-heading">Check result</h2>
+        <p id="result-message"></p>
+        <dl>
+          <div><dt>Recognition</dt><dd id="phrase-result"></dd></div>
+          <div><dt>Individual sounds</dt><dd id="sound-result"></dd></div>
+        </dl>
+        <p id="alignment-note" class="quiet small"></p>
+        <p id="cleanup-result" class="quiet small"></p>
+      </section>
+      <footer class="research-note">
+        <h2>About this preview</h2>
+        <p class="quiet measure">For local research only. Results are not pronunciation grades, corrective feedback, a diagnosis, or evidence of improvement. Sound locations may be unverified even when the phrase matches.</p>
+        <p class="quiet small">Changing the selection, check type, recording, age, or consent discards an active recording, clears the displayed result, and requests cancellation of an active check. We wait for confirmation before enabling another recording or check.</p>
+        <p class="quiet small"><a href="/credits">Pronunciation dictionary credits</a></p>
+      </footer>
+    </div>
+    <noscript><p class="notice">JavaScript is needed to choose a phrase and check a recording.</p></noscript>
+  </main>
+</body>
+</html>

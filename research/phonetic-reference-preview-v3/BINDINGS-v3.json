@@ -1,0 +1,58 @@
+{
+  "active": false,
+  "assets": [
+    {
+      "bytes": 3035,
+      "linkTarget": "../../blobs/d3d413893434f36cef6042639ab0be56769b95fe",
+      "path": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/README.md",
+      "resolvedPath": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/blobs/d3d413893434f36cef6042639ab0be56769b95fe",
+      "sha256": "81a55816a87034bcf0828d6181fa88abad32a0cbfcebc2ebc8b336664b69ba60"
+    },
+    {
+      "bytes": 1856,
+      "linkTarget": "../../blobs/c8fc04b8bd95c7a3361e606579a36f335a2b0c57",
+      "path": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/config.json",
+      "resolvedPath": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/blobs/c8fc04b8bd95c7a3361e606579a36f335a2b0c57",
+      "sha256": "4609fb49b7e1d28aecb2840da1926c40bd915bc6f1120a940afacf7159bbfb13"
+    },
+    {
+      "bytes": 212,
+      "linkTarget": "../../blobs/36ebe8b7c1cc967b3059f0494ae8a1069dd67655",
+      "path": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/preprocessor_config.json",
+      "resolvedPath": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/blobs/36ebe8b7c1cc967b3059f0494ae8a1069dd67655",
+      "sha256": "a2254a5b58f72cd4de3632f8eee64f3f098b7c1402128d2f419e7d00ae13e335"
+    },
+    {
+      "bytes": 4637,
+      "linkTarget": "../../blobs/14929da774c31eccf9e8c25fa3a966d8fc17d3fa",
+      "path": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/vocab.json",
+      "resolvedPath": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/blobs/14929da774c31eccf9e8c25fa3a966d8fc17d3fa",
+      "sha256": "d732ab2456c0c017930001dc9af0b41b3b93d25b2eb9740bf9d925508d7d87d0"
+    },
+    {
+      "bytes": 1263535127,
+      "linkTarget": "../../blobs/3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e",
+      "path": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4/pytorch_model.bin",
+      "resolvedPath": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/blobs/3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e",
+      "sha256": "3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e"
+    }
+  ],
+  "python": "/opt/homebrew/Cellar/python@3.13/3.13.14_1/Frameworks/Python.framework/Versions/3.13/bin/python3.13",
+  "python_pin": {
+    "bytes": 52640,
+    "sha256": "e1ab0abf4365a2d400998c9c8cd52733170ed568118d03b4b005d418c140d6da"
+  },
+  "runtime_manifest": {
+    "bytes": 13451053,
+    "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/coreml-whisper-v1/native-phonetic-converter-draft-v2/RUNTIME-PINS-v1.json",
+    "sha256": "58f6ecfb239f1f237e784b2625aea0fe000fdfcecae73294bf5a10f7070a5339"
+  },
+  "schema": "PhoneticReferenceBindingsV3",
+  "site_packages": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/coreml-whisper-v1/converter-env/lib/python3.13/site-packages",
+  "snapshot": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+  "supervisor_origin": {
+    "path": "research/assessment-mobile-admission/mobile_admission/process.py",
+    "sha256": "03f0f1ca5b7f7ef2cead5b683f644a25293c9fc2e260d3db00827b5e25e03bda"
+  },
+  "trust_boundary": "ReviewedInstalledSystemBoundaryV3 required in root admission; serialized trusted writers; no hostile mutation guarantee"
+}

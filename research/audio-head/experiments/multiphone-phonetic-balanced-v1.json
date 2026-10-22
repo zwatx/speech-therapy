@@ -1,0 +1,33 @@
+{
+  "allOtherHyperparameters": "Exactly original frozen phonetic-head recipe; seed7, CPU2, fixed1037features, hidden128/dropout.1/AdamWwd.01/batch64/max100/patience15",
+  "authorTestInferencePerformed": false,
+  "baselineRecipeSha256": "771bdf7c231ff233e6306301aa18c3375f85e26bef29f92a529f1355e65428b3",
+  "clinicalUseEligible": false,
+  "declaredBeforeOuterRelease": true,
+  "experiment": "multiphone-phonetic-rare-rating-emphasis-20260926-v1",
+  "family": "target-scalars",
+  "featureBindingSha256": "360c829d179f9c66b66c900fdcf3db2cb0897fdc5724feb642100802d3da4985",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "learnerFeedbackEligible": false,
+  "learningRates": [
+    0.001,
+    0.0003
+  ],
+  "objective": "Mean weighted soft five-rater NLL without row renormalization. Global actual-fit inverse-square-root observed class prevalence, maxweight ratio10, normalize prevalence-weighted mean1; reject absent fit classes, no pseudo labels",
+  "outerEvaluation": "Inner-only supplementary study; excluded from already fixed19-pipeline development release; no outer or author-test inference",
+  "outerOutcomesUsed": false,
+  "plannedTrials": 20,
+  "predictionCorrection": "softmax(logits-log(classWeights)); exact population-optimum objective correction, not empirical calibration",
+  "purpose": "Address observed inner ranking/proper-score tradeoff without target or speaker changes; compare every fold to same unweighted family/regime",
+  "regimes": [
+    "all-age",
+    "child-only"
+  ],
+  "selection": "Same population-specific unweighted inner macro-phone NLL as unweighted comparator; select LR by lower loss then lower LR, earlier epoch for ties within1e-7"
+}

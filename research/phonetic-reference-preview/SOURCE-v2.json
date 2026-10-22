@@ -1,0 +1,59 @@
+{
+  "active": false,
+  "clinical": false,
+  "earlier_source": {
+    "bytes": 2359,
+    "path": "frozen-v1/SOURCE-v1.json",
+    "sha256": "9386f7aa60a990ab4fd868409da04019ccc7cc43e15f41278133b391ddedc09e"
+  },
+  "executionJob": "pending separate root review; no admission supplied",
+  "files": [
+    {
+      "bytes": 11166,
+      "path": "contract.py",
+      "sha256": "59ce9a54509dda6010b8e56a0629360cef644353cd283a7a40b5894e82b23318"
+    },
+    {
+      "bytes": 8989,
+      "path": "worker.py",
+      "sha256": "7e36f2f2a416b9f577ef725c889560eb0bfb864ad327bb82d74aafd517dc1f99"
+    },
+    {
+      "bytes": 25633,
+      "path": "owner.py",
+      "sha256": "6a29dcd3a8a6b92db50189efc1357506e63958370c2e976bb8a258bbffb4708b"
+    },
+    {
+      "bytes": 8210,
+      "path": "test_reference_preview.py",
+      "sha256": "eac1c2789ef389056532bef9d602a0d6b1563ae23e08a0ef7d6efd9c86e9d370"
+    },
+    {
+      "bytes": 4699,
+      "path": "README.md",
+      "sha256": "776d09422678ccc3a6d1b935c57736f31a0b7ec6297a476a7b111fc28f5db7cd"
+    },
+    {
+      "bytes": 3742,
+      "path": "BINDINGS-v2.json",
+      "sha256": "74928fa9855265b891d7ccc4c00a85078b4b45e10a2d652ad576ef5a61170704"
+    },
+    {
+      "bytes": 1278,
+      "path": "work/WORKLOG.md",
+      "sha256": "c510963cf08aae97c3a5d63516860004f5a313b66a89a78eac5aa61f77252bf5"
+    }
+  ],
+  "learnerFeedback": false,
+  "originalNativeParityAccepted": false,
+  "preserved_evidence": {
+    "originalNative304": "FAILED",
+    "prefixChecks": {
+      "failed": 6,
+      "passed": 34,
+      "total": 40
+    }
+  },
+  "producedPhoneTruth": false,
+  "schema": "PhoneticReferencePreviewSourceV2"
+}

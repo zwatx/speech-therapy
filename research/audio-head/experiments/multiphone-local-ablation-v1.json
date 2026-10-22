@@ -1,0 +1,60 @@
+{
+  "authorPartition": "train",
+  "binding": {
+    "cohortSha256": "33967da3dfb3e41a5c7b14dbd0355ceb36574ecbdcb042c8e99137f6344ec805",
+    "featuresSha256": "d6dbcb1d4d36153af2e13577fb4e39d4c23e6cabcb511f69990b968dbde6279a",
+    "scalarSha256": "e1c4a79f542496454e073f1e987b00949ee9798142a4bf9b4b22796b70fb3291",
+    "splitsSha256": "b480fa2550f240547565bfa9b0ca1e516ffc4b73e7770932dd94f006df702fcf"
+  },
+  "training": {
+    "clinicalUseEligible": false,
+    "comparison": "Replay the existing selected full thirteen-scalar model on identical validation rows",
+    "cpuThreads": 2,
+    "experiment": "multiphone-inner-local-scalar-ablation-v1",
+    "folds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "l2Candidates": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1
+    ],
+    "learnerFeedbackEligible": false,
+    "maxOptimizerIterations": 200,
+    "objective": "Mean five-rater distribution NLL + alpha times squared coefficient sum; intercept unpenalized",
+    "optimizer": "CPU float64 LBFGS strong_wolfe, zero initialization, history10",
+    "outerOutcomesUsed": false,
+    "phase": "inner",
+    "plannedInnerFits": 60,
+    "prior": "Same inner-fit rows, per-phone observed counts plus one pseudocount per rating class",
+    "scaling": "Zero excluded scalars in a copy; fit each design column's mean/SD on inner-fit rows only",
+    "selection": "All-age inner-validation macro-phone NLL; exact ties prefer stronger L2",
+    "variants": {
+      "local-scalars": [
+        "targetMeanLogPosterior",
+        "targetMeanPosterior",
+        "targetMaxPosterior",
+        "meanLogMarginVsBestOtherPhone",
+        "meanLogFractionOfNonblankMass",
+        "targetArgmaxFraction",
+        "meanBlankPosterior",
+        "meanSpecialPosterior",
+        "meanFullVocabularyEntropy",
+        "ctcTargetOccupancySeconds",
+        "occupiedFrames"
+      ],
+      "target-posterior": [
+        "targetMeanPosterior"
+      ],
+      "utterance-context": [
+        "utteranceViterbiLogProbabilityPerFrame",
+        "greedyCanonicalTokenErrorRate"
+      ]
+    }
+  }
+}

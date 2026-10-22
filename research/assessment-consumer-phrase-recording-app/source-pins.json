@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "7eee7acd80569c576d0b52dbdd10f5b7dc254f5731971b0122a895afb8d8d3c8"
+    },
+    {
+      "path": "catalog.json",
+      "sha256": "6299105400f8690dfe2766efa980d4758a892432b2ec61e6529a2a1b54b72a8b"
+    },
+    {
+      "path": "phrase_app/__init__.py",
+      "sha256": "9dc0be4ab921a948af14626a3f109bfb2fbfd758e65879e24b9fb192189ac961"
+    },
+    {
+      "path": "phrase_app/server.py",
+      "sha256": "7f518d12c9684ddeaf9ed01c0031873c0912410c47f7852119cc55aba7d8f89f"
+    },
+    {
+      "path": "phrase_app/service.py",
+      "sha256": "bbfb98cafb6de2d0f59a67c543e344255e5ba730fe4986d8755a88e24fa9a22b"
+    },
+    {
+      "path": "phrase_app/word_cli.py",
+      "sha256": "d999a8bdea4629649c6086667b0b5c0d4144534cba6c55416d44669f22e72e15"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "406a86b4662217b71bf8a0ab46af983fac179301bbe137841d69964fdf04fe94"
+    },
+    {
+      "path": "test_service.py",
+      "sha256": "ed376b73508364b51a30960399a3751807a79b7287eaa3f289a495556b0606d4"
+    },
+    {
+      "path": "ui/app.css",
+      "sha256": "a14f66be97ec9fc128e5ff2895e570b026e33401793ca44efdb49272eb9665e8"
+    },
+    {
+      "path": "ui/app.js",
+      "sha256": "9bcace888b9c37d2f905758e50647c802f73144884b01e9851c188097f372ca9"
+    },
+    {
+      "path": "ui/audio-capture.js",
+      "sha256": "cfdd74264574691662fb1b1fd0fbb2559e40abf76fd855cf62a9b849719df346"
+    },
+    {
+      "path": "ui/credits.txt",
+      "sha256": "e60f6d8863fc651fb52bf29694288d77319de76a28f932152c3619c637d22467"
+    },
+    {
+      "path": "ui/index.html",
+      "sha256": "cf01de36fbc85d254c4b3f4c5dfd9e6faf387bf6db874d60083163aff4607998"
+    },
+    {
+      "path": "ui/recorder.js",
+      "sha256": "c31ed8ea05fb5782eba8d461ec567495e7008d0359f0a539e535359620fdbdda"
+    },
+    {
+      "path": "ui/tests/app.test.cjs",
+      "sha256": "ad44bbdc5e3581b8475ecd0111a3be8e36784b01a8a9d95d1e2953b53686b497"
+    },
+    {
+      "path": "ui/tests/recorder.test.cjs",
+      "sha256": "50f5454d70b3f4ccdbca88c5ff754685523d41949c6302e1a3165c4d71393787"
+    }
+  ],
+  "prototypeSourceManifestSha256": "343fba5c967712c83518570876403b50e9bba93a64bce9feed6303710d5f0556"
+}

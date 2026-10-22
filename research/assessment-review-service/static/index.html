@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'none'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Assessment review service</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" id="skip-link">Skip to content</a>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="titleblock">
+        <p class="eyebrow">Local research review service</p>
+        <h1 class="title">Assessment review service</h1>
+        <p class="project-line" id="project-line"></p>
+      </div>
+      <div class="account" id="account" role="group" aria-label="Account and project" hidden>
+        <div class="account-row">
+          <p class="account-who"><span class="account-k">Signed in as</span> <code id="account-id"></code></p>
+          <button type="button" class="btn" id="sign-out">Sign out</button>
+        </div>
+        <div class="account-row">
+          <div class="account-project">
+            <label for="project-select" class="account-k">Project</label>
+            <select id="project-select" disabled></select>
+          </div>
+          <p class="account-role"><span class="account-k">Assigned role</span> <strong id="account-role"></strong></p>
+        </div>
+        <p class="account-session" id="account-session"></p>
+      </div>
+    </div>
+    <div class="notice" role="note">
+      <p>
+        <strong>Invented accounts, generated fixtures.</strong>
+        Accounts here are invented local test accounts. The server keeps them separate and decides each account’s role, but separate accounts do not show that different or qualified people did the work.
+        The demo project’s recordings are one generated tone with no speech and no target words, and every saved answer is an invented workflow judgment.
+        The content-preparation project lists a public prompt pack whose prompts stay pending; decisions there are engineering preparation, not clinical approval.
+        Nothing here is eligible for learner, clinical or production use.
+      </p>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1" aria-busy="true">
+    <p class="state-panel">Loading…</p>
+  </main>
+
+  <div class="flash" id="flash">
+    <p class="flash-text" id="flash-text" role="status" aria-live="polite"></p>
+    <button type="button" class="flash-dismiss" id="flash-dismiss">Dismiss</button>
+  </div>
+
+  <dialog class="confirm" id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-body">
+    <h2 class="confirm-title" id="confirm-title"></h2>
+    <div class="confirm-body" id="confirm-body"></div>
+    <div class="confirm-actions">
+      <button type="button" class="btn" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirm-ok">Confirm</button>
+    </div>
+  </dialog>
+
+  <noscript>
+    <p class="state-panel">This review service needs JavaScript enabled to sign in and load local records.</p>
+  </noscript>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

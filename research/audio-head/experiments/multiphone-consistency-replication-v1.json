@@ -1,0 +1,177 @@
+{
+  "authorTestInferencePerformed": false,
+  "batchSizeTargetRows": 64,
+  "cleanFeatureBindingSha256": "360c829d179f9c66b66c900fdcf3db2cb0897fdc5724feb642100802d3da4985",
+  "clinicalUseEligible": false,
+  "coefficients": [
+    0,
+    0.1,
+    1
+  ],
+  "device": "cpu",
+  "dropoutEnabled": false,
+  "encoderUpdated": false,
+  "epochZeroEligible": true,
+  "experiment": "multiphone-consistency-replication-v1",
+  "exploratoryAfterFoldZero": true,
+  "folds": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "gradientNormLimit": 5,
+  "labelsTransferred": false,
+  "learnerFeedbackEligible": false,
+  "learningRate": 3e-05,
+  "maximumEpochs": 6,
+  "noiseConditionCount": 1,
+  "noiseSNRdB": 20,
+  "noisyAccuracyMeasured": false,
+  "objective": "Clean five-rater NLL plus coefficient times KL(fixed warm clean teacher || noisy student); same row mean",
+  "outerPerformanceEvaluationPerformed": false,
+  "patienceEpochs": 2,
+  "pilotTrainerSha256": "7058da214a4f072eb008be5975c9c50786fff4ee4d5528d48bf0ee71286d116f",
+  "protocolPath": "/Users/zacharywilson/Documents/speech-therapy/docs/model/multiphone-consistency-replication-protocol.md",
+  "protocolSha256": "21fbf98b3d778ae333a87aab9ca17c8ee5a36b1d64a3dc5903c11aec0d15de87",
+  "regimes": [
+    "all-age",
+    "child-only"
+  ],
+  "retainedPilot": {
+    "features": {
+      "path": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/consistency-features-v1/features/features.json",
+      "sha256": "db29e07aaccfff4a1b2400e1c3c0670cc19e99b47c71bb8ea9368d72baa16a52"
+    },
+    "ledger": {
+      "path": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/consistency-study-v1/queue-ledger.json",
+      "sha256": "727e071a5276b7f0c6ab045ce4d92c349f95474ac48f742a387ba6c12b546000"
+    },
+    "report": {
+      "path": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/consistency-comparison-v1/report.json",
+      "sha256": "a9528724ea614dda419802e3892516a51004976f9639e272e55f0266383d7c0e"
+    }
+  },
+  "schemaVersion": 1,
+  "seed": 7,
+  "selection": "Clean population-specific inner macro-phone NLL only; improve by more than1e-7; earlier epoch ties",
+  "sharedFeaturesIncludeOtherFoldsOuterWaveforms": true,
+  "studentGradientsEnabled": true,
+  "teacher": "Fixed original warm head in eval mode, clean fitting rows only; detached model probabilities",
+  "threads": 2,
+  "warmHeads": {
+    "fold-1/all-age": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f1-s7-lr0003",
+      "files": {
+        "best.pt": "f27428b241c37c9cf2d1ee5d32e59963f5c3474f41f94712c5a453367dcf1f63",
+        "config.json": "a54d8b504aede3daa85878905fd120077fc49ff27a1195e587d1d97250f038b5",
+        "history.json": "e898ea15eaaaa39f23e2b22105625adbd841ff403b8006c007d9f47221f597b1",
+        "predictions.json": "13fde72d6e6dae0686a4947b3c2a153c0239c5756115f80765308055aad3f872",
+        "prior.json": "d07a5691b1f7c1630d04a1ddec087d4ba4c9e12652775aeac6a1c1081dd07014",
+        "replay.json": "5bfd92316431901f98a1e01c6b8f3f27454a2223452e541dbaf96cd27e26eabf",
+        "report.json": "bc7d7f771c8a99f697e6ed0287eae80bb4a846ff3776ea6422faa60720e903be"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 3
+    },
+    "fold-1/child-only": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f1-s7-lr0003",
+      "files": {
+        "best.pt": "753cac8d2acd5407b6339c2782f1b7c5861ea73a86138ef1faedbc6d5ffdab4e",
+        "config.json": "bf9c0093c4ae401d5bc1f6db10d5fb98cbc018501f78bbf3199a46183953aa84",
+        "history.json": "737dc222df3ad250106773852cd0215bac8b1dc2681482cd3e97c800093b3327",
+        "predictions.json": "002173293f1d6a666799bd3c3182ead01917b4177589d28a2a41b336e7301c31",
+        "prior.json": "6a3e273174b4c340b4e5d1e935bb5a767773e2266149ce602e679275ca42529f",
+        "replay.json": "a86e8eaeafbe712816dee341d51026937dbd482f52fed74f2f00a448fce71ed6",
+        "report.json": "31ae8c82e65b662712a2e0f182e8f82edf037817b0183cded4bf33182c8df5ee"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    },
+    "fold-2/all-age": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f2-s7-lr0003",
+      "files": {
+        "best.pt": "6f318a0d3279810764cf5065d56bfc2724dd93b9b821efe4d5b2ce9c0e5ed100",
+        "config.json": "debce373b06839cd8acf488116cf4322f46056304d6ce651eb8165891e17850f",
+        "history.json": "555e8e3b4376d45e549b61fa8d6156d7a804a617b24350d876e2be1e68fb7fc0",
+        "predictions.json": "820c71c27ade512f2ac6343487c048cbb6a6af356eba30dd9d740b40bd110d12",
+        "prior.json": "5eb1cb33a8b2af3eeefa7e55fc831817e9fe9c90823eaf456125ad37bfd3cd88",
+        "replay.json": "b65d749cc75459364b691dea5b5701f513c8b8709641ed385a7501f39f0d03b0",
+        "report.json": "db1a81e7fbaeb286f1ab9a352282b876c30523e2f5ae179552ada52a918b814e"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 4
+    },
+    "fold-2/child-only": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f2-s7-lr0003",
+      "files": {
+        "best.pt": "1119fccac1307998cbe1a818606f25cb61b4e267a1ecc4c7ec9d67ac08c18ad6",
+        "config.json": "dd991dd8eb180fed84af0f6ad6c66f99d39c812b901bd238bfcd7c97f6a423ba",
+        "history.json": "192db97a8e19ce0e92c961568a60574e052d78c4c1fde6ca6f8b30dda94ec93f",
+        "predictions.json": "f2ddbb563693f28e338d53ec35e85bb2f0966f926e916261505281ac50875fcd",
+        "prior.json": "40f63ce0776fc2f1a75044cf0a27335c22ff7f4022a77b6cd396f88a069a3a81",
+        "replay.json": "7926c99430116e3b3d897bdb4622937366e9832595a15cd4397b409acf7999d1",
+        "report.json": "86492b6c16f3d1656398846305734806262cfd32955d88b2d00ed2a61f82d502"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 7
+    },
+    "fold-3/all-age": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f3-s7-lr0003",
+      "files": {
+        "best.pt": "543878c6a85a1c9feff33914fa5ee43b00807408575a3ae6ddbf9f7e13a14698",
+        "config.json": "9b3da1b3f5e9d7e1b57adc2c21bb3a8c2e28ea43b4f85335a5ba9813a2d518b9",
+        "history.json": "0358a9afd315423b1a1bda9b1d5bdd27318f9c287ae306d456a3e533c689241b",
+        "predictions.json": "d5acbcfd4da3bfd879950ad584539086bb6490358aa4022d5aaeec3adb87b1b7",
+        "prior.json": "29d62514d81dc94f8ce97a1ffa90e42cda8be377e7fb01e24d046234cd64f3f1",
+        "replay.json": "bd9a85c09c4d83e4739fffe5b303a39b074acd8a1d1014628b2f6c5fbae7862c",
+        "report.json": "b4b3018dfe5bdb9a47581ea90c56a0be336578cd1fcb7303745b61497dd3064d"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 4
+    },
+    "fold-3/child-only": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f3-s7-lr0003",
+      "files": {
+        "best.pt": "54d3b1d75058fb2676585b96a9cb14513ba544d566ba44f28ca0ae1bfeb0a80e",
+        "config.json": "2d37fd3211d9f1596131cee5c3024816b6f7d68358f0ebee847c40d45ede7348",
+        "history.json": "783b48cbad9732bea37dc1e03774a49b18d4b0c488127e8dbe148d408ccd39de",
+        "predictions.json": "4f27118e8905b3b394c420b5bf264216dbc50925fd9d8aea18a0eb0d63ae2ac7",
+        "prior.json": "18e6ae8fc9b3c61ddc8aa84bc93fabfde8af42785788693a12facef3744e21cc",
+        "replay.json": "271a13a78e35c7a914d457158e9bdc1548cbe883ea39dc73125970e45d93ed3d",
+        "report.json": "d6c2c6cc62d63ad8bab0aa2d23b95ab640a58898e7c62eb3017f62a74b44c1b8"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 6
+    },
+    "fold-4/all-age": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f4-s7-lr0003",
+      "files": {
+        "best.pt": "1ad483955f74d22050edf0d7fd88628b7fed14a96550f72f9bc787f47db44b46",
+        "config.json": "f098810ba14101e055132be7cd0133ea68a63dfcb105047110143a4d36533334",
+        "history.json": "4cfc9f47dbb6a43c24a4e819c02381c1156245a27eb3b2486c5c56e1be1b8ded",
+        "predictions.json": "ccc37effa1940ee12864519808002d278eef77c3e8d0266c264c3708bd07d50d",
+        "prior.json": "4db43dcb000983aef4148e5d6f7dfbd43b54f84e79e9fbe2be2f6a8730ab4de1",
+        "replay.json": "db61be769798c0467df4e359d92cc2307baf29adf53183cc2c2990246935e549",
+        "report.json": "a19a193f73e97a4198c0cdbd1c800e591fed16585a451dd6700d45cc96895445"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 3
+    },
+    "fold-4/child-only": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f4-s7-lr0003",
+      "files": {
+        "best.pt": "dae85a9f8ff15239819c521c02201364ae4ee8087dbd4ba095afffe9c710731d",
+        "config.json": "3a61a470c896bec98d3e4ac31ac8db326b2413a78cbe7162e562df4123bdaffb",
+        "history.json": "d48f0a94d412471073138b07084735f1ff7db0adce8451fb13d01dccef419c49",
+        "predictions.json": "971c9b3c66c138506aac399be713f707ff3461d4aa300e9ae02cc848c08e1fc7",
+        "prior.json": "b73498f82268a13066c8f53dd6523c4a3b1068649b70daa873969599ee3fde1e",
+        "replay.json": "c320a2ada13da5a3a5987cd6a15baf083883341a8f385342d1bffc9e7b003c6a",
+        "report.json": "6ad277ac0f8556d386e1107939e022d0d72529539b4d41e4a95b4965d4c6ec9b"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 3
+    }
+  },
+  "weightDecay": 0.01
+}

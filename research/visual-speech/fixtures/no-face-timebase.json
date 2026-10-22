@@ -1,0 +1,8 @@
+{
+  "referenceID": "synthetic-clock-not-recorded-audio",
+  "sampleRateHz": 16000,
+  "durationSeconds": 1,
+  "videoPTSToAudioOffsetSeconds": -0.1,
+  "alignmentMethod": "synthetic-smoke-only-no-audio-track",
+  "alignmentUncertaintySeconds": null
+}

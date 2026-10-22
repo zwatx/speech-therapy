@@ -1,0 +1,529 @@
+{
+  "schemaVersion": 1,
+  "kind": "assessment-engineering-content-decisions",
+  "sourcePackPath": "docs/consumer-assessment/proposed-engineering-pack.json",
+  "sourcePackSha256": "a957a9e3291f0d90b275d40cd914890836ee7e6fc4fd361f7589cd1444587ef3",
+  "status": "model_engineering_decisions_accepted_professional_review_deferred",
+  "authoringModel": {
+    "name": "Opus 5.5",
+    "id": "claude-opus-5-5",
+    "role": "authored these engineering decisions; independent model review is recorded separately by the parent workflow, not by this file"
+  },
+  "modelEngineeringReview": "accepted",
+  "professionalReview": "deferred_until_finished_product",
+  "professionalReviewRequiredForEngineeringPrototyping": false,
+  "scope": {
+    "minAge": 6,
+    "maxAge": 12,
+    "intendedLanguage": "en",
+    "use": "engineering_prototyping_only"
+  },
+  "referenceVariety": {
+    "id": "en-US-descriptive-engineering-baseline",
+    "description": "Descriptive US-English engineering baseline taken from the dictionary pronunciations in the pinned pack. It is a convenience reference for engineering, not a prescriptive or correct standard for any speaker.",
+    "actualReferenceVarietyLabels": "unknown_until_reference_register_joined",
+    "note": "Any acquired reference recording may carry a different or unknown variety label and must keep that label until the reference register is joined. Reference-asset metadata was not available when these decisions were written."
+  },
+  "variantPolicy": {
+    "acceptedVariants": "all_dictionary_variants",
+    "meaning": "Every dictionary variant in the pinned pack is accepted for engineering exercise. Accepted variants describe intended targets, not the phones a speaker actually produced.",
+    "preferredVariant": "variant-1 for every prompt (first listed dictionary form)",
+    "sourcePhonesModified": false
+  },
+  "occurrencePolicy": {
+    "rule": "Choose the exact source index when one selected-position index exists; choose the first selected-position index when several exist. Every other target occurrence is retained as context.",
+    "onlyPromptNeedingFirstOccurrenceRule": "n-middle-banana",
+    "bananaRule": "Choose index 2 (first middle N); retain index 4 as context; this rule requires future clinical review."
+  },
+  "instructionPolicy": {
+    "instruction": "Neutral say-the-word, record and replay wording only.",
+    "adultSupport": "A caregiver may read aloud and operate controls.",
+    "excluded": [
+      "diagnosis",
+      "exercise-specific corrective cues",
+      "mouth, tongue or lip placement advice",
+      "scores or correctness feedback"
+    ]
+  },
+  "counts": {
+    "prompts": 15,
+    "distinctSourceWords": 13,
+    "variants": 17,
+    "allTargetOccurrences": 23,
+    "selectedPositionOccurrences": 18,
+    "chosenOccurrences": 17,
+    "promptsWithAssessmentUnavailable": 1
+  },
+  "illustrationRegistry": "illustrations.json",
+  "decisions": [
+    {
+      "promptId": "r-beginning-rabbit",
+      "word": "rabbit",
+      "sourceWord": "rabbit",
+      "targetPhone": "R",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["R", "AE", "B", "AH", "T"],
+        "variant-2": ["R", "AE", "B", "IH", "T"]
+      },
+      "acceptedVariantIds": ["variant-1", "variant-2"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0, "variant-2": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0], "variant-2": [0]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0], "variant-2": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": [], "variant-2": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["variant_choice"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 16, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Both dictionary variants are accepted; they differ only in the unstressed second-syllable vowel (AH or IH). variant-1 is preferred as the first listed form. R occurs once in each variant, at source index 0, which is also the only selected-position index, so it is chosen exactly in both.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"rabbit\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/rabbit.svg"
+    },
+    {
+      "promptId": "r-middle-bread",
+      "word": "bread",
+      "sourceWord": "bread",
+      "targetPhone": "R",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["B", "R", "EH", "D"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 1},
+      "allTargetIndexesByVariant": {"variant-1": [1]},
+      "selectedPositionIndexesByVariant": {"variant-1": [1]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["cluster_context"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 16, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. R at source index 1 is the only target occurrence and is chosen exactly. It follows B in a B-R cluster; this is recorded as context only, with no clinical inference about cluster versus singleton production.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"bread\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/bread.svg"
+    },
+    {
+      "promptId": "r-end-door",
+      "word": "door",
+      "sourceWord": "door",
+      "targetPhone": "R",
+      "position": "end",
+      "phonesByVariant": {
+        "variant-1": ["D", "AO", "R"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": [],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 16, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. Final R at source index 2 is the only target occurrence and is chosen exactly. The dictionary form is rhotic, matching the descriptive US-English baseline; that is a reference convention, not a judgment of other varieties.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"door\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/door.svg"
+    },
+    {
+      "promptId": "b-beginning-baby",
+      "word": "baby",
+      "sourceWord": "baby",
+      "targetPhone": "B",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["B", "EY", "B", "IY"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0, 2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": [2]},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["repeated_target"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 0, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant with B at source indexes 0 and 2. The beginning position selects index 0 only, which is chosen exactly. Index 2 is retained as context; it is the chosen target of b-middle-baby.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"baby\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/baby.svg"
+    },
+    {
+      "promptId": "b-middle-baby",
+      "word": "baby",
+      "sourceWord": "baby",
+      "targetPhone": "B",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["B", "EY", "B", "IY"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [0, 2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2]},
+      "retainedContextIndexesByVariant": {"variant-1": [0]},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["repeated_target"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 0, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant with B at source indexes 0 and 2. The middle position selects index 2 only, which is chosen exactly. Index 0 is retained as context; it is the chosen target of b-beginning-baby.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"baby\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/baby.svg"
+    },
+    {
+      "promptId": "n-middle-banana",
+      "word": "banana",
+      "sourceWord": "banana",
+      "targetPhone": "N",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["B", "AH", "N", "AE", "N", "AH"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [2, 4]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2, 4]},
+      "retainedContextIndexesByVariant": {"variant-1": [4]},
+      "occurrenceRule": {"rule": "first_of_multiple_selected_position_indexes", "ruleSpecificFutureClinicalReviewRequired": true},
+      "preparationIssueCodes": ["repeated_target", "selected_occurrence_ambiguous"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 5, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant with N at source indexes 2 and 4, both in the middle position. Engineering rule: choose the first middle N (index 2) as the single selected target. Index 4 is retained as context and is not a separate target. The first-occurrence rule is an engineering convention and requires future clinical review.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"banana\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/banana.svg"
+    },
+    {
+      "promptId": "k-middle-backpack",
+      "word": "backpack",
+      "sourceWord": "backpack",
+      "targetPhone": "K",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["B", "AE", "K", "P", "AE", "K"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [2, 5]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2]},
+      "retainedContextIndexesByVariant": {"variant-1": [5]},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["repeated_target"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 6, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant with K at source indexes 2 and 5. The middle position selects index 2 only, which is chosen exactly. Index 5 is retained as context; it is the chosen target of k-end-backpack.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"backpack\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/backpack.svg"
+    },
+    {
+      "promptId": "k-end-backpack",
+      "word": "backpack",
+      "sourceWord": "backpack",
+      "targetPhone": "K",
+      "position": "end",
+      "phonesByVariant": {
+        "variant-1": ["B", "AE", "K", "P", "AE", "K"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 5},
+      "allTargetIndexesByVariant": {"variant-1": [2, 5]},
+      "selectedPositionIndexesByVariant": {"variant-1": [5]},
+      "retainedContextIndexesByVariant": {"variant-1": [2]},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["repeated_target"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 6, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant with K at source indexes 2 and 5. The end position selects index 5 only, which is chosen exactly. Index 2 is retained as context; it is the chosen target of k-middle-backpack.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"backpack\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/backpack.svg"
+    },
+    {
+      "promptId": "s-beginning-sky",
+      "word": "sky",
+      "sourceWord": "sky",
+      "targetPhone": "S",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["S", "K", "AY"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["cluster_context"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 10, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. S at source index 0 is the only target occurrence and is chosen exactly. It begins an S-K cluster; this is recorded as context only, with no clinical inference about cluster versus singleton production.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"sky\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/sky.svg"
+    },
+    {
+      "promptId": "v-beginning-vase",
+      "word": "vase",
+      "sourceWord": "vase",
+      "targetPhone": "V",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["V", "EY", "S"],
+        "variant-2": ["V", "AA", "Z"]
+      },
+      "acceptedVariantIds": ["variant-1", "variant-2"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0, "variant-2": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0], "variant-2": [0]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0], "variant-2": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": [], "variant-2": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["variant_choice"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 9, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Both dictionary variants (V EY S and V AA Z) are accepted. variant-1 is preferred as the first listed form. variant-2 is accepted for engineering exercise only; it is not a variety label and not a record of what a speaker produced. V occurs once in each variant, at source index 0, and is chosen exactly in both.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"vase\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/vase.svg"
+    },
+    {
+      "promptId": "y-beginning-yo-yo",
+      "word": "yo-yo",
+      "sourceWord": "yoyo",
+      "targetPhone": "Y",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["Y", "OW", "Y", "OW"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0, 2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": [2]},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["repeated_target", "source_spelling_alias"],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 18, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Display word \"yo-yo\" maps to dictionary source word \"yoyo\"; this is a spelling alias only and the phones are unchanged. Y occurs at source indexes 0 and 2. The beginning position selects index 0 only, which is chosen exactly. Index 2 is retained as context.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"yo-yo\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/yo-yo.svg"
+    },
+    {
+      "promptId": "th-beginning-thumb",
+      "word": "thumb",
+      "sourceWord": "thumb",
+      "targetPhone": "TH",
+      "position": "beginning",
+      "phonesByVariant": {
+        "variant-1": ["TH", "AH", "M"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 0},
+      "allTargetIndexesByVariant": {"variant-1": [0]},
+      "selectedPositionIndexesByVariant": {"variant-1": [0]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": [],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 20, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. TH at source index 0 is the only target occurrence and is chosen exactly. The illustration shows an open hand with the thumb highlighted to identify the word; it is not a mouth, tongue or therapy instruction.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"thumb\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/thumb.svg"
+    },
+    {
+      "promptId": "voiced-th-middle-feather",
+      "word": "feather",
+      "sourceWord": "feather",
+      "targetPhone": "DH",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["F", "EH", "DH", "ER"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": [],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 21, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. DH at source index 2 is the only target occurrence and is chosen exactly.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"feather\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/feather.svg"
+    },
+    {
+      "promptId": "ng-end-ring",
+      "word": "ring",
+      "sourceWord": "ring",
+      "targetPhone": "NG",
+      "position": "end",
+      "phonesByVariant": {
+        "variant-1": ["R", "IH", "NG"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 2},
+      "allTargetIndexesByVariant": {"variant-1": [2]},
+      "selectedPositionIndexesByVariant": {"variant-1": [2]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": [],
+      "modelSupport": {"modelInventorySupported": true, "modelTargetId": 22, "assessmentAvailability": "engineering_research_check_only_no_learner_finding"},
+      "decisionRationale": "Single variant. NG at source index 2 is the only target occurrence and is chosen exactly. The R at index 0 is a different sound and is not a target of this prompt.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"ring\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/ring.svg"
+    },
+    {
+      "promptId": "zh-middle-treasure",
+      "word": "treasure",
+      "sourceWord": "treasure",
+      "targetPhone": "ZH",
+      "position": "middle",
+      "phonesByVariant": {
+        "variant-1": ["T", "R", "EH", "ZH", "ER"]
+      },
+      "acceptedVariantIds": ["variant-1"],
+      "preferredVariantId": "variant-1",
+      "chosenOccurrenceIndexByVariant": {"variant-1": 3},
+      "allTargetIndexesByVariant": {"variant-1": [3]},
+      "selectedPositionIndexesByVariant": {"variant-1": [3]},
+      "retainedContextIndexesByVariant": {"variant-1": []},
+      "occurrenceRule": {"rule": "exact_source_index", "ruleSpecificFutureClinicalReviewRequired": false},
+      "preparationIssueCodes": ["unsupported_target"],
+      "modelSupport": {
+        "modelInventorySupported": false,
+        "modelTargetId": null,
+        "assessmentAvailability": "unavailable_unsupported_inventory",
+        "retainedAsContent": true,
+        "negativeCase": "unsupported_target_must_return_unavailable_assessment",
+        "proxyTargetAssigned": false
+      },
+      "decisionRationale": "Single variant. ZH at source index 3 is the only target occurrence and is chosen exactly as content. The pinned model inventory does not support ZH (modelTargetID is null), so the prompt is kept as content and as a negative case; any assessment of it must be unavailable. No substitute or proxy phone is assigned.",
+      "modelEngineeringReview": "accepted",
+      "professionalReview": "deferred_until_finished_product",
+      "instruction": "Look at the picture and say the word \"treasure\". Tap record, say the word, then tap replay to listen.",
+      "adultSupport": "A caregiver may read the word and these instructions aloud and may operate the record and replay controls. The prompt gives no sound-specific coaching, feedback or diagnosis.",
+      "ageReadinessEngineeringBasis": {
+        "declaredAppAgeRange": {"min": 6, "max": 12},
+        "basis": "Common, concrete, picturable noun. The picture and optional caregiver reading remove any reading requirement. Engineering inclusion basis only.",
+        "developmentalNormClaimed": false
+      },
+      "illustration": "illustrations/treasure.svg"
+    }
+  ],
+  "claimLimits": {
+    "qualifiedApprovalEstablished": false,
+    "referenceAudioVerified": false,
+    "rightsVerified": false,
+    "learnerFeedbackEligible": false,
+    "clinicalUseEligible": false,
+    "productionUseEligible": false,
+    "clinicalValidityEstablished": false,
+    "producedPhoneTruthEstablished": false
+  }
+}

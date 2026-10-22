@@ -1,0 +1,22 @@
+{
+  "experiment": "speechocean-r-alignment-pilot-v1",
+  "purpose": "Training-side engineering check of canonical /R/ interval localization",
+  "selection": "One canonical R; select 20 train speakers by SHA-256 of 20260923:speaker, then one eligible utterance per speaker by SHA-256 of 20260923:utterance",
+  "sampleCount": 20,
+  "selectionSeed": 20260923,
+  "split": "author train only",
+  "model": "Existing pinned frozen WavLM-base-plus encoder and CMU Arctic automatic-phone-alignment linear CTC heads",
+  "headSeeds": [7, 17, 29],
+  "headSteps": 800,
+  "canonicalMapping": "Strip ARPAbet stress digit and lowercase; reject missing vocabulary tokens; no produced-phone inference",
+  "alignment": "Exact Viterbi path constrained to full canonical phone sequence, with CTC blank and repeated-phone rules",
+  "diagnostics": ["greedy canonical token error rate", "R duration", "R posterior support", "R argmax fraction", "pairwise R interval overlap", "R center spread across heads"],
+  "flags": {"minimumRArgmaxFraction": 0.5, "minimumRMeanPosterior": 0.25, "minimumRDurationSeconds": 0.04, "maximumRDurationSeconds": 0.5, "maximumCenterSpreadSeconds": 0.15, "minimumPairwiseIntervalIou": 0.25},
+  "interpretation": "A forced path exists by construction when frames suffice. Flags measure internal support and head stability, not localization truth, produced phones, or clinical validity.",
+  "knownHoldout": true,
+  "confirmatory": false,
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false
+}

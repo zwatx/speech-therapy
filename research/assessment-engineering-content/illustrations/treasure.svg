@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="treasure-title treasure-desc">
+  <title id="treasure-title">Treasure</title>
+  <desc id="treasure-desc">An open treasure chest with its lid raised, filled with gold coins, and a lock plate on the front.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <ellipse cx="120" cy="182" rx="84" ry="7" fill="#D9D9D9"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M52 100 L62 44 C90 32 150 32 178 44 L188 100 Z" fill="#D9D9D9"/>
+    <circle cx="78" cy="96" r="12" fill="#E9C46A" stroke-width="4"/>
+    <circle cx="166" cy="97" r="11" fill="#E9C46A" stroke-width="4"/>
+    <circle cx="100" cy="89" r="13" fill="#E9C46A" stroke-width="4"/>
+    <circle cx="146" cy="89" r="12" fill="#E9C46A" stroke-width="4"/>
+    <circle cx="123" cy="92" r="13" fill="#E9C46A" stroke-width="4"/>
+    <rect x="48" y="100" width="144" height="76" rx="6" fill="#FFFFFF"/>
+    <rect x="68" y="100" width="14" height="76" fill="#D9D9D9" stroke-width="3"/>
+    <rect x="158" y="100" width="14" height="76" fill="#D9D9D9" stroke-width="3"/>
+    <rect x="108" y="108" width="24" height="28" rx="4" fill="#FFFFFF" stroke-width="4"/>
+  </g>
+  <circle cx="120" cy="118" r="4" fill="#1A1A1A"/>
+  <path d="M118 120 L122 120 L123.5 129 L116.5 129 Z" fill="#1A1A1A"/>
+</svg>

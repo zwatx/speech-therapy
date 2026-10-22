@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="rabbit-title rabbit-desc">
+  <title id="rabbit-title">Rabbit</title>
+  <desc id="rabbit-desc">A rabbit sitting and facing forward, with two long upright ears, round eyes and a small nose.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <ellipse cx="120" cy="182" rx="66" ry="7" fill="#D9D9D9"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="104" cy="40" rx="11" ry="30" transform="rotate(-10 104 40)" fill="#FFFFFF"/>
+    <ellipse cx="136" cy="40" rx="11" ry="30" transform="rotate(10 136 40)" fill="#FFFFFF"/>
+    <ellipse cx="104" cy="44" rx="4" ry="18" transform="rotate(-10 104 44)" fill="#D9D9D9" stroke="none"/>
+    <ellipse cx="136" cy="44" rx="4" ry="18" transform="rotate(10 136 44)" fill="#D9D9D9" stroke="none"/>
+    <ellipse cx="120" cy="138" rx="44" ry="38" fill="#FFFFFF"/>
+    <ellipse cx="120" cy="146" rx="24" ry="22" fill="#D9D9D9" stroke="none"/>
+    <ellipse cx="98" cy="174" rx="16" ry="8" fill="#FFFFFF"/>
+    <ellipse cx="142" cy="174" rx="16" ry="8" fill="#FFFFFF"/>
+    <circle cx="120" cy="88" r="30" fill="#FFFFFF"/>
+    <path d="M120 100 Q120 106 113 107 M120 100 Q120 106 127 107" fill="none" stroke-width="3"/>
+  </g>
+  <circle cx="109" cy="84" r="4" fill="#1A1A1A"/>
+  <circle cx="131" cy="84" r="4" fill="#1A1A1A"/>
+  <path d="M115 94 L125 94 L120 100 Z" fill="#1A1A1A"/>
+</svg>

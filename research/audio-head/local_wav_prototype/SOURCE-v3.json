@@ -1,0 +1,75 @@
+{
+  "actualObservations": {
+    "correctedSourceCases": 1,
+    "genericAdmittedChildScoringObserved": false,
+    "independentAccuracyEstablished": false,
+    "sourceV1Cases": 6
+  },
+  "files": [
+    {
+      "bytes": 8683,
+      "path": "research/audio-head/local_wav_prototype/README.md",
+      "sha256": "f727dbd78a9005bc229851f2d40a65248de8d4a541c0d2d37f2372c8880558d6"
+    },
+    {
+      "bytes": 79,
+      "path": "research/audio-head/local_wav_prototype/__init__.py",
+      "sha256": "c9832a82d5b884becfe9cf14f766e2d28aa1373548ff08775b305e0860eb4264"
+    },
+    {
+      "bytes": 2146,
+      "path": "research/audio-head/local_wav_prototype/bindings.py",
+      "sha256": "d76d2b3d378c8b1fa88f3be20b1195a3c5028046bd0a3d5d1b934bdb300e2b6b"
+    },
+    {
+      "bytes": 17693,
+      "path": "research/audio-head/local_wav_prototype/cli.py",
+      "sha256": "3e21fc84b3ea82efd3f5efee3798e809b529cc7faa9ac47c1288313b2e37362a"
+    },
+    {
+      "bytes": 12310,
+      "path": "research/audio-head/local_wav_prototype/common.py",
+      "sha256": "cac95c38fe9c1fe9b8ca459507b6797c0ada06c6477c84b88dcdc8385c0a93b9"
+    },
+    {
+      "bytes": 5674,
+      "path": "research/audio-head/local_wav_prototype/pins.json",
+      "sha256": "65c492d2974fb28e40ea79e390a6c1c140a02460b28ced491634693efaeba086"
+    },
+    {
+      "bytes": 21083,
+      "path": "research/audio-head/local_wav_prototype/test_prototype.py",
+      "sha256": "f92be94c45d3a73be3b5e6080e8493785d95daac6080c00d67845c485c593665"
+    },
+    {
+      "bytes": 7512,
+      "path": "research/audio-head/local_wav_prototype/worker.py",
+      "sha256": "921a0b49987422aa655817677541880e20f10c205482ce35ed3bbdca72f832ac"
+    },
+    {
+      "bytes": 8880,
+      "path": "work/r-inference-checkpoint-20261011/PROTOTYPE-PLAN.md",
+      "sha256": "cee1d691075cae8c1af1600984d298d2db4a78e6ba9d35e031bd5dd70a665cad"
+    }
+  ],
+  "generatedTests": {
+    "modelsImported": false,
+    "passed": 24,
+    "runSeconds": 0.35,
+    "tests": 24
+  },
+  "modelAndPolicyPinsUnchanged": true,
+  "purpose": "Documentation-only privacy correction; runtime and original seven observation receipts unchanged",
+  "pythonASTFilesParsed": 6,
+  "reviews": {
+    "fableCorrectedSourceVerdict": "CLEAR",
+    "fableModel": "claude-fable-5-1",
+    "opusModel": "claude-opus-5-5"
+  },
+  "schemaVersion": 3,
+  "sourceV1Archive": "work/r-inference-checkpoint-20261011/prototype-source-v1",
+  "sourceV2Archive": "work/r-inference-checkpoint-20261011/prototype-source-v2",
+  "changes": [
+    "README states retained token IDs encode private speech; transcript-field removal is not anonymization."
+  ]
+}

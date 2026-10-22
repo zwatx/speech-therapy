@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    "original",
+    "gain-minus-6db",
+    "white-noise-20db",
+    "white-noise-10db"
+  ],
+  "holdoutStatus": "already-inspected-engineering-holdouts; not fresh confirmatory evidence",
+  "learnerFeedbackEligible": false,
+  "noiseGenerator": "torch-cpu-float64-normal; seed from sha256(17:audioSha256:white-noise-v1)",
+  "noiseSeed": 17,
+  "peakPolicy": "If mixture peak exceeds 0.99, scale signal and noise together; never hard clip",
+  "productionEligible": false,
+  "purpose": "engineering-acoustic-stress",
+  "reporting": "Every supplied head and condition; no training, tuning, ranking, or winner selection",
+  "schemaVersion": 1,
+  "snrBasis": "whole-recording RMS, including silence; measured after float32 mixture conversion",
+  "waveformChanges": "No pitch, time, trim, resample, or label changes"
+}

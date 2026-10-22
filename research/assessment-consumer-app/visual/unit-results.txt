@@ -1,0 +1,18 @@
+PASS UNIT worker guarded bootstrap and bound manifest
+PASS UNIT worker blocks remote/query/POST before network
+PASS UNIT worker no-face result closes frame
+PASS UNIT worker multiple-face result contains no geometry
+PASS UNIT worker finite tracking projects outline and descriptive ratio only
+PASS UNIT worker invalid geometry and overrate fail closed
+PASS UNIT worker close rejects SDK unit metrics before I/O
+PASS UNIT runtime ready and stop releases worker without camera ownership
+PASS UNIT runtime caps dimensions and admits one in-flight frame
+PASS UNIT runtime cancellation closes late bitmap and ignores late result
+PASS UNIT runtime background closes worker and clears geometry
+PASS UNIT runtime timeout terminates unresponsive worker
+PASS UNIT runtime stale observations never publish tracking geometry
+PASS UNIT runtime initialization cancellation cannot recreate worker
+PASS UNIT runtime repeated stop waits for detached cleanup
+PASS UNIT runtime restart waits for detached cleanup
+PASS UNIT runtime callback restart survives old failure continuation
+{"mode":"injected_unit_seams","passed":17,"modelsExecuted":0,"hardwareUsed":false}

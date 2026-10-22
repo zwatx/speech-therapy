@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-oof-diagnostics-v1",
+  "purpose": "Descriptive train-only diagnostics of saved five-rater out-of-fold predictions",
+  "authorPartition": "train",
+  "knownAuthorTest": true,
+  "authorTestUsedForSettings": false,
+  "inputReport": "outputs/speechocean-r-rater-cv-convergence-v2/report.json",
+  "inputReportSha256": "6464b90cda8f10c9b75324edbf1b4bc459f781e71ea61bad2c2e0766d1bdecaa",
+  "inputOutOfFold": "outputs/speechocean-r-rater-cv-convergence-v2/out-of-fold.json",
+  "inputOutOfFoldSha256": "e1f90b49529ff3daabf546794c672a0c62e3001fe85933eddcf12ef906e7546c",
+  "expectedClips": 766,
+  "expectedSpeakers": 124,
+  "ratersPerClip": 5,
+  "methods": ["wav2vec2-base", "wavlm-base-plus", "trainPrior", "targetWord"],
+  "agreementGroups": ["unanimousTwo", "unanimousZero", "mixed"],
+  "expectedUnanimousOneClips": 0,
+  "metric": "Per-rater natural-log loss and three-class multiclass Brier, averaged equally over five ratings per clip",
+  "logLossEpsilon": 1e-12,
+  "bootstrap": {
+    "unit": "speaker",
+    "seed": 20260923,
+    "resamples": 2000,
+    "confidencePercentiles": [2.5, 97.5],
+    "differenceDirection": "first minus second; negative means lower log loss for first",
+    "comparisons": [
+      ["wav2vec2-base", "trainPrior"],
+      ["wav2vec2-base", "targetWord"],
+      ["wavlm-base-plus", "wav2vec2-base"]
+    ]
+  },
+  "outputDirectory": "outputs/speechocean-r-oof-diagnostics-v1",
+  "modelFitPerformed": false,
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "clinicalReliabilityEstablished": false
+}

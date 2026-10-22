@@ -1,0 +1,47 @@
+{
+  "active": false,
+  "files": [
+    {
+      "bytes": 13533,
+      "path": "contract.py",
+      "sha256": "5631c02f849098c537c9780736dee012972af5ae0f04e4a42307855ffb78a117"
+    },
+    {
+      "bytes": 10349,
+      "path": "worker.py",
+      "sha256": "ec3a829ab5665ae075ca71ce59ea20548c1eb99e6af48f87dc128efa1debb929"
+    },
+    {
+      "bytes": 35938,
+      "path": "owner.py",
+      "sha256": "9d366f43f0e64aff184d961c74e3bc8f6e409bd3a5da6d97062c9540c5dcc24d"
+    },
+    {
+      "bytes": 23569,
+      "path": "test_reference_preview.py",
+      "sha256": "eef953cb37b5f6e6065cca7d5e7ba853bd73895dcf90326d8a75dddf2d29736b"
+    },
+    {
+      "bytes": 3885,
+      "path": "BINDINGS-v3.json",
+      "sha256": "a580b2acd8f03bf41f52bbefa7c3bcfb392603c41e11f666d68c666928fca931"
+    },
+    {
+      "bytes": 3564,
+      "path": "ORIGINS-v3.json",
+      "sha256": "fd74a68cc4af0f2a0213d8075e08944b7f5d1c4004f75d4e051b5720f5fe86d1"
+    },
+    {
+      "bytes": 6808,
+      "path": "README.md",
+      "sha256": "8a4fabbe97568a53e1f889e20e72aa7c0cf606efe78affd4f7040e88c56a0c77"
+    },
+    {
+      "bytes": 1692,
+      "path": "work/WORKLOG.md",
+      "sha256": "669af3860f13c545a4c9e214059fac21b249666ab0950d512593850f92b0bf7b"
+    }
+  ],
+  "schema": "PhoneticReferenceSourceV3",
+  "status": "SOURCE_ONLY_STOP_EDITS"
+}

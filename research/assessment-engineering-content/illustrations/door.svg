@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="door-title door-desc">
+  <title id="door-title">Door</title>
+  <desc id="door-desc">A closed panelled door in its frame, with a round doorknob on the right side.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M68 180 L68 18 L172 18 L172 180" fill="#D9D9D9"/>
+    <rect x="78" y="28" width="84" height="152" fill="#FFFFFF"/>
+    <rect x="90" y="44" width="50" height="48" rx="4" fill="none" stroke-width="3"/>
+    <rect x="90" y="106" width="50" height="58" rx="4" fill="none" stroke-width="3"/>
+    <line x1="36" y1="180" x2="204" y2="180"/>
+  </g>
+  <circle cx="152" cy="110" r="6" fill="#1A1A1A"/>
+</svg>

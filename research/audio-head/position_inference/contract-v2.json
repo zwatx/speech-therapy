@@ -1,0 +1,14 @@
+{
+  "maximumTargets": 512,
+  "occurrenceIdentity": "zero-based wordIndex/phoneIndex",
+  "parentContractSha256": "c077e68e37fa68da36a44194094e5c07c40e1866148834c68b6fbd24a5da9782",
+  "promptSchemaVersion": 2,
+  "researchOnly": true,
+  "schemaVersion": 2,
+  "sourceSha256": {
+    "multiphone_research_audio.py": "9283d9d1d74436edc8314cf422d798d5f312e78c2659930b9c326e3f50954a5f",
+    "multiphone_research_ctc.ts": "402228b84efb31045d5066e8b570fcc1c0ee5ff5e6286ca588d068ed13602ba2",
+    "position_inference/__init__.py": "eb7b8fc571d89550ae65fc6a7b96043bd61dee75bb6b17903306ac793a3e9a0d",
+    "position_inference/audio.py": "99b042a2489ad49690ba0aad729a5f52a6a7470214a22dd371801e792b5e59ca"
+  }
+}

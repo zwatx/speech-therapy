@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "researchOnly": true,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "productionUseEligible": false,
+  "binding": {
+    "attemptId": "00000000-0000-4000-8000-000000000001",
+    "requestSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "audioSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "promptSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "outcome": "processed",
+  "reason": null,
+  "promptMatch": "unverified",
+  "captureMetrics": {"sampleCount": 16000, "durationMilliseconds": 1000, "rms": 0.05, "peak": 0.2, "railSamples": 0},
+  "timingMilliseconds": {"total": 6500, "inference": 6400},
+  "targets": [{"id": "initial-b", "wordIndex": 0, "phoneIndex": 0, "targetPhone": "B", "subjectiveCorpusRatingProbabilities": [0.1, 0.2, 0.7]}],
+  "model": {"id": "ages-6-12-research-mixture", "manifestSha256": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf"}
+}

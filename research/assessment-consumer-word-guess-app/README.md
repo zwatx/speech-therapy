@@ -1,0 +1,5 @@
+# Isolated native word-guess wrapper
+
+Fresh source copy, not an edit to any delivered service. Requests remain closed schema2 adult or child6–12. Public responses are closed schema2 `recording_feedback_with_word_guess` envelopes containing the actual schema1 base feedback and normalized ASCII `wordGuess` or null. The new schema2 declaration/presentation policy is distinct from all predecessors. A guess exists only after validated final matched/mismatched evidence and is a model hypothesis, never what the person said or a phone/correctness/diagnosis finding. All eleven claims remain false.
+
+The prompt-blind worker, admission normalizer/thresholds/models and child assessment parser are unchanged. No positive recognition accuracy or audible capture is established by generated tests. No browser/visual/legacy assessment routes are served. Direct module entry refuses; use the separate reviewed native API launcher and explicit runtime. All runtime/inference and old owner services are outside source-only staging.

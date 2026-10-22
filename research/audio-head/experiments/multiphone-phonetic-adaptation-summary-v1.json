@@ -1,0 +1,27 @@
+{
+  "role": "Descriptive report of the fixed six-arm inner phonetic-continuation study",
+  "requiredPlanSha256": "469a0cdf9b915cf31df3bd81d4485e72362e7223ea5603bb70c969e8b7cc829e",
+  "requiredPreflightSha256": "844afe3594ebb0627a87be92333ecbb01f86f59c70295cf085c8e6a86791e1b8",
+  "requiredTrainingRecipeSha256": "f627ed0f308d2c8953a36c8131d8039d2fba4d8745f51bc1b69dcf2ea707931a",
+  "reportingDeclaredAfter": "Prepared after the all-age head-only result was observed and before all six arms completed. At the last observation when this reader was requested, all-age upper1-lr1e-6 was still running and the other four arms were pending. Score definitions already existed in the fixed trainer. This is a descriptive reporting specification, not a new prospective efficacy protocol.",
+  "requiredArms": 6,
+  "requiredScope": "Fold0 inner validation only, original fixed all-age and ages6-12 fitting populations",
+  "ageSlices": ["allAges", "ages6to12", "ages13plus"],
+  "properScores": ["perRaterLogLoss", "macroTargetLogLoss", "perRaterBrier"],
+  "rankingScores": ["rating0", "ratingBelow2"],
+  "rankingAggregation": "Equal phone weight, excluding phones without both positive and negative rater support; preserve support and undefined values",
+  "comparisons": "Each arm versus its own raw epoch-zero checkpoint and the same-regime same-fit prior; each upper-layer arm additionally versus the selected same-regime head-only control. Record numerical differences between the arms' starting predictions. Do not rank or select a new winner.",
+  "differenceConvention": "Model minus reference: lower proper losses and higher AUROC/AP are favorable. Always retain the signed differences, including regressions.",
+  "requiredVerification": "Caller-pinned completed queue ledger; fixed plan/preflight/source contract; every completed trainer report/history/checkpoint and same-device exact replay; recompute selected, epoch-zero and prior metrics from saved probabilities; rehash all captured inputs/outputs before publication",
+  "inferencePerformed": false,
+  "selectionPerformed": false,
+  "outerOutcomesUsed": false,
+  "authorTestInferencePerformed": false,
+  "limitations": [
+    "One development inner fold and one seed; no new generalization, significance or calibration claim",
+    "All-age and child-only epoch selection use different declared populations; compare controls within each regime",
+    "This is subjective corpus-rating prediction, not produced-phone recognition or clinical pronunciation judgment",
+    "Epoch zero remains eligible; a selected epoch-zero result does not establish a benefit from encoder adaptation",
+    "No ages2-5 or verified child speech-sound-disorder evaluation"
+  ]
+}

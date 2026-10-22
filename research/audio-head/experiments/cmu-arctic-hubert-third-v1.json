@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "status": "locked",
+  "purpose": "public-speech-engineering",
+  "predeclaredBeforeRuns": true,
+  "corpusProfile": "four-speaker-v1",
+  "manifest": "research/audio-head/outputs/cmu-arctic-four-speaker-v1/manifest.json",
+  "manifestSha256": "0d0c747d420144c3c03e3b49fe268bf12319763961443ad3fdeeda44c94a4ea0",
+  "sourceLockSha256": "1a933842159c04413f0cd0c27debd72d3d96a1c5d481d0e7a3346effe8b7583e",
+  "corpusSourceLockSha256": "1a933842159c04413f0cd0c27debd72d3d96a1c5d481d0e7a3346effe8b7583e",
+  "trainingClips": 192,
+  "calibrationClips": 12,
+  "testClips": 12,
+  "labelSource": "automatic-phone-alignment",
+  "heldoutStatus": "The same already-inspected automatic-label adult read-speech records; no fresh confirmatory evidence",
+  "encoder": {
+    "kind": "hubert-base-ls960",
+    "modelId": "facebook/hubert-base-ls960",
+    "revision": "dba3bb02fda4248b6e082697eee756de8fe8aa8a",
+    "artifactSha256": {
+      "config.json": "56be398848bbd9cbc720172b0d45b2f01cac7652f2968f0f31f5faf9f2986acc",
+      "preprocessor_config.json": "4a93853b74278b7c769d07f5a861e5d12ceb5db2bced5620d335f87238cb9e86",
+      "pytorch_model.bin": "062249fffb353eab67547a2fbc129f7c31a2f459faf641b19e8fb007cc5c48ad"
+    },
+    "artifactBytes": {
+      "config.json": 1385,
+      "preprocessor_config.json": 213,
+      "pytorch_model.bin": 377569754
+    },
+    "width": 768,
+    "preprocessing": "pinned-feature-extractor-single-clip-v1-waveform-normalized-no-attention-mask",
+    "licenseEvidence": {
+      "basis": "Apache-2.0 tag in the exact official model card; no separate LICENSE file in its snapshot",
+      "modelCardUrl": "https://huggingface.co/facebook/hubert-base-ls960/blob/dba3bb02fda4248b6e082697eee756de8fe8aa8a/README.md",
+      "modelCardSha256": "c59fb00d253ab5ae5d288f130c64dddf3b7af3d5ce35c96395ac7a3db5db88f5",
+      "scope": "Private engineering only; no redistribution or production authorization"
+    }
+  },
+  "head": "linear-v1",
+  "globalSeed": 7,
+  "headSeeds": [7, 17, 29],
+  "learningRate": 0.01,
+  "stepBudgets": [200, 800],
+  "outputPrefix": "cmu-arctic-hubert-third",
+  "runnerSha256": "44be114ee1ae267520ee7f1aff767117b3eb9479c728335635230593724bbaee",
+  "sourceSha256": {
+    "arctic_profiles.py": "77c9ffa3159d2f94b29635fb0a17bfbfc44ff5e36f9753d5aa1b37b686a525b4",
+    "labels.py": "bf666f12310e4fd029f1b0678f2b90e11008c7a23db60498b136d9a4a38a08c1",
+    "data.py": "315ee26214c87bbd5fe1c70e0f23dec27a6a5f3a1e5a1cf9f3f83a0099e35e8b",
+    "encoders.py": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+    "pipeline.py": "2d19240ba0f96268bd733d77125cc6462470f3e83a958163820693f049e5dbb5",
+    "diagnostics.py": "f02cfc1171bf186aa6ca2f1c5c90ac86c26971c002796afe3729e5b8f688c452",
+    "comparison.py": "cbe0e640d3c2d6e63697ece3460c4e94b9511f4c8b9de4b0be1f1d3e00509c69",
+    "requirements.lock.txt": "fc43effd22f410ff3a60dc108facdd6ec94058a9d12d88139fcddfdb6dc06ade"
+  },
+  "execution": "Sequential CPU runs with two threads and the existing verified cache; no corpus changes or additional model downloads",
+  "reporting": "Retain all six HuBERT runs and each split's loss, token edits and exact-sequence counts; report head-seed mean/min/max/sample SD at each fixed step budget against existing matched wav2vec2 and WavLM runs; do not select a winner from held-out partitions",
+  "noWinnerSelection": true,
+  "calibrated": false,
+  "productionEligible": false,
+  "learnerFeedbackEligible": false
+}

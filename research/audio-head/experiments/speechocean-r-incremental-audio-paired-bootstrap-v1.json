@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-incremental-audio-paired-bootstrap-v1",
+  "purpose": "Exploratory fixed-OOF paired whole-speaker uncertainty for both incremental audio comparisons",
+  "authorPartition": "train",
+  "knownAuthorTest": true,
+  "authorTestUsedForSettings": false,
+  "authorTestInferencePerformed": false,
+  "modelFitPerformed": false,
+  "modelSelectionPerformed": false,
+  "runs": {
+    "speakerOnly": {
+      "experiment": "speechocean-r-incremental-audio-v1",
+      "recipe": "experiments/speechocean-r-incremental-audio-v1.json",
+      "recipeSha256": "e24a8c70cf1a909eac24c4c3bf453b2981a6f0ec00444f39767a8d1185a4bb3a",
+      "report": "outputs/speechocean-r-incremental-audio-v1/report.json",
+      "reportSha256": "ae5d86860f3182376f85e7133398690d496c6a95e94c17bcbe1451a40b004d94",
+      "outOfFold": "outputs/speechocean-r-incremental-audio-v1/out-of-fold.json",
+      "outOfFoldSha256": "5cbce3fd58ea5993d4b206c4aaba89e7a1eab619fd12fe6aa63556140ae0d3d1"
+    },
+    "speakerAndWordPurged": {
+      "experiment": "speechocean-r-incremental-audio-word-purged-v1",
+      "recipe": "experiments/speechocean-r-incremental-audio-word-purged-v1.json",
+      "recipeSha256": "15b71f160656ca5942f32f1be356514476a6f28a7058fc85b9d7625d06a24ecf",
+      "report": "outputs/speechocean-r-incremental-audio-word-purged-v1/report.json",
+      "reportSha256": "2ab0d25fc7b23683e8f554578e401f63a244b0e7fb8a3d72d9e41fc8bfb7dd75",
+      "outOfFold": "outputs/speechocean-r-incremental-audio-word-purged-v1/out-of-fold.json",
+      "outOfFoldSha256": "163b6dd91730bc0eb077c1e0d9b0dd71dd7bd326c3ef1ee93e5fd6240f9d8a3d"
+    }
+  },
+  "expectedClips": 766,
+  "expectedSpeakers": 124,
+  "expectedRaterScores": 3830,
+  "selectedTrainIdsSha256": "57e5a8ee6c74027d2e4c42d3e8a8892013fd2c6a4fca9cf3cbfcf111864e47e3",
+  "outerFolds": 5,
+  "outerSeed": 20260923,
+  "methods": ["captureOnly", "wav2vec2AudioOnly", "wav2vec2Combined", "wavlmAudioOnly", "wavlmCombined"],
+  "comparisons": [["wav2vec2Combined", "captureOnly"], ["wavlmCombined", "captureOnly"]],
+  "differenceDirection": "combined minus capture-only; negative favors combined",
+  "metrics": ["perRaterLogLoss", "perRaterBrier"],
+  "logLossEpsilon": 1e-12,
+  "bootstrap": {
+    "unit": "whole speaker",
+    "seed": 20260928,
+    "resamples": 10000,
+    "percentiles": [2.5, 97.5],
+    "equalClipWeight": true
+  },
+  "outputDirectory": "outputs/speechocean-r-incremental-audio-paired-bootstrap-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "clinicalReliabilityEstablished": false
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "stage": "implementation_preparation",
+  "manifestSha256": "ac02f689b9ec4a105f4d0e6aa4093698d3ffbf430acc4d1849426c7f0bb3ecf1",
+  "assetCount": 8,
+  "allAssetByteBindingsVerified": true,
+  "sourceBindings": {
+    "research/assessment-consumer-app/visual/asset-manifest.json": "ac02f689b9ec4a105f4d0e6aa4093698d3ffbf430acc4d1849426c7f0bb3ecf1",
+    "research/assessment-consumer-app/visual/source-audit.json": "e2fd1f700a2b0bfaa68f14711720f66d75b54305a54b67f6486eea98729f21b8",
+    "research/assessment-consumer-app/visual/acquisition-npm-metadata.json": "937a3e5f136c5cab9bd5e64ccb3b20fb8f138d700c0a59cd92765d08a633ee96",
+    "research/assessment-consumer-app/visual/model-acquisition.json": "7126f966b64ac8732b5ab565b010cacad9b577b209c971231cbff8daa607cbd4",
+    "research/assessment-consumer-app/visual/portrait-rights.json": "e834d33da08331fc993b6e12a62af8378e91059238c7aaef16458fc3386197a1",
+    "research/assessment-consumer-app/visual/portrait-rights-api.json": "7a594225e447c882424aebeebd5d10e5c3840868d7989204f9ae5ed3fe371110",
+    "research/assessment-consumer-app/visual/portrait-rights-page.html": "a7923fd75ce80730f6ef551b54d612ce9abe742550d802b0e44c27d23fb0f1de",
+    "research/assessment-consumer-app/visual/README.md": "568b1696bfde75b376a6bba7aa82a3a30f08e0fdea796e9d7d353c02b490cbb0",
+    "research/assessment-consumer-app/visual/lifecycle-tests.cjs": "1de133b66f4ae8367e382fe1f565d583dadbf68247e1d0cb4fc0948ed9c6a8ca",
+    "research/assessment-consumer-app/visual/unit-results.txt": "231c6e1d47ffb7fc16dc0b06639c4722492ae60c1eee6a8f9c1539cfbd5b9d21",
+    "research/assessment-consumer-app/ui/visual-worker.js": "0acf749d8dfcd4e542ceda5a9a37e1d6cc15bea31eba172c7f7b3b1eb92d1165",
+    "research/assessment-consumer-app/ui/visual-runtime.js": "a5d188b378476e091f388525c196f4addd224d87d5d5b1eafbe2afe2c2e79788",
+    "work/consumer-feedback-20261004/visual-feasibility.md": "41e4810465574585145d80c4d328c6996e9de3ffda49535acb8f122e8ed0fe65",
+    "work/consumer-feedback-20261004/visual-feasibility.json": "3e6ed383f5105d3b3b53ce7ffa449e8e12b72f43bb3c2172402b7ca61800bfcf"
+  },
+  "checks": {
+    "javascriptSyntax": "pass",
+    "actualSourceInjectedUnitSeamsPassed": 17,
+    "upstreamModelsExecuted": 0,
+    "browserInvoked": false,
+    "hardwareUsed": false,
+    "sourcePrivacyReview": "CLEAR: independent Astra read-only source and controlled seams",
+    "actualModelNetworkEvidence": "not run"
+  },
+  "limitations": [
+    "Published SDK metrics code is present. Guarded network attempt counts must not be represented as telemetry code absence.",
+    "Actual portrait/blank/checkerboard/multiple-face inference and browser CSP compatibility require independent root verification.",
+    "No physical-device or child-landmark accuracy established.",
+    "Runtime does not own or stop camera tracks; caller owns consent and mirror stream.",
+    "SDK shutdown acknowledgement may time out; owned worker is then terminated and cleanupConfirmed remains conservatively false."
+  ],
+  "independentReview": {
+    "path": "work/consumer-feedback-20261004/visual-review/REVIEW_RECEIPT.json",
+    "sha256": "36ad71df9eb56a7f888255dd4fcafea00e81f175e04f70279bd31688d1dc87b2",
+    "controlledSeamsPassed": 31,
+    "actualModelsExecuted": 0,
+    "browserInvoked": false,
+    "hardwareUsed": false
+  }
+}

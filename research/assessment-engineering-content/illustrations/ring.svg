@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="ring-title ring-desc">
+  <title id="ring-title">Ring</title>
+  <desc id="ring-desc">A gold finger ring with a single clear gemstone set on top.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <ellipse cx="120" cy="184" rx="52" ry="6" fill="#D9D9D9"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 124 A50 50 0 1 0 170 124 A50 50 0 1 0 70 124 Z M82 124 A38 38 0 1 1 158 124 A38 38 0 1 1 82 124 Z" fill="#E9C46A" fill-rule="evenodd"/>
+    <path d="M106 78 L134 78 L130 68 L110 68 Z" fill="#D9D9D9"/>
+    <path d="M106 30 L134 30 L146 44 L120 70 L94 44 Z" fill="#FFFFFF"/>
+    <path d="M94 44 L146 44 M110 44 L120 70 L130 44 M106 30 L110 44 M134 30 L130 44" fill="none" stroke-width="2.5"/>
+  </g>
+</svg>

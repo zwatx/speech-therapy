@@ -1,0 +1,156 @@
+{
+  "authorTestInferencePerformed": false,
+  "batchSizeTargetRows": 64,
+  "cleanFeatureBindingSha256": "360c829d179f9c66b66c900fdcf3db2cb0897fdc5724feb642100802d3da4985",
+  "clinicalUseEligible": false,
+  "coefficient": 0.1,
+  "device": "cpu",
+  "dropoutEnabled": false,
+  "encoderUpdated": false,
+  "epochZeroEligible": true,
+  "existingControlDeclarations": {
+    "0": {
+      "coefficient": 0,
+      "recipePath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/experiments/multiphone-noise-consistency-v1.json",
+      "recipeSha256": "0a6207886c1d0a528f42c1c3266a30aed015aa323da7a4362208cde76edc02e0",
+      "regime": "child-only",
+      "warmPopulationKey": "child-only"
+    },
+    "1": {
+      "coefficient": 0,
+      "recipePath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/experiments/multiphone-consistency-replication-v1.json",
+      "recipeSha256": "e7fed373cfc90d8deb4165f92e6451fffaceb7ddc313fb3367e522c342234711",
+      "regime": "child-only",
+      "warmPopulationKey": "fold-1/child-only"
+    },
+    "2": {
+      "coefficient": 0,
+      "recipePath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/experiments/multiphone-consistency-replication-v1.json",
+      "recipeSha256": "e7fed373cfc90d8deb4165f92e6451fffaceb7ddc313fb3367e522c342234711",
+      "regime": "child-only",
+      "warmPopulationKey": "fold-2/child-only"
+    },
+    "3": {
+      "coefficient": 0,
+      "recipePath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/experiments/multiphone-consistency-replication-v1.json",
+      "recipeSha256": "e7fed373cfc90d8deb4165f92e6451fffaceb7ddc313fb3367e522c342234711",
+      "regime": "child-only",
+      "warmPopulationKey": "fold-3/child-only"
+    },
+    "4": {
+      "coefficient": 0,
+      "recipePath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/experiments/multiphone-consistency-replication-v1.json",
+      "recipeSha256": "e7fed373cfc90d8deb4165f92e6451fffaceb7ddc313fb3367e522c342234711",
+      "regime": "child-only",
+      "warmPopulationKey": "fold-4/child-only"
+    }
+  },
+  "experiment": "multiphone-child-pairwise-ranking-v1",
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "gradientNormLimit": 5,
+  "identicalRowsPaired": false,
+  "labelsTransferred": false,
+  "learnerFeedbackEligible": false,
+  "learningRate": 3e-05,
+  "maximumEpochs": 6,
+  "minimumImprovement": 1e-07,
+  "noisyInferencePerformed": false,
+  "objective": "Clean five-rater NLL + .1 mean sampled softplus; event uniform, then active phone uniform, exact distinct-position q_i(1-q_j) pairs; no repeated vote weight",
+  "outerPerformanceEvaluationPerformed": false,
+  "pairEvents": [
+    "rating0",
+    "ratingBelow2"
+  ],
+  "pairSeed": 20260926,
+  "pairsPerUpdate": 64,
+  "patienceEpochs": 2,
+  "pilotTrainerSha256": "7058da214a4f072eb008be5975c9c50786fff4ee4d5528d48bf0ee71286d116f",
+  "protocolPath": "/Users/zacharywilson/Documents/speech-therapy/docs/model/multiphone-ranking-objective-protocol.md",
+  "protocolSha256": "dc94968abf6497516e67cea3df764fe5d0c47c40c9005345336765dba8aad2ac",
+  "regime": "child-only",
+  "sameSpeakerPairsRetained": true,
+  "schemaVersion": 1,
+  "seed": 7,
+  "supportAssessmentPath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/pairwise-sampling-support-assessment-v1.json",
+  "supportAssessmentSha256": "cefb950e7cfddc80ca3de7bbbc1775240f3fbd31c199085668545cfbc60c7d92",
+  "threads": 2,
+  "warmHeads": {
+    "0": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f0-s7-lr0003",
+      "files": {
+        "best.pt": "67af398f5e861ed2d8d58fdf45b45a236d4f99e9fd0174082553c1eb16e57b50",
+        "config.json": "e2996d39d97ae371e70b52863132eb247536c604d7c7084d949197c06c0b3cf8",
+        "history.json": "a61f21c44dc72c1cf45248eb02b747cb003bd50b289246bf52d5c1b6b7b63d7f",
+        "predictions.json": "6330a179eef55309e8d180e9b6f73c7589e5ffb5b1d38298a1b862bc430d68b9",
+        "prior.json": "1993ffe418f4ba00c6e35522e9f8604323cbfe1eec5801adf20fdb4cd13afa24",
+        "replay.json": "8ac9a1bbe2add1fbb903c9892a83feaf7d00ab571064bfc60bca829f805e0f55",
+        "report.json": "0f4fe362dd66bd3813f1f580a8d7b01b5d1e605b024072278d3437da34be313b"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    },
+    "1": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f1-s7-lr0003",
+      "files": {
+        "best.pt": "753cac8d2acd5407b6339c2782f1b7c5861ea73a86138ef1faedbc6d5ffdab4e",
+        "config.json": "bf9c0093c4ae401d5bc1f6db10d5fb98cbc018501f78bbf3199a46183953aa84",
+        "history.json": "737dc222df3ad250106773852cd0215bac8b1dc2681482cd3e97c800093b3327",
+        "predictions.json": "002173293f1d6a666799bd3c3182ead01917b4177589d28a2a41b336e7301c31",
+        "prior.json": "6a3e273174b4c340b4e5d1e935bb5a767773e2266149ce602e679275ca42529f",
+        "replay.json": "a86e8eaeafbe712816dee341d51026937dbd482f52fed74f2f00a448fce71ed6",
+        "report.json": "31ae8c82e65b662712a2e0f182e8f82edf037817b0183cded4bf33182c8df5ee"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    },
+    "2": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f2-s7-lr0003",
+      "files": {
+        "best.pt": "1119fccac1307998cbe1a818606f25cb61b4e267a1ecc4c7ec9d67ac08c18ad6",
+        "config.json": "dd991dd8eb180fed84af0f6ad6c66f99d39c812b901bd238bfcd7c97f6a423ba",
+        "history.json": "192db97a8e19ce0e92c961568a60574e052d78c4c1fde6ca6f8b30dda94ec93f",
+        "predictions.json": "f2ddbb563693f28e338d53ec35e85bb2f0966f926e916261505281ac50875fcd",
+        "prior.json": "40f63ce0776fc2f1a75044cf0a27335c22ff7f4022a77b6cd396f88a069a3a81",
+        "replay.json": "7926c99430116e3b3d897bdb4622937366e9832595a15cd4397b409acf7999d1",
+        "report.json": "86492b6c16f3d1656398846305734806262cfd32955d88b2d00ed2a61f82d502"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 7
+    },
+    "3": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f3-s7-lr0003",
+      "files": {
+        "best.pt": "54d3b1d75058fb2676585b96a9cb14513ba544d566ba44f28ca0ae1bfeb0a80e",
+        "config.json": "2d37fd3211d9f1596131cee5c3024816b6f7d68358f0ebee847c40d45ede7348",
+        "history.json": "783b48cbad9732bea37dc1e03774a49b18d4b0c488127e8dbe148d408ccd39de",
+        "predictions.json": "4f27118e8905b3b394c420b5bf264216dbc50925fd9d8aea18a0eb0d63ae2ac7",
+        "prior.json": "18e6ae8fc9b3c61ddc8aa84bc93fabfde8af42785788693a12facef3744e21cc",
+        "replay.json": "271a13a78e35c7a914d457158e9bdc1548cbe883ea39dc73125970e45d93ed3d",
+        "report.json": "d6c2c6cc62d63ad8bab0aa2d23b95ab640a58898e7c62eb3017f62a74b44c1b8"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 6
+    },
+    "4": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f4-s7-lr0003",
+      "files": {
+        "best.pt": "dae85a9f8ff15239819c521c02201364ae4ee8087dbd4ba095afffe9c710731d",
+        "config.json": "3a61a470c896bec98d3e4ac31ac8db326b2413a78cbe7162e562df4123bdaffb",
+        "history.json": "d48f0a94d412471073138b07084735f1ff7db0adce8451fb13d01dccef419c49",
+        "predictions.json": "971c9b3c66c138506aac399be713f707ff3461d4aa300e9ae02cc848c08e1fc7",
+        "prior.json": "b73498f82268a13066c8f53dd6523c4a3b1068649b70daa873969599ee3fde1e",
+        "replay.json": "c320a2ada13da5a3a5987cd6a15baf083883341a8f385342d1bffc9e7b003c6a",
+        "report.json": "6ad277ac0f8556d386e1107939e022d0d72529539b4d41e4a95b4965d4c6ec9b"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 3
+    }
+  },
+  "weightDecay": 0.01
+}

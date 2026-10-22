@@ -1,0 +1,62 @@
+{
+  "catalog": "work/consumer-feedback-20261004/native-feedback-plan/candidate-catalog-prompts.json",
+  "node": "/Users/zacharywilson/.local/share/mise/installs/node/24/bin/node",
+  "occurrenceContract": {
+    "path": "research/audio-head/position_inference/contract-v2.json",
+    "sha256": "f089324f893253f7dafb0b8920ed04eaf9d2e182e969645ccc7bcb1618d4d9ce"
+  },
+  "phoneticSnapshot": "research/audio-head/outputs/model-cache/models--facebook--wav2vec2-lv-60-espeak-cv-ft/snapshots/ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+  "python": "research/audio-head/.venv/bin/python",
+  "rawContract": {
+    "path": "research/audio-head/experiments/multiphone-research-audio-v1.json",
+    "sha256": "c077e68e37fa68da36a44194094e5c07c40e1866148834c68b6fbd24a5da9782"
+  },
+  "schemaVersion": 1,
+  "sharedManifest": {
+    "path": "research/audio-head/outputs/multiphone-20260927/ages-6-12-mixture-v1/bundle/manifest.json",
+    "sha256": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf"
+  },
+  "sources": {
+    "packages/audio-model-adapter/src/adapter.ts": "8682b5d4ec8941282e09ed585a1749af8527d806e7e2673463dbc9e7d859aad7",
+    "packages/audio-model-adapter/src/manifest.ts": "1e07477079fa4425dacfbe271ba6c7ede472bf099d5f6914b8e4cc535053e148",
+    "packages/audio-model-adapter/src/model-cache.ts": "005f728e99109c440b6deaac8996ae0c5023fd08b9a9447b5fd6301dca748830",
+    "packages/audio-model-adapter/src/posteriors.ts": "0c4672fb8d132437b3d120812a5785cd2a2858d365cbec016523c0b5f3a57087",
+    "pnpm-lock.yaml": "42066a0bf8c2fea1fa1baa8fd8e4ea5089a70cd5a8c1016404a27dbd7c47e129",
+    "research/assessment-admission/admission/__init__.py": "8338b3080a40aacc7e43a0b0cf4b982b55f18987554b006a74f3069938d7545f",
+    "research/assessment-admission/admission/models.py": "530dd0e1e3e266faaf7f8c9bec12224e2bdc3ebbfc2f1ca96aa18de3a20e14f8",
+    "research/assessment-admission/admission/policy.py": "3f7a1e67d717e188468a9f6951115307af1103e8b76adc04c3aa0e37067cb01e",
+    "research/assessment-admission/admission/worker.py": "32246a6cfca845a2a6659d4e5a17df6fb4bda6c6fcfcdd70b987390d8d1c8f39",
+    "research/audio-head/ages_6_12_bundle/__init__.py": "cae696b6b14351155a0658eb38d910b584035ea78ac8e4d7766a7cac323a8b84",
+    "research/audio-head/ages_6_12_bundle/inference.py": "dd3009f5b923cb64ce4a6ddf161fdc48480fd0b8bc7cd103d54239c258f41b94",
+    "research/audio-head/alignment_pilot.py": "850b0a3e836763700374fd9268d880501bad5af7c6f7217d3842b572c85f211c",
+    "research/audio-head/data.py": "315ee26214c87bbd5fe1c70e0f23dec27a6a5f3a1e5a1cf9f3f83a0099e35e8b",
+    "research/audio-head/diagnostics.py": "f02cfc1171bf186aa6ca2f1c5c90ac86c26971c002796afe3729e5b8f688c452",
+    "research/audio-head/encoders.py": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+    "research/audio-head/experiments/multiphone-local-features-v1.json": "6ada55352a010f566ee3ebdcad36d90fd9c5a0da236cf2016bb2f6fc3d473eb0",
+    "research/audio-head/experiments/multiphone-phonetic-features-v1.json": "f534d5ed847e9b1c1e62e2b7e98322b5917b9becf91e3b89c9d07f159050343b",
+    "research/audio-head/multiphone_cache.py": "15712352cc03bf03ff94dbd6f39f1e3891be10f91e5c138a01ee11a3ee177e4c",
+    "research/audio-head/multiphone_ctc_cache.ts": "ccd56705693c38cd28ed3aa0e294ddb536eb8da781e44c4000d3964a2fe9119d",
+    "research/audio-head/multiphone_data.py": "454c7bc9faaf65b1afac2706aea53acd277bd59393b9e704c4d24e7f0a28617e",
+    "research/audio-head/multiphone_evidence_gate.py": "831081804ed7564f7afe2a61f1346d09d338be97317f113f7dbe4a49607710ea",
+    "research/audio-head/multiphone_local_features.py": "c65d4aa921f024c313c555ea253b770dc43e89428f05003f59f1ca51918da09f",
+    "research/audio-head/multiphone_models.py": "0e254f967b4c8dc5c5fe0a3bd2cbae05c62c480b6360cdb1912403271568987a",
+    "research/audio-head/multiphone_phonetic_features.py": "34dbd9c91c56818de16fe27aa3019a3c0daa05c237cdc1e4929e25efef6c1074",
+    "research/audio-head/multiphone_research_audio.py": "9283d9d1d74436edc8314cf422d798d5f312e78c2659930b9c326e3f50954a5f",
+    "research/audio-head/multiphone_research_ctc.ts": "402228b84efb31045d5066e8b570fcc1c0ee5ff5e6286ca588d068ed13602ba2",
+    "research/audio-head/multiphone_research_inference.py": "be97b7e693994363a1c212c21c3f838f78f5ef53c3339189dbf6a82172d684ce",
+    "research/audio-head/pipeline.py": "2d19240ba0f96268bd733d77125cc6462470f3e83a958163820693f049e5dbb5",
+    "research/audio-head/position_inference/__init__.py": "eb7b8fc571d89550ae65fc6a7b96043bd61dee75bb6b17903306ac793a3e9a0d",
+    "research/audio-head/position_inference/audio.py": "99b042a2489ad49690ba0aad729a5f52a6a7470214a22dd371801e792b5e59ca",
+    "research/audio-head/requirements.lock.txt": "fc43effd22f410ff3a60dc108facdd6ec94058a9d12d88139fcddfdb6dc06ade",
+    "research/audio-head/speechocean_audit.py": "c0520d80f1d14fb8af746facff836ff78562835a9b8d187bbaa19d3ad7bcccdc",
+    "research/audio-head/speechocean_r_annotation_sample.py": "e222b6b345969beb18fe3de82a6ce4538f8c7fa4cd66e16672870aa1e9cfb411",
+    "research/audio-head/speechocean_r_label_audit.py": "ed55cf91bd83ed8fecdce82841e321a51ec2ca4602613c0c5f150756ccccf422",
+    "research/audio-head/speechocean_r_probe.py": "5df3442033c98c972b19021b3e3d3adae9da34dc2bb38f05559e47591241a198",
+    "work/consumer-feedback-20261004/native-feedback-plan/candidate-catalog-prompts.json": "578513d4c8a8ca36c4ab92433321423e8badd286f374f005e5b403b9a2d49755"
+  },
+  "wordModelManifest": {
+    "path": "work/roadmap-completion-20261004/admission/models/manifest.json",
+    "sha256": "8a8054e4c434e9106e9bb625d27c3219089c7a6b643504ad893a531c3b4e6c37"
+  },
+  "wordPolicySha256": "33b4a2598c1700d2d88ded58fbe369bed4bca71d63fbff6a1beb191cc6e9cf49"
+}

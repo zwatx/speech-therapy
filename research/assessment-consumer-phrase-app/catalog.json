@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "prompts": [
+    {
+      "id": "bread-phrase",
+      "focus": "B and R in bread",
+      "cue": "Listen for B followed by R at the start of bread. This cue comes from the chosen phrase, not a detected error.",
+      "prompt": {
+        "schemaVersion": 2,
+        "language": "en",
+        "transcript": "I see bread",
+        "words": [
+          {
+            "text": "I",
+            "phones": [
+              "AY1"
+            ]
+          },
+          {
+            "text": "see",
+            "phones": [
+              "S",
+              "IY1"
+            ]
+          },
+          {
+            "text": "bread",
+            "phones": [
+              "B",
+              "R",
+              "EH1",
+              "D"
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "id": "bread-phrase-2-0",
+            "wordIndex": 2,
+            "phoneIndex": 0,
+            "targetPhone": "B"
+          },
+          {
+            "id": "bread-phrase-2-1",
+            "wordIndex": 2,
+            "phoneIndex": 1,
+            "targetPhone": "R"
+          }
+        ]
+      }
+    },
+    {
+      "id": "red-ball",
+      "focus": "R in red and L in ball",
+      "cue": "Listen to red and ball separately, then say the whole phrase at a comfortable pace.",
+      "prompt": {
+        "schemaVersion": 2,
+        "language": "en",
+        "transcript": "My red ball",
+        "words": [
+          {
+            "text": "My",
+            "phones": [
+              "M",
+              "AY1"
+            ]
+          },
+          {
+            "text": "red",
+            "phones": [
+              "R",
+              "EH1",
+              "D"
+            ]
+          },
+          {
+            "text": "ball",
+            "phones": [
+              "B",
+              "AO1",
+              "L"
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "id": "red-ball-1-0",
+            "wordIndex": 1,
+            "phoneIndex": 0,
+            "targetPhone": "R"
+          },
+          {
+            "id": "red-ball-2-2",
+            "wordIndex": 2,
+            "phoneIndex": 2,
+            "targetPhone": "L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "little-dog",
+      "focus": "L at the start and end of little",
+      "cue": "Listen for both L sounds in little. This cue describes the chosen phrase, not a detected error.",
+      "prompt": {
+        "schemaVersion": 2,
+        "language": "en",
+        "transcript": "The little dog",
+        "words": [
+          {
+            "text": "The",
+            "phones": [
+              "DH",
+              "AH0"
+            ]
+          },
+          {
+            "text": "little",
+            "phones": [
+              "L",
+              "IH1",
+              "T",
+              "AH0",
+              "L"
+            ]
+          },
+          {
+            "text": "dog",
+            "phones": [
+              "D",
+              "AO1",
+              "G"
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "id": "little-dog-1-0",
+            "wordIndex": 1,
+            "phoneIndex": 0,
+            "targetPhone": "L"
+          },
+          {
+            "id": "little-dog-1-4",
+            "wordIndex": 1,
+            "phoneIndex": 4,
+            "targetPhone": "L"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reference-phrase",
+      "focus": "Reference phrase for local testing",
+      "cue": "Say the entire phrase once. Listen back before checking. This reference is for engineering checks, not a pronunciation standard.",
+      "prompt": {
+        "language": "en",
+        "schemaVersion": 2,
+        "targets": [
+          {
+            "id": "reference-0-0",
+            "phoneIndex": 0,
+            "targetPhone": "L",
+            "wordIndex": 0
+          },
+          {
+            "id": "reference-0-2",
+            "phoneIndex": 2,
+            "targetPhone": "T",
+            "wordIndex": 0
+          },
+          {
+            "id": "reference-0-3",
+            "phoneIndex": 3,
+            "targetPhone": "S",
+            "wordIndex": 0
+          },
+          {
+            "id": "reference-1-0",
+            "phoneIndex": 0,
+            "targetPhone": "G",
+            "wordIndex": 1
+          },
+          {
+            "id": "reference-2-0",
+            "phoneIndex": 0,
+            "targetPhone": "T",
+            "wordIndex": 2
+          },
+          {
+            "id": "reference-3-0",
+            "phoneIndex": 0,
+            "targetPhone": "DH",
+            "wordIndex": 3
+          },
+          {
+            "id": "reference-4-0",
+            "phoneIndex": 0,
+            "targetPhone": "R",
+            "wordIndex": 4
+          },
+          {
+            "id": "reference-4-2",
+            "phoneIndex": 2,
+            "targetPhone": "S",
+            "wordIndex": 4
+          },
+          {
+            "id": "reference-4-3",
+            "phoneIndex": 3,
+            "targetPhone": "T",
+            "wordIndex": 4
+          },
+          {
+            "id": "reference-4-4",
+            "phoneIndex": 4,
+            "targetPhone": "R",
+            "wordIndex": 4
+          },
+          {
+            "id": "reference-4-6",
+            "phoneIndex": 6,
+            "targetPhone": "M",
+            "wordIndex": 4
+          }
+        ],
+        "transcript": "LET'S GO TO THE RESTROOM",
+        "words": [
+          {
+            "phones": [
+              "L",
+              "EH0",
+              "T",
+              "S"
+            ],
+            "text": "LET'S"
+          },
+          {
+            "phones": [
+              "G",
+              "OW0"
+            ],
+            "text": "GO"
+          },
+          {
+            "phones": [
+              "T",
+              "UW0"
+            ],
+            "text": "TO"
+          },
+          {
+            "phones": [
+              "DH",
+              "AH0"
+            ],
+            "text": "THE"
+          },
+          {
+            "phones": [
+              "R",
+              "EH1",
+              "S",
+              "T",
+              "R",
+              "UW0",
+              "M"
+            ],
+            "text": "RESTROOM"
+          }
+        ]
+      }
+    }
+  ]
+}

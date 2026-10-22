@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "c7e5b4605b1d24480ba78a86530d5b162a9a655ccb03137bdc023009e01a2c8e"
+    },
+    {
+      "path": "catalog.json",
+      "sha256": "d2498b89673d55a82b25c652eac361ff5f93d2d7e38c29b5d975cd794927e43c"
+    },
+    {
+      "path": "phrase_app/__init__.py",
+      "sha256": "65e5820bda07a27c92d76f03f503267416c7f53ee227dc6fd0abe6b0bddf738e"
+    },
+    {
+      "path": "phrase_app/server.py",
+      "sha256": "4d872c107b8154420d3c36f33f161cc88745aa6f3b533d48543764c6b2aedae6"
+    },
+    {
+      "path": "phrase_app/service.py",
+      "sha256": "637ea8a482d71c9b8f2b2fb01b5eaeec599bc62a7acf7ace038a801a20d08a1a"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "427ce1ad06f9bc1c7dba7b8d212380633d17b5460c6fe215c7b7d6222cd5a936"
+    },
+    {
+      "path": "test_service.py",
+      "sha256": "f470817d4d424420ede087ac51680f72176ffbae81454869b9d0c39ec8877014"
+    },
+    {
+      "path": "ui/app.css",
+      "sha256": "48cf70c5ded930b028e6d3b9cff7582f4fb90e842193a67a2174a6ed49a73f61"
+    },
+    {
+      "path": "ui/app.js",
+      "sha256": "ff8a057f372835465a62138f1a39681c418aec63a2d14d8d15b8ed302b33f4d8"
+    },
+    {
+      "path": "ui/index.html",
+      "sha256": "f17c11bce40aba08001b9c326b3d2b549aee4d94fd6c49276a86cb25265e09cb"
+    },
+    {
+      "path": "ui/tests/app.test.cjs",
+      "sha256": "fd5ce0d1a09bea2438d0918c40f161e76b3d97d96612e658c0eca48be6e7216d"
+    }
+  ],
+  "prototypeSourceManifestSha256": "343fba5c967712c83518570876403b50e9bba93a64bce9feed6303710d5f0556"
+}

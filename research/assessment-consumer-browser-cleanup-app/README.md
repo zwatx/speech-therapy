@@ -1,0 +1,23 @@
+# Browser recording-cleanup successor
+
+This isolated successor retains the reviewed recording, mirror, two-try listening, licensed examples, strict whole-word recognition and separate adult sound comparison. After a guided first-round summary, **Practice a few words** opens an explicit choice of one to three of the original thirteen words. Nothing is selected automatically. Suggested words require the original primary, submitted, posted, verified whole-word not-matched observation with its exact session context. A suggestion is a practice idea, not a sound diagnosis.
+
+Starting enters fresh manual visits in canonical roster order. Each uses the existing Record/Stop, replay, example and optional mirror controls. Word checks are unavailable during this short sequence, including through direct controller calls; the existing individual Practice buttons still open the older single-word check flow. Finish requires a valid kept recording belonging to this visit, clears the owned takes and stops the camera before acknowledging completion. Finish does not advance; Next is separate. Skip advances explicitly. End practice leaves a report and keeps the first round. End and clear removes the entire guided session.
+
+The report distinguishes Finished, Skipped, Left unfinished and Not started. It is memory-only participation metadata in this tab: there is no saved browser history or save-retry claim. Editing retains the previous report until Start practice explicitly replaces it. Initial observations never change; reassessment still uses all thirteen words and fresh recording attempts. Backgrounding, context replacement, stale callbacks, pending permissions, cleanup refusal and shared processing pauses retain the existing guards.
+
+## Source and launch boundaries
+
+`source-pins.json` closes fifteen package inputs and thirty-two dependencies. The exact word sibling, wire schemas, source/model/content/policy pins, sound service and worker remain unchanged. Only a current validated free-practice result may display the recognizer’s transient whole-word guess. Guided rows never contain it. Experimental sound comparison remains adult/free/canonical-bread only, with separate opt-ins; it does not establish which phone was produced.
+
+Use `scripts/consumer-browser-cleanup-app.py` with the reviewed feature/worker hashes, an absolute worker artifact path and separate runtime/cache paths. `--check` verifies source metadata before Catalog, runtime, observer or listener construction. The launcher defaults to port8809 and reserves all delivered predecessor ports, including8797,8803,8805 and the old generated helper8807. Check availability before launching. Never reuse an owner runtime. The preceding browser source, user-used services and native compiled profile are unchanged.
+
+Verification and generated browser fixtures are isolated under `work/consumer-feedback-20261009/browser-capture-cleanup`. Generated graph, player, recording and response checks establish software behavior; they do not establish physical capture/output, child accuracy, sound correctness, correction efficacy, meaningful change or diagnosis. The prior audio-environment failures and independent sound-label gap remain open. The overall app goal remains active.
+
+## Recording cleanup
+
+Cancel or setup failure revokes the current attempt immediately. A new Record, example/replay or feedback check waits for that exact capture’s audio-context closure and all outstanding setup, permission and resume work. Late streams stop before any cancelled result can be adopted. Repeated cleanup callers share the original acknowledgement. An unresolved browser request remains unavailable; no timeout declares it successful. The status distinguishes waiting on the browser’s microphone request from closing recording setup.
+
+A failed close or track stop keeps its exact owner and private resource references until the existing Reload recovery. No automatic retry changes a failed acknowledgement. Retained takes remain blocked from replay and checks while cleanup is pending or failed. An already active recording always keeps its Stop control even when another cleanup failure was reported. Reload clears this tab’s in-memory session; it does not establish secure erasure or physical cleanup.
+
+The new package changes the capture lifecycle and pending status only. Guided choices, full first/recheck rosters, word/sound contracts, licensed references, models and false clinical claim limits are preserved. Final source-bound verification is recorded in the task-local receipts; generated checks do not prove physical sensors or audibility.

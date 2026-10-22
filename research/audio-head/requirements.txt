@@ -1,0 +1,4 @@
+# Python 3.13; resolved transitive versions are captured in requirements.lock.txt.
+numpy==2.2.6
+torch==2.8.0
+transformers==4.57.6

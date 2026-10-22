@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "experiment": "multiphone-estimated-local-evidence-v1",
+  "cohortSha256": "33967da3dfb3e41a5c7b14dbd0355ceb36574ecbdcb042c8e99137f6344ec805",
+  "splitsSha256": "b480fa2550f240547565bfa9b0ca1e516ffc4b73e7770932dd94f006df702fcf",
+  "authorPartition": "train",
+  "mappingVersion": "arpabet-espeak-provisional-v1",
+  "consonants": {"B":"b","P":"p","M":"m","T":"t","D":"d","N":"n","K":"k","G":"ɡ","F":"f","V":"v","S":"s","Z":"z","SH":"ʃ","CH":"tʃ","JH":"dʒ","L":"l","R":"ɹ","W":"w","Y":"j","HH":"h","TH":"θ","DH":"ð","NG":"ŋ","ZH":"ʒ"},
+  "vowels": {"AA":"ɑː","AE":"æ","AH":"ʌ","AO":"ɔː","AW":"aʊ","AY":"aɪ","EH":"ɛ","ER":"ɚ","EY":"eɪ","IH":"ɪ","IY":"iː","OW":"oʊ","OY":"ɔɪ","UH":"ʊ","UW":"uː"},
+  "stressOverrides": {"AH0":"ə"},
+  "mappingLimitations": [
+    "Provisional canonical-token correspondence, not reviewed acceptable pronunciation variants.",
+    "Vowel length, dialect and stress distinctions are simplified; ER maps to the rhotic token ɚ at every stress.",
+    "Canonical AA+R states remain separate although the decoder has merged tokens such as ɑːɹ; this mismatch can distort estimated boundaries.",
+    "Canonical T/D use t/d rather than the flap ɾ; L uses l rather than ɫ or syllabic variants.",
+    "A forced canonical path can assign a target interval when the target was not produced."
+  ],
+  "convKernel": [10,3,3,3,3,2,2],
+  "convStride": [5,2,2,2,2,2,2],
+  "frameStrideSamples": 320,
+  "frameReceptiveFieldSamples": 400,
+  "sampleRateHertz": 16000,
+  "minimumAudioSeconds": 0.1,
+  "maximumAudioSeconds": 30,
+  "poolingContextFrames": 2,
+  "minimumTargetFramesDiagnostic": 2,
+  "preflightSelection": "fold 0 inner-fit only; duration-sorted shortest, middle, longest, with utterance ID tie-break",
+  "authorTestInferencePerformed": false,
+  "frameTimesValidated": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false
+}

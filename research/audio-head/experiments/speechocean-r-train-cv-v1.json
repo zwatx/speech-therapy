@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-train-cv-v1",
+  "purpose": "Exploratory nested speaker-group comparison using only the SpeechOcean762 author train partition",
+  "authorPartition": "train",
+  "expectedTrainClips": 766,
+  "expectedTrainSpeakers": 124,
+  "maxCpuMathThreads": 4,
+  "knownAuthorTest": true,
+  "authorTestUsedForSettings": false,
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "inputs": {
+    "wav2vec2-base": {
+      "directory": "outputs/speechocean-r-probe-v2",
+      "recipeVersion": "one-r-full-clip-frozen-wav2vec2-meanpool-ridge-v2",
+      "featureIndexSha256": "19085b3f39b7a63b9126f6f5fcd67712bf13f95bff04b5f7e484f0667bff59e2",
+      "featureProgressSha256": "119743b4122bb37aa153fb2b656d816d73cb6869235c40342c69755e510aef92",
+      "featureArraySha256": "480480fe916cfd4f3016fee04999bfa07bcc53ea838f4cec265b0d1e790e7432"
+    },
+    "wavlm-base-plus": {
+      "directory": "outputs/speechocean-r-probe-wavlm-v1",
+      "recipeVersion": "one-r-full-clip-frozen-wavlm-meanpool-ridge-v1",
+      "featureIndexSha256": "7e8b109927e6bdffa47c118ead5ed2139d788677e075ba8109bb67dae65f466c",
+      "featureProgressSha256": "4ac963f142c56165ceb8317bd001551e31336240d81766ddffad793931c8038c",
+      "featureArraySha256": "f43ff7abe9dfa3c34e04cc5894d0b0099e2dc625135c8af5f357377e7785c8a6"
+    }
+  },
+  "outerFolds": 5,
+  "outerSeed": 20260923,
+  "outerAssignment": "Sort train speaker IDs by SHA-256 of seed:outer:speaker, then assign sorted index modulo 5",
+  "innerFractionOfOuterTrainSpeakers": 0.2,
+  "innerAssignment": "For each outer fold, sort its train speakers by SHA-256 of seed:inner:fold:speaker; first rounded 20 percent validate, all others fit",
+  "ridgeAlphas": [1.0, 10.0, 100.0, 1000.0],
+  "targetWordSmoothing": [1.0, 5.0, 20.0],
+  "selectionMetric": "inner validation MAE; smallest candidate breaks ties",
+  "refit": "For each outer fold, refit selected ridge and target-word baseline on all outer-train speakers only",
+  "constantTwo": 2.0,
+  "trainMeanBaseline": true,
+  "reportOuterPromptOverlap": true,
+  "predictionsClipped": false,
+  "outputDirectory": "outputs/speechocean-r-train-cv-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false
+}

@@ -1,0 +1,146 @@
+{
+  "accuracyMeasured": false,
+  "authorPartition": "train",
+  "authorTestInferencePerformed": false,
+  "calibrationMeasured": false,
+  "clinicalUseEligible": false,
+  "conditions": [
+    "original",
+    "gain025",
+    "noise20db",
+    "noise10db"
+  ],
+  "ctcSessionOptions": {
+    "executionMode": "sequential",
+    "interOpNumThreads": 1,
+    "intraOpNumThreads": 2
+  },
+  "experiment": "multiphone-capture-sensitivity-v1",
+  "fold": 0,
+  "frameTimesValidated": false,
+  "heads": {
+    "all-age": {
+      "directory": "outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f0-s7-lr0003",
+      "files": {
+        "best.pt": "9f7ba424f077094cd1678744a3365658cb07d5efd1e425db49d4c5b3cbf42bce",
+        "config.json": "ab5c3eeae3bae95fedbc145e57fd086afe5a3f9e7e8f81ae4986632112d3a340",
+        "predictions.json": "18d3812f08fc84b590b6a0e15d6c5d6e22bf1e1a028f9f232868e0866dde5992",
+        "prior.json": "6cd26c831fd748357ab6887722978c98307a2b60e35c8125c946d4d12d93c84e",
+        "replay.json": "2af417be35eca47bda1c632e7befb22c4359b4106fe97cb2e7cbdd52213c39d0",
+        "report.json": "35989efb2dac54182a8cbb7441b3f2b74dddc4133dd32474fefa8f1b581bb4c7"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    },
+    "child-only": {
+      "directory": "outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f0-s7-lr0003",
+      "files": {
+        "best.pt": "67af398f5e861ed2d8d58fdf45b45a236d4f99e9fd0174082553c1eb16e57b50",
+        "config.json": "e2996d39d97ae371e70b52863132eb247536c604d7c7084d949197c06c0b3cf8",
+        "predictions.json": "6330a179eef55309e8d180e9b6f73c7589e5ffb5b1d38298a1b862bc430d68b9",
+        "prior.json": "1993ffe418f4ba00c6e35522e9f8604323cbfe1eec5801adf20fdb4cd13afa24",
+        "replay.json": "8ac9a1bbe2add1fbb903c9892a83feaf7d00ab571064bfc60bca829f805e0f55",
+        "report.json": "0f4fe362dd66bd3813f1f580a8d7b01b5d1e605b024072278d3437da34be313b"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    }
+  },
+  "inputs": {
+    "cohort": {
+      "path": "outputs/multiphone-20260926/cohort.json",
+      "sha256": "33967da3dfb3e41a5c7b14dbd0355ceb36574ecbdcb042c8e99137f6344ec805"
+    },
+    "featureBinding": {
+      "path": "outputs/multiphone-20260926/phonetic-head-binding-v1.json",
+      "sha256": "360c829d179f9c66b66c900fdcf3db2cb0897fdc5724feb642100802d3da4985"
+    },
+    "headRecipe": {
+      "path": "experiments/multiphone-phonetic-heads-v1.json",
+      "sha256": "771bdf7c231ff233e6306301aa18c3375f85e26bef29f92a529f1355e65428b3"
+    },
+    "innerQueue": {
+      "path": "outputs/multiphone-20260926/phonetic-head-queue-v1.json",
+      "sha256": "ec18efdb6bdf41407d8bcb1365bc9849b1002e6b362b42024095d2e4bd9c79eb"
+    },
+    "innerSelection": {
+      "path": "outputs/multiphone-20260926/phonetic-head-selection-v1.json",
+      "sha256": "33d2ac3b88a0b67186d982a55a6e536312a30136199e1e6fce75e39bb43f36d2"
+    },
+    "localRecipe": {
+      "path": "experiments/multiphone-local-features-v1.json",
+      "sha256": "6ada55352a010f566ee3ebdcad36d90fd9c5a0da236cf2016bb2f6fc3d473eb0"
+    },
+    "originalFeatures": {
+      "path": "outputs/multiphone-20260926/ctc-local-full/features/features.json",
+      "sha256": "d6dbcb1d4d36153af2e13577fb4e39d4c23e6cabcb511f69990b968dbde6279a"
+    },
+    "phoneticRecipe": {
+      "path": "experiments/multiphone-phonetic-features-v1.json",
+      "sha256": "f534d5ed847e9b1c1e62e2b7e98322b5917b9becf91e3b89c9d07f159050343b"
+    },
+    "splits": {
+      "path": "outputs/multiphone-20260926/splits.json",
+      "sha256": "b480fa2550f240547565bfa9b0ca1e516ffc4b73e7770932dd94f006df702fcf"
+    }
+  },
+  "learnerFeedbackEligible": false,
+  "limitations": [
+    "These source speakers were inner validation used for epoch/LR selection; this is a descriptive sensitivity diagnostic, not independent generalization.",
+    "Gain normalization inside encoders may suppress simple gain changes; no claim about microphones, rooms or device hardware robustness.",
+    "Synthetic additive white noise does not reproduce real room noise, reverberation, clipping, or mobile microphone processing.",
+    "Forced canonical CTC occupancy can move even if the intended utterance is unchanged; it is not a verified produced-phone boundary.",
+    "Common attenuation may accompany noise to avoid clipping; measured SNR uses the equally attenuated original signal and is reported after PCM16 quantization.",
+    "Human ratings are intentionally absent from transformed results; changed probabilities do not establish pronunciation changes or correctness.",
+    "Five-rater score distribution models are not validated child-SSD pronunciation judges, and ages2-5 are absent.",
+    "Argmax tie handling selects the lowest index and is used only for descriptive class-change counts, never learner feedback."
+  ],
+  "maximumSpeakers": 8,
+  "measurements": [
+    "paired target probability total variation",
+    "expected rating signed and absolute shift",
+    "rating0 and below2 probability shifts",
+    "argmax class changes descriptive only",
+    "canonical occupancy and pooling window movement in frames",
+    "source/derived PCM RMS, peak, rail count, DC, near-silence fraction",
+    "nominal and measured whole-waveform SNR, common attenuation",
+    "original cached CTC/scalar/window/phonetic vector/saved prediction parity"
+  ],
+  "modelSelectionPerformed": false,
+  "noise": "One source-audio-hash-seeded, zero-mean Gaussian draw shared between SNR levels; exact whole-waveform RMS scaling before common attenuation and PCM16 quantization",
+  "originalParityAbsoluteTolerances": {
+    "ctcLogPosterior": 0.0,
+    "phoneticPooled": 2e-06,
+    "probability": 2e-06,
+    "scalar": 0.0
+  },
+  "outerInferencePerformed": false,
+  "parityFailurePolicy": "Fail closed with measured maximum difference; investigate without post-hoc tolerance relaxation. All original windows and target identities must match exactly.",
+  "partition": "innerValidationRows",
+  "peakHandling": "If clean+noise peak exceeds0.98, attenuate BOTH clean and noise by0.98/peak. Preserve relative SNR; disclose common gain. No waveform clipping or trimming. Original source WAV is copied byte-for-byte.",
+  "phoneticDevice": "cpu",
+  "phoneticThreads": 2,
+  "reporting": "Per target, per clip/speaker, and all-target weighted descriptive shifts. No independent-sample CI from5-8speakers. No accuracy, NLL, Brier or calibration against original ratings on any transformed audio.",
+  "sampleFormat": "mono PCM16 little endian WAV",
+  "sampleRateHertz": 16000,
+  "scalarFeatureNames": [
+    "targetMeanLogPosterior",
+    "targetMeanPosterior",
+    "targetMaxPosterior",
+    "meanLogMarginVsBestOtherPhone",
+    "meanLogFractionOfNonblankMass",
+    "targetArgmaxFraction",
+    "meanBlankPosterior",
+    "meanSpecialPosterior",
+    "meanFullVocabularyEntropy",
+    "ctcTargetOccupancySeconds",
+    "occupiedFrames",
+    "utteranceViterbiLogProbabilityPerFrame",
+    "greedyCanonicalTokenErrorRate"
+  ],
+  "schemaVersion": 1,
+  "seed": 20260926,
+  "selection": "SHA256(seed:speaker:speakerId) ascending; then SHA256(seed:clip:clipId) ascending within each selected speaker; all available if fewer than eight; age6-12 metadata only, no rating/confidence/duration selection",
+  "trainingPerformed": false,
+  "transformedLabelsAvailable": false
+}

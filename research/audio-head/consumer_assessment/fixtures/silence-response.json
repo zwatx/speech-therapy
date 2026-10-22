@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "researchOnly": true,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "productionUseEligible": false,
+  "binding": {
+    "attemptId": "00000000-0000-4000-8000-000000000001",
+    "requestSha256": "ff55ff3f0769b11f087a47c1d426543decc03581d69ba17255b9a126176e5113",
+    "audioSha256": "2976da01e205a110c9fa41d47659e238a5c6d3c3f3137582f2949853faa201dd",
+    "promptSha256": "70e3fc1bcd6e877e4477243bfd9c2bdb8771f9afe62fd78af538827a425c36fa"
+  },
+  "outcome": "unavailable",
+  "reason": "silence",
+  "promptMatch": "unverified",
+  "captureMetrics": {
+    "sampleCount": 1600,
+    "durationMilliseconds": 100.0,
+    "rms": 0.0,
+    "peak": 0.0,
+    "railSamples": 0
+  },
+  "timingMilliseconds": {
+    "total": 0,
+    "inference": 0
+  },
+  "targets": [],
+  "model": null
+}

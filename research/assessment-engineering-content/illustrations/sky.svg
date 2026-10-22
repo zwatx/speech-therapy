@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="sky-title sky-desc">
+  <title id="sky-title">Sky</title>
+  <desc id="sky-desc">A wide view of the open sky above low hills, with a yellow sun and two white clouds.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 164 C64 142 108 148 140 158 C172 148 204 144 226 154 L226 176 C226 180 222 184 218 184 L22 184 C18 184 14 180 14 176 Z" fill="#D9D9D9"/>
+    <path d="M180 64 L190 64 M171 43 L178 36 M150 34 L150 24 M129 43 L122 36 M120 64 L110 64 M129 85 L122 92 M150 94 L150 104 M171 85 L178 92" fill="none" stroke-width="4"/>
+    <circle cx="150" cy="64" r="22" fill="#E9C46A"/>
+    <path d="M138 104 C128 104 126 92 135 88 C137 77 152 74 158 82 C165 72 183 74 183 89 C194 89 196 104 184 104 Z" fill="#FFFFFF"/>
+    <path d="M56 120 C45 120 42 107 52 102 C52 90 68 86 76 94 C83 82 103 82 106 96 C118 95 124 110 112 120 Z" fill="#FFFFFF"/>
+  </g>
+</svg>

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "purpose": "public-speech-engineering",
+  "labelSource": "automatic-phone-alignment",
+  "predeclaredBeforeRuns": true,
+  "corpusProfile": "four-speaker-v1",
+  "trainingSpeakers": ["bdl", "awb", "clb", "jmk"],
+  "acceptedClipsPerTrainingSpeaker": 48,
+  "trainingPromptCandidates": "arctic_a0001 through arctic_a0080, first valid short clips",
+  "heldoutSourceLockSha256": "a043d028fbad9db8206e89436191997f979f848f194b22e5a40b54a0efc3812c",
+  "heldoutStatus": "Already inspected in the one-speaker engineering experiment; not a fresh confirmatory test",
+  "holdouts": {"rms": {"split": "calibration", "clips": 12}, "slt": {"split": "test", "clips": 12}},
+  "encoder": "wav2vec2-base",
+  "encoderRevision": "0b5b8e868dd84f03fd87d01f9c4ff0f080fecfe8",
+  "head": "linear-v1",
+  "seed": 7,
+  "learningRate": 0.01,
+  "stepBudgets": [200, 800],
+  "reporting": "Report both fixed runs and all split agreement metrics; no best-checkpoint selection from holdouts",
+  "productionEligible": false,
+  "learnerFeedbackEligible": false
+}

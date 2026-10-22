@@ -1,0 +1,1186 @@
+.result-guess { margin: 8px 0; }
+.result-guess-word { margin: 0; font: 500 1.125rem/1.35 var(--serif); overflow-wrap: anywhere; }
+.result-guess-note { margin: 2px 0 0; font-size: 0.875rem; }
+
+:root {
+  --ink: #111;
+  --ink-soft: #3a3a3a;
+  --muted: #5f5f5f;
+  --rule: #e3e3e1;
+  --rule-strong: #bdbdbb;
+  --paper: #fff;
+  --wash: #f4f4f2;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --max: 1160px;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.5 var(--sans);
+}
+
+p {
+  margin: 0 0 8px;
+}
+
+a {
+  color: var(--ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: absolute;
+  top: -60px;
+  left: 16px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.skip:focus {
+  top: 12px;
+}
+
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.quiet {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 13.5px;
+}
+
+.measure {
+  max-width: 68ch;
+}
+
+.status-line:empty {
+  display: none;
+}
+
+/* Header */
+
+.site {
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-inner {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  padding-top: 18px;
+  padding-bottom: 14px;
+}
+
+.site-title {
+  margin: 0 auto 0 0;
+  font: 400 22px/1.2 var(--serif);
+}
+
+.site-title a {
+  text-decoration: none;
+}
+
+.site-note {
+  margin: 0;
+  font-size: 14px;
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Layout. Practice comes first in the page; wide screens put the word list
+   back in the left column. */
+
+.layout {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  column-gap: 56px;
+  align-items: start;
+  padding-top: 32px;
+  padding-bottom: 64px;
+}
+
+.main-col {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.after-col {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.words {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.words-title {
+  margin: 0 0 10px;
+  font: 400 20px/1.25 var(--serif);
+}
+
+.word-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.word-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 8px 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.word-row:hover {
+  background: var(--wash);
+}
+
+.word-row:focus-visible {
+  outline-offset: -2px;
+}
+
+.word-row[aria-current="true"] {
+  background: var(--wash);
+  box-shadow: inset 3px 0 0 var(--ink);
+  font-weight: 600;
+}
+
+.word-row-pos {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* Practice */
+
+.practice:focus {
+  outline: none;
+}
+
+.practice-empty {
+  padding: 24px 0;
+}
+
+.word-head {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.word-head-body {
+  min-width: 0;
+}
+
+.word {
+  margin: 0;
+  font: 400 56px/1.05 var(--serif);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.word-position {
+  margin: 6px 0 0;
+  font-size: 16px;
+}
+
+.picture {
+  margin: 0;
+}
+
+.picture img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 240 / 200;
+}
+
+.minor {
+  margin: 0 0 6px;
+  font: 600 15px/1.4 var(--sans);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 10px;
+}
+
+.example-actions {
+  gap: 4px 18px;
+  margin: 12px 0 0;
+}
+
+.change-word {
+  display: none;
+}
+
+.button {
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 15px/1.2 var(--sans);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.button:hover {
+  background: var(--wash);
+}
+
+.button.primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.button.primary:hover {
+  background: #333;
+}
+
+.button.primary:focus-visible {
+  outline-offset: 3px;
+}
+
+.button:disabled,
+.button.primary:disabled {
+  border-color: var(--rule-strong);
+  background: var(--paper);
+  color: #8a8a8a;
+  cursor: not-allowed;
+}
+
+.notice {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--ink);
+  background: var(--wash);
+}
+
+.notice .button {
+  margin-top: 8px;
+}
+
+/* Practice loop and mirror */
+
+.studio {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: start;
+  padding: 24px 0 8px;
+}
+
+.loop {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.panel {
+  min-width: 0;
+  padding: 20px 22px 18px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+}
+
+.panel-title {
+  margin: 0 0 6px;
+  font: 400 26px/1.2 var(--serif);
+}
+
+#record-panel.is-recording {
+  border-color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--ink);
+}
+
+.meters {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 4px;
+}
+
+.meter-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 92px;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+}
+
+.meter-label {
+  color: var(--muted);
+}
+
+.meter {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  background: var(--rule);
+}
+
+.meter-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.meter-value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.record-button {
+  min-width: 120px;
+}
+
+/* Word check. Every outcome uses the same neutral style; the words carry the meaning. */
+
+.result {
+  margin-top: 10px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--rule-strong);
+}
+
+.result.is-result {
+  border-left-color: var(--ink);
+}
+
+.result-title {
+  margin: 0 0 4px;
+  font: 400 21px/1.3 var(--serif);
+}
+
+.result p:empty,
+.next-steps:empty {
+  display: none;
+}
+
+.result-facts {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.next-steps {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.next-steps li + li {
+  margin-top: 2px;
+}
+
+.settings {
+  margin-top: 6px;
+  border-top: 1px solid var(--rule);
+}
+
+.settings summary {
+  padding: 11px 0;
+  line-height: 22px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-body {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+  gap: 12px 24px;
+  align-items: start;
+  padding: 4px 0 4px;
+}
+
+.settings-note {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.field select {
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+
+.field select:focus-visible {
+  border-color: var(--ink);
+  outline-offset: 0;
+}
+
+.field .small,
+.check .small {
+  margin-top: 6px;
+}
+
+.check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.check label {
+  padding: 11px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.check .small {
+  grid-column: 2;
+  margin-bottom: 0;
+}
+
+.check input:disabled + label {
+  color: #8a8a8a;
+  cursor: not-allowed;
+}
+
+/* Who is practicing sits in Say it, above Record, because it applies to
+   word check and the sound comparison alike. */
+
+.who-field {
+  margin: 16px 0 4px;
+}
+
+.who-field select {
+  max-width: 240px;
+}
+
+/* Word check settings now hold only the opt-in box. */
+
+.word-setup {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.word-setup .check {
+  padding-top: 0;
+}
+
+/* Listen and compare */
+
+.try-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.try-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.try-name {
+  min-width: 9.5em;
+  font-weight: 600;
+}
+
+.try-name .quiet {
+  margin-left: 4px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.try-result {
+  flex: 1 1 11em;
+  color: var(--ink-soft);
+}
+
+.try-row .button {
+  min-width: 84px;
+}
+
+/* Mirror */
+
+.mirror-panel .panel-title {
+  font-size: 22px;
+}
+
+.mirror-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-top: 14px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--wash);
+}
+
+.mirror-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: scaleX(-1);
+}
+
+.mirror-placeholder {
+  margin: 0;
+}
+
+.limits {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+
+/* Example reference */
+
+.reference {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  margin: 0;
+  font-size: 14px;
+}
+
+.facts dt,
+.facts dd {
+  margin: 0;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.facts dt {
+  padding-right: 16px;
+  color: var(--muted);
+}
+
+.facts dd {
+  overflow-wrap: anywhere;
+}
+
+/* Footer */
+
+.site-foot {
+  margin-top: 56px;
+}
+
+.engineering-note {
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.engineering-note summary {
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.engineering-note p {
+  max-width: 68ch;
+  margin-top: 10px;
+}
+
+/* Mode switch and guided word check. Every state uses the same neutral ink
+   style; the words carry the meaning. */
+
+.mode-bar {
+  display: inline-flex;
+  margin: 0 0 12px;
+}
+
+.mode-option {
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 500 15px/1.2 var(--sans);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.mode-option + .mode-option {
+  border-left: 0;
+}
+
+.mode-option:first-child {
+  border-radius: 2px 0 0 2px;
+}
+
+.mode-option:last-child {
+  border-radius: 0 2px 2px 0;
+}
+
+.mode-option:hover {
+  background: var(--wash);
+}
+
+.mode-option[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mode-option:focus-visible {
+  position: relative;
+  outline-offset: 3px;
+}
+
+.guided-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.guided-phase {
+  flex: 1 1 10em;
+  min-width: 0;
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.guided-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  flex: 1 1 100%;
+  padding: 10px 12px;
+  border-left: 3px solid var(--ink);
+  background: var(--wash);
+}
+
+.guided-confirm p {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
+.view-title {
+  margin: 0 0 12px;
+  font: 400 40px/1.1 var(--serif);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.guided-setup {
+  margin: 16px 0 4px;
+}
+
+.guided-terms {
+  margin: 16px 0 0;
+  padding-left: 20px;
+}
+
+.guided-terms li + li {
+  margin-top: 4px;
+}
+
+.layout.is-full > .main-col,
+.layout.is-full > .after-col {
+  grid-column: 1 / -1;
+  max-width: 760px;
+}
+
+.guided-counts {
+  margin: 12px 0 8px;
+}
+
+.g-rows {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.g-row {
+  display: grid;
+  grid-template-columns: 3ch 10em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 44px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.g-num {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.g-word {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.g-obs {
+  min-width: 0;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.g-detail {
+  display: block;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  overflow-wrap: anywhere;
+}
+
+.g-practice {
+  flex: none;
+  min-width: 96px;
+}
+
+.g-pair {
+  grid-template-columns: 3ch 10em minmax(0, 1fr);
+  align-items: start;
+}
+
+.g-pair-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto auto;
+  grid-auto-flow: column;
+  gap: 0 16px;
+  min-width: 0;
+  margin: 0;
+}
+
+.g-pair-facts dt {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.g-pair-facts dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+
+.g-pair .g-detail {
+  grid-column: 3;
+}
+
+/* Guided roster: round rows are static list items reusing .word-row;
+   practice rows are .word-row buttons as in the catalog list. */
+
+li.word-row {
+  cursor: default;
+}
+
+li.word-row:hover {
+  background: none;
+}
+
+.word-row[aria-current="step"] {
+  background: var(--wash);
+  box-shadow: inset 3px 0 0 var(--ink);
+  font-weight: 600;
+}
+
+#guided-roster .button {
+  margin-top: 14px;
+}
+
+#guided-finish-note {
+  margin-top: 6px;
+}
+
+/* Narrower windows: the mirror moves under the practice loop. */
+
+@media (max-width: 1020px) {
+  .studio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Phones and narrow windows: one column in page order, compact word header,
+   so Record is on the first screen and the word list follows practice. */
+
+@media (max-width: 860px) {
+  .wrap {
+    padding: 0 20px;
+  }
+
+  .site-inner {
+    flex-wrap: wrap;
+    row-gap: 2px;
+    padding-top: 12px;
+    padding-bottom: 10px;
+  }
+
+  .site-note {
+    font-size: 13px;
+  }
+
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+    padding-top: 16px;
+  }
+
+  .main-col,
+  .words,
+  .after-col {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .words {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .word-head {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    padding-bottom: 12px;
+  }
+
+  .word {
+    font-size: 40px;
+  }
+
+  .word-position {
+    margin-top: 2px;
+    font-size: 15px;
+  }
+
+  .example-actions {
+    gap: 0 16px;
+    margin-top: 8px;
+  }
+
+  .change-word {
+    display: inline-flex;
+  }
+
+  .studio {
+    gap: 16px;
+    padding-top: 16px;
+  }
+
+  .panel {
+    padding: 16px 16px 14px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+  }
+
+  .meters {
+    margin-top: 12px;
+  }
+
+  .meter-row {
+    grid-template-columns: 48px minmax(0, 1fr) 80px;
+  }
+
+  .settings-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .check {
+    padding-top: 0;
+  }
+
+  .reference {
+    margin-top: 0;
+  }
+
+  .facts {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+
+  .mode-bar {
+    display: flex;
+    max-width: 100%;
+  }
+
+  .mode-option {
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 11px 14px;
+  }
+
+  .layout.is-full > .main-col,
+  .layout.is-full > .after-col {
+    grid-column: 1;
+  }
+
+  .view-title {
+    font-size: 32px;
+  }
+
+  .g-row {
+    grid-template-columns: 3ch minmax(0, 1fr) auto;
+  }
+
+  .g-row .g-obs {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .g-row .g-practice {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+
+  .g-pair {
+    grid-template-columns: 3ch minmax(0, 1fr);
+  }
+
+  .g-pair .g-pair-facts,
+  .g-pair .g-detail {
+    grid-column: 2;
+  }
+
+  .g-pair-facts {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
+
+  .g-pair-facts dd + dt {
+    margin-top: 4px;
+  }
+}
+
+/* Very narrow windows: the picture sits above the word so the heading and
+   example controls use the full width. */
+@media (max-width: 360px) {
+  .word-head {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 12px;
+  }
+
+  .picture {
+    max-width: 88px;
+  }
+
+  .mode-bar {
+    flex-direction: column;
+  }
+
+  .mode-option {
+    flex: none;
+    width: 100%;
+  }
+
+  .mode-option + .mode-option {
+    border-top: 0;
+    border-left: 1px solid var(--ink);
+  }
+
+  .mode-option:first-child {
+    border-radius: 2px 2px 0 0;
+  }
+
+  .mode-option:last-child {
+    border-radius: 0 0 2px 2px;
+  }
+
+  .meter-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "label value"
+      "meter meter";
+    row-gap: 4px;
+  }
+
+  .meter-label {
+    grid-area: label;
+  }
+
+  .meter {
+    grid-area: meter;
+  }
+
+  .meter-value {
+    grid-area: value;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast: keep meter fills, the selected word and result rules visible. */
+
+@media (forced-colors: active) {
+  .meter {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .meter-fill {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .word-row[aria-current="true"],
+  .word-row[aria-current="step"] {
+    outline: 2px solid CanvasText;
+    outline-offset: -2px;
+  }
+
+  .mode-option[aria-pressed="true"] {
+    outline: 2px solid CanvasText;
+    outline-offset: -4px;
+  }
+
+  .guided-confirm {
+    border-left-color: CanvasText;
+  }
+
+  #record-panel.is-recording {
+    border-width: 3px;
+  }
+
+  .result,
+  .result.is-result {
+    border-left-color: CanvasText;
+  }
+}
+
+/* The video and outline share the same contained, mirrored image geometry. */
+.mouth-outline { position: absolute; inset: 0; width: 100%; height: 100%; transform: scaleX(-1); pointer-events: none; }
+.mouth-outline line { stroke: white; stroke-width: 2; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 1px #111); }
+.visual-choice { margin-top: 16px; }
+
+/* Experimental sound comparison. Same neutral result style as word check;
+   the limitation line matches the result text's size and colour. */
+.sound-preview .panel-title { font-size: 24px; }
+.sp-limit { margin-top: 6px; color: var(--ink); }
+.sp-setup { grid-template-columns: minmax(0, 1fr); gap: 4px; margin-top: 6px; border-top: 1px solid var(--rule); padding-top: 8px; }
+.sp-setup .check { padding-top: 0; }
+.sound-preview .engineering-note { margin-top: 12px; }
+/* Chosen practice uses native checkbox semantics and the existing neutral tokens. */
+.plan-fieldset { margin: 12px 0 0; padding: 0; border: 0; min-width: 0; }
+.plan-list li { display: flex; align-items: flex-start; border-bottom: 1px solid var(--rule); }
+.plan-list label { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; min-height: 44px; padding: 10px 0; cursor: pointer; overflow-wrap: anywhere; }
+.plan-list input { width: 20px; height: 20px; margin: 12px 10px 0 0; accent-color: var(--ink); flex: none; }
+.plan-list input:disabled + label { opacity: .55; cursor: not-allowed; }
+.plan-list .word-row-pos { white-space: normal; }
+.plan-report-rows .g-row { grid-template-columns: 3ch minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 860px) {
+  .plan-report-rows .g-row { grid-template-columns: 3ch minmax(0, 1fr); }
+}
+#plan-suggest-note:empty { display: none; }
+.words.is-plan { position: static; }

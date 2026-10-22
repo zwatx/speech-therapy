@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "kind": "assessment-engineering-illustration-registry",
+  "sourcePackSha256": "a957a9e3291f0d90b275d40cd914890836ee7e6fc4fd361f7589cd1444587ef3",
+  "authoringModel": {
+    "name": "Opus 5.5",
+    "id": "claude-opus-5-5"
+  },
+  "format": {
+    "type": "image/svg+xml",
+    "viewBox": "0 0 240 200",
+    "palette": "black and white with light grey; one warm yellow accent (#E9C46A) only where it helps meaning",
+    "selfContained": true
+  },
+  "rightsNote": "Original vector artwork drawn for this project. No third-party assets were incorporated. This registry makes no copyright guarantee for any jurisdiction and does not verify rights.",
+  "illustrations": [
+    {
+      "word": "rabbit",
+      "path": "illustrations/rabbit.svg",
+      "promptIds": ["r-beginning-rabbit"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "bread",
+      "path": "illustrations/bread.svg",
+      "promptIds": ["r-middle-bread"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "door",
+      "path": "illustrations/door.svg",
+      "promptIds": ["r-end-door"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "baby",
+      "path": "illustrations/baby.svg",
+      "promptIds": ["b-beginning-baby", "b-middle-baby"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "banana",
+      "path": "illustrations/banana.svg",
+      "promptIds": ["n-middle-banana"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "backpack",
+      "path": "illustrations/backpack.svg",
+      "promptIds": ["k-middle-backpack", "k-end-backpack"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "sky",
+      "path": "illustrations/sky.svg",
+      "promptIds": ["s-beginning-sky"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "vase",
+      "path": "illustrations/vase.svg",
+      "promptIds": ["v-beginning-vase"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "yo-yo",
+      "path": "illustrations/yo-yo.svg",
+      "promptIds": ["y-beginning-yo-yo"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "thumb",
+      "path": "illustrations/thumb.svg",
+      "promptIds": ["th-beginning-thumb"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "feather",
+      "path": "illustrations/feather.svg",
+      "promptIds": ["voiced-th-middle-feather"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "ring",
+      "path": "illustrations/ring.svg",
+      "promptIds": ["ng-end-ring"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    },
+    {
+      "word": "treasure",
+      "path": "illustrations/treasure.svg",
+      "promptIds": ["zh-middle-treasure"],
+      "origin": "generated_original_for_project",
+      "thirdPartyAssetsUsed": false,
+      "meaningReview": "model_engineering_review",
+      "professionalReview": "deferred_until_finished_product",
+      "attributionBasis": "Created for this project with Opus 5.5; no third-party assets incorporated"
+    }
+  ]
+}

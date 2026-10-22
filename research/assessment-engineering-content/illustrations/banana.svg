@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" width="240" height="200" role="img" aria-labelledby="banana-title banana-desc">
+  <title id="banana-title">Banana</title>
+  <desc id="banana-desc">A single curved yellow banana with a short stem at one end.</desc>
+  <rect width="240" height="200" fill="#FFFFFF"/>
+  <ellipse cx="124" cy="180" rx="80" ry="7" fill="#D9D9D9"/>
+  <g stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M58 72 L50 50 L62 46 L70 68 Z" fill="#1A1A1A"/>
+    <path d="M56 70 C56 150 130 186 196 140 L198 130 C140 142 90 120 70 66 Z" fill="#E9C46A"/>
+    <path d="M70 86 C92 132 142 150 188 138" fill="none" stroke-width="2.5"/>
+  </g>
+  <circle cx="198" cy="135" r="4" fill="#1A1A1A"/>
+</svg>

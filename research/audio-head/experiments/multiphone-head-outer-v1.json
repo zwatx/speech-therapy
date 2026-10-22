@@ -1,0 +1,28 @@
+{
+  "authorTestInferencePerformed": false,
+  "epochPolicy": "same-fold same-pipeline selected inner best epoch count, fresh seed7",
+  "experiment": "multiphone-pooled-head-outer-refits-v1",
+  "holdoutPredictionsComputed": false,
+  "learningRatePolicy": "same-fold inner metric then lower learning rate then earlier epoch",
+  "plannedLocalRefits": 20,
+  "plannedPhoneticRefits": 40,
+  "protocolPath": "/Users/zacharywilson/Documents/speech-therapy/docs/model/multiphone-outer-evaluation-protocol.md",
+  "protocolSha256": "6daceb544fc4d0721ae8a2d06c069d1b28511ce00cea2eb0c995b11b2b328395",
+  "role": "Refit only; holdout release is separate",
+  "sourceSha256": {
+    "encoders.py": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+    "multiphone_cache.py": "15712352cc03bf03ff94dbd6f39f1e3891be10f91e5c138a01ee11a3ee177e4c",
+    "multiphone_child_train.py": "466b0f1c875a35a3515e0a2b88ee3dec567cf82b4505ada3f30909d7e3e056f0",
+    "multiphone_controls.py": "34a722ee2001db77e85cecdf91f78865d07f445c8e4e4bb37d5d2bc78b14a95a",
+    "multiphone_data.py": "454c7bc9faaf65b1afac2706aea53acd277bd59393b9e704c4d24e7f0a28617e",
+    "multiphone_head_outer.py": "c8ae504131de63e321b83776e93a59ab6d53ec397877a88b3a85370c45af5fe7",
+    "multiphone_local_head.py": "6c4eccd1df859f2f690b80afb839dd42f0628f80e5db54d67a6f374b362e128d",
+    "multiphone_local_train.py": "3cd4432bd7ec54f185e2dc582f4794aa0357de09ec26f8365391a0b633d411ac",
+    "multiphone_models.py": "0e254f967b4c8dc5c5fe0a3bd2cbae05c62c480b6360cdb1912403271568987a",
+    "multiphone_phonetic_features.py": "34dbd9c91c56818de16fe27aa3019a3c0daa05c237cdc1e4929e25efef6c1074",
+    "multiphone_phonetic_head.py": "1585565d4956a2b116cc2f3d7ff9ff744abfb5070c8473892cb9a72b5b61b9b6",
+    "multiphone_train.py": "9d026a37216e6ae7e535b94f7b6fc52744e81a3b29ef94a564364b388ff18970",
+    "multiphone_verify.py": "5ba5fa3e92bb3d4e6367c3817df958a35becf8d04147fd8be82c63d34fd10d39",
+    "speechocean_r_rater_cv.py": "89d37ce3879ddfea13ab0a5393faf12793a0430c8e3a22a6e97bf53d69bdcd33"
+  }
+}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; media-src 'self' blob:; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Phrase practice · Speech practice</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#practice">Skip to practice</a>
+  <header class="site">
+    <div class="wrap site-inner">
+      <p class="site-title">Speech practice</p>
+      <p class="quiet small">Local research preview</p>
+    </div>
+  </header>
+  <main id="practice" class="wrap" tabindex="-1">
+    <div class="intro">
+      <p class="eyebrow">Phrase practice</p>
+      <h1>One phrase. Listen, then check.</h1>
+      <p class="quiet measure">Choose a phrase and an existing recording. Listen back in your own time, then choose whether to check it on this computer.</p>
+    </div>
+    <p id="load-status" class="notice" role="status">Loading phrases…</p>
+    <div id="practice-body" hidden>
+      <section class="phrase-section" aria-labelledby="phrase-heading">
+        <div class="phrase-picker">
+          <label for="phrase">Choose a phrase</label>
+          <select id="phrase" aria-describedby="phrase-note"></select>
+          <p id="phrase-note" class="quiet small">Use a recording of this whole phrase.</p>
+        </div>
+        <div class="phrase-copy">
+          <h2 id="phrase-heading"></h2>
+          <p id="phrase-focus" class="focus-text"></p>
+          <p id="phrase-cue" class="quiet measure"></p>
+          <p class="quiet small">This listening cue describes the chosen phrase. It does not identify an error in your recording.</p>
+        </div>
+      </section>
+      <div class="workspace">
+        <section class="panel" aria-labelledby="recording-heading">
+          <p class="eyebrow">1 · Listen</p>
+          <h2 id="recording-heading">Your recording</h2>
+          <p class="quiet">Choose one WAV file, up to 4 seconds long.</p>
+          <label for="audio-file" class="file-label">Choose a WAV recording</label>
+          <input id="audio-file" type="file" accept=".wav,audio/wav,audio/x-wav" aria-describedby="file-requirements file-status">
+          <p id="file-requirements" class="quiet small">Mono · 16 kHz · 16-bit PCM · 0.1–4 seconds. Other formats need to be converted before use.</p>
+          <p id="file-status" class="small status-line" role="status">No recording chosen.</p>
+          <div id="playback" class="playback" hidden>
+            <p id="audio-label" class="audio-label">Listen to your recording</p>
+            <audio id="audio" aria-labelledby="audio-label" controls preload="metadata"></audio>
+            <p class="quiet small">Playback starts only when you press Play. You can listen without entering an age or agreeing to a check.</p>
+          </div>
+          <button id="clear" class="button" type="button" disabled>Clear recording and result</button>
+          <p class="quiet small retention">Choosing a file keeps it in this tab. Choosing Check sends a temporary copy to the local service on this computer.</p>
+        </section>
+        <section class="panel" aria-labelledby="check-heading">
+          <p class="eyebrow">2 · Check, if you choose</p>
+          <h2 id="check-heading">Phrase check</h2>
+          <p class="quiet">The check can look for the chosen phrase. Individual sound results are uncertain.</p>
+          <form id="check-form">
+          <div class="age-field">
+            <label for="age">Age of the person in the recording</label>
+            <select id="age" aria-describedby="age-note">
+              <option value="">Choose age</option>
+              <option value="6">6 years</option><option value="7">7 years</option>
+              <option value="8">8 years</option><option value="9">9 years</option>
+              <option value="10">10 years</option><option value="11">11 years</option>
+              <option value="12">12 years</option>
+            </select>
+            <p id="age-note" class="quiet small">Checking supports known ages 6–12 only. If the age is unknown or outside this range, you can still listen.</p>
+          </div>
+          <div class="consent-field">
+            <input id="consent" type="checkbox" aria-describedby="consent-note">
+            <label for="consent">I agree to check this recording on this computer.</label>
+          </div>
+          <p id="consent-note" class="quiet small">The service attempts to remove its temporary copy after the check. If cleanup cannot be confirmed, further checks pause.</p>
+          <div class="actions">
+            <button id="check" class="button primary" type="submit" aria-describedby="check-status" disabled>Check this recording</button>
+            <button id="cancel" class="button" type="button" hidden>Cancel check</button>
+            <button id="refresh-status" class="button" type="button" hidden>Check service status</button>
+          </div>
+          <p id="check-status" class="small status-line" role="status" aria-live="polite">Choose a recording to begin.</p>
+          </form>
+        </section>
+      </div>
+      <section id="result" class="result" aria-labelledby="result-heading" hidden>
+        <p class="eyebrow">This recording</p>
+        <h2 id="result-heading">Check result</h2>
+        <p id="result-message"></p>
+        <dl>
+          <div><dt>Phrase</dt><dd id="phrase-result"></dd></div>
+          <div><dt>Individual sounds</dt><dd id="sound-result"></dd></div>
+        </dl>
+        <p id="alignment-note" class="quiet small"></p>
+        <p id="cleanup-result" class="quiet small"></p>
+      </section>
+      <footer class="research-note">
+        <h2>About this preview</h2>
+        <p class="quiet measure">For local research only. Results are not pronunciation grades, corrective feedback, a diagnosis, or evidence of improvement. Sound locations may be unverified even when the phrase matches.</p>
+        <p class="quiet small">Changing the phrase, recording, age, or consent clears the displayed result and requests cancellation of an active check. A cancellation request does not confirm the service has stopped.</p>
+      </footer>
+    </div>
+    <noscript><p class="notice">JavaScript is needed to choose a phrase and check a recording.</p></noscript>
+  </main>
+</body>
+</html>

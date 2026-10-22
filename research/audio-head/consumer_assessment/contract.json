@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Local consumer assessment research bridge v1",
+  "description": "Research-only engineering transport. Ages and prompt are caller supplied; neither identity nor produced speech is verified. No feedback, clinical use or production use.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/response"
+    }
+  ],
+  "$defs": {
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "attemptId",
+        "ageYears",
+        "prompt",
+        "audioBase64"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "attemptId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ageYears": {
+          "type": "integer",
+          "minimum": 6,
+          "maximum": 12
+        },
+        "prompt": {
+          "$ref": "#/$defs/prompt"
+        },
+        "audioBase64": {
+          "type": "string",
+          "maxLength": 176128,
+          "contentEncoding": "base64",
+          "description": "Strict base64 of bounded mono16kHz PCM16 RIFF/WAV,0.1\u20134s; structural validation required."
+        }
+      }
+    },
+    "prompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "language",
+        "transcript",
+        "words",
+        "targets"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 2
+        },
+        "language": {
+          "const": "en"
+        },
+        "transcript": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "words": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "phones"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "phones": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 512,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Z]+[012]?$"
+                }
+              }
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "wordIndex",
+              "phoneIndex",
+              "targetPhone"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "wordIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "phoneIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "targetPhone": {
+                "enum": [
+                  "B",
+                  "P",
+                  "M",
+                  "T",
+                  "D",
+                  "N",
+                  "K",
+                  "G",
+                  "F",
+                  "V",
+                  "S",
+                  "Z",
+                  "SH",
+                  "CH",
+                  "JH",
+                  "L",
+                  "R",
+                  "W",
+                  "Y",
+                  "HH",
+                  "TH",
+                  "DH",
+                  "NG"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "researchOnly",
+        "learnerFeedbackEligible",
+        "clinicalUseEligible",
+        "productionUseEligible",
+        "binding",
+        "outcome",
+        "reason",
+        "promptMatch",
+        "captureMetrics",
+        "timingMilliseconds",
+        "targets",
+        "model"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "researchOnly": {
+          "const": true
+        },
+        "learnerFeedbackEligible": {
+          "const": false
+        },
+        "clinicalUseEligible": {
+          "const": false
+        },
+        "productionUseEligible": {
+          "const": false
+        },
+        "binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "attemptId",
+            "requestSha256",
+            "audioSha256",
+            "promptSha256"
+          ],
+          "properties": {
+            "attemptId": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "requestSha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "audioSha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "promptSha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "outcome": {
+          "enum": [
+            "processed",
+            "unavailable"
+          ]
+        },
+        "reason": {
+          "enum": [
+            null,
+            "invalid_request",
+            "request_too_large",
+            "age_out_of_range",
+            "unsupported_target",
+            "invalid_audio",
+            "audio_too_long",
+            "silence",
+            "clipping",
+            "model_unavailable",
+            "inference_failed",
+            "timeout",
+            "busy"
+          ]
+        },
+        "promptMatch": {
+          "const": "unverified"
+        },
+        "captureMetrics": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sampleCount",
+                "durationMilliseconds",
+                "rms",
+                "peak",
+                "railSamples"
+              ],
+              "properties": {
+                "sampleCount": {
+                  "type": "integer",
+                  "minimum": 1600,
+                  "maximum": 64000
+                },
+                "durationMilliseconds": {
+                  "type": "number",
+                  "minimum": 100,
+                  "maximum": 4000
+                },
+                "rms": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "peak": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "railSamples": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 64000
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timingMilliseconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "total",
+            "inference"
+          ],
+          "properties": {
+            "total": {
+              "type": "number",
+              "minimum": 0
+            },
+            "inference": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "targets": {
+          "type": "array",
+          "maxItems": 512,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "wordIndex",
+              "phoneIndex",
+              "targetPhone",
+              "subjectiveCorpusRatingProbabilities"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "wordIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "phoneIndex": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "targetPhone": {
+                "enum": [
+                  "B",
+                  "P",
+                  "M",
+                  "T",
+                  "D",
+                  "N",
+                  "K",
+                  "G",
+                  "F",
+                  "V",
+                  "S",
+                  "Z",
+                  "SH",
+                  "CH",
+                  "JH",
+                  "L",
+                  "R",
+                  "W",
+                  "Y",
+                  "HH",
+                  "TH",
+                  "DH",
+                  "NG"
+                ]
+              },
+              "subjectiveCorpusRatingProbabilities": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "description": "Subjective corpus rating class0/1/2 distribution; no pronunciation correctness or produced-phone verdict."
+              }
+            }
+          }
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "manifestSha256"
+              ],
+              "properties": {
+                "id": {
+                  "const": "ages-6-12-research-mixture"
+                },
+                "manifestSha256": {
+                  "const": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "processed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "null"
+              },
+              "targets": {
+                "minItems": 1
+              },
+              "model": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "manifestSha256"
+                ],
+                "properties": {
+                  "id": {
+                    "const": "ages-6-12-research-mixture"
+                  },
+                  "manifestSha256": {
+                    "const": "bc62f1e4f1727379161d0f3f7d8e6074e645e7578b5c25661fd9da53e4fde1bf"
+                  }
+                }
+              },
+              "captureMetrics": {
+                "type": "object"
+              },
+              "binding": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "attemptId",
+                  "requestSha256",
+                  "audioSha256",
+                  "promptSha256"
+                ],
+                "properties": {
+                  "attemptId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "requestSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "audioSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "promptSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason": {
+                "enum": [
+                  "invalid_request",
+                  "request_too_large",
+                  "age_out_of_range",
+                  "unsupported_target",
+                  "invalid_audio",
+                  "audio_too_long",
+                  "silence",
+                  "clipping",
+                  "model_unavailable",
+                  "inference_failed",
+                  "timeout",
+                  "busy"
+                ]
+              },
+              "targets": {
+                "maxItems": 0
+              },
+              "model": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "x-http": {
+    "method": "POST",
+    "path": "/v1/assessment",
+    "bindAddress": "127.0.0.1",
+    "defaultPort": 8765,
+    "contentType": "application/json",
+    "originHeaders": "rejected",
+    "hostHeaders": [
+      "127.0.0.1:<port>",
+      "localhost:<port>"
+    ],
+    "maximumBodyBytes": 220000,
+    "readDeadlineSeconds": 5,
+    "inferenceTimeoutSeconds": 45,
+    "maximumConcurrentInferences": 1,
+    "maximumHandlerThreads": 4,
+    "requestBinding": "SHA256 of exact request body bytes",
+    "promptBinding": "SHA256 of UTF8 JSON sorted keys, compact separators, no ASCII escaping override (ensure_ascii default true)",
+    "retention": "HTTP temporary files, worker artifacts and runtime copies removed on every completed/crashed/timed-out worker outcome; CLI output explicit only",
+    "capturePolicy": "Exact all-zero PCM is silence; any sample at -32768 or32767 is clipping. Engineering checks only, no calibrated VAD or nonspeech rejection."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "experiment": "multiphone-author-train-20260926-v1",
+  "authorPartition": "train",
+  "targetPhones": ["B", "P", "M", "T", "D", "N", "K", "G", "F", "V", "S", "Z", "SH", "CH", "JH", "L", "R", "W", "Y", "HH", "TH", "DH", "NG", "ZH"],
+  "singleOccurrencePerTargetPerClip": true,
+  "minimumTargetRows": 100,
+  "minimumTargetSpeakers": 50,
+  "outerFolds": 5,
+  "splitSeed": 20260926,
+  "innerValidationSpeakerFraction": 0.2,
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "sourceMetadataSha256": {
+    "train/utt2spk": "e83546f91fa7444547b8c690ef004ad514eee1f7066d38ec87f7a6c847c84737",
+    "train/spk2age": "783be59032da6a140c143fde9c850da1148d48a3aadd27745f2e1b412f981a02",
+    "resource/scores.json": "31c847b8ee29d61d8fe338bcbb1d4c4721425f05481d2144ad57cd19ea1159f8",
+    "resource/scores-detail.json": "8a90ff40558fe8032d9bfa919429dcae267c0ec3fbdedf1dca30c0515ea989e1"
+  }
+}

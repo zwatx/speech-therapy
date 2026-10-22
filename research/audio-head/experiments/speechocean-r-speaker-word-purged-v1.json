@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-speaker-word-purged-v1",
+  "purpose": "Exploratory author-train stress test of unseen speakers and canonical /R/ target words",
+  "authorPartition": "train",
+  "expectedTrainClips": 766,
+  "expectedTrainSpeakers": 124,
+  "selectedTrainIdsSha256": "57e5a8ee6c74027d2e4c42d3e8a8892013fd2c6a4fca9cf3cbfcf111864e47e3",
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "sourceMetadataSha256": {
+    "train/utt2spk": "e83546f91fa7444547b8c690ef004ad514eee1f7066d38ec87f7a6c847c84737",
+    "resource/scores.json": "31c847b8ee29d61d8fe338bcbb1d4c4721425f05481d2144ad57cd19ea1159f8",
+    "resource/scores-detail.json": "8a90ff40558fe8032d9bfa919429dcae267c0ec3fbdedf1dca30c0515ea989e1"
+  },
+  "inputs": {
+    "wav2vec2-base": {
+      "directory": "outputs/speechocean-r-probe-v2",
+      "recipeVersion": "one-r-full-clip-frozen-wav2vec2-meanpool-ridge-v2",
+      "featureIndexSha256": "19085b3f39b7a63b9126f6f5fcd67712bf13f95bff04b5f7e484f0667bff59e2",
+      "featureProgressSha256": "119743b4122bb37aa153fb2b656d816d73cb6869235c40342c69755e510aef92",
+      "featureArraySha256": "480480fe916cfd4f3016fee04999bfa07bcc53ea838f4cec265b0d1e790e7432"
+    },
+    "wavlm-base-plus": {
+      "directory": "outputs/speechocean-r-probe-wavlm-v1",
+      "recipeVersion": "one-r-full-clip-frozen-wavlm-meanpool-ridge-v1",
+      "featureIndexSha256": "7e8b109927e6bdffa47c118ead5ed2139d788677e075ba8109bb67dae65f466c",
+      "featureProgressSha256": "4ac963f142c56165ceb8317bd001551e31336240d81766ddffad793931c8038c",
+      "featureArraySha256": "f43ff7abe9dfa3c34e04cc5894d0b0099e2dc625135c8af5f357377e7785c8a6"
+    }
+  },
+  "knownAuthorTest": true,
+  "authorTestUsedForSettings": false,
+  "authorTestInferencePerformed": false,
+  "outerFolds": 5,
+  "outerSeed": 20260923,
+  "outerAssignment": "Reuse speaker assignment from speechocean-r-rater-cv-convergence-v2",
+  "outerPurge": "Hold out all clips of the assigned speakers; remove from outer fit every clip whose exact canonical /R/ target word occurs in the heldout clips",
+  "innerFractionOfOuterTrainSpeakers": 0.2,
+  "innerAssignment": "Select inner validation speakers from retained outer fit speakers with the existing seeded hash rule",
+  "innerPurge": "Within retained outer fit, remove from inner fit every clip whose exact canonical /R/ target word occurs in inner validation clips",
+  "classes": [0, 1, 2],
+  "label": "Five individual rater scores per clip represented as a three-class empirical distribution",
+  "head": "Linear softmax on fit-standardized frozen full-clip pooled features with L2 weight penalty and unpenalized intercept",
+  "softmaxL2Candidates": [0.001, 0.01, 0.1],
+  "selectionMetric": "Inner speaker-and-word-disjoint per-rater natural-log loss; lowest candidate breaks ties",
+  "baseline": "Fit-only three-class prior with one pseudocount per class",
+  "priorPseudocountPerClass": 1.0,
+  "optimizer": "Torch CPU float64 LBFGS strong_wolfe, zero initialization, max 400 iterations, history 10",
+  "maxOptimizerIterations": 400,
+  "maxCpuMathThreads": 4,
+  "logLossEpsilon": 1e-12,
+  "brierDefinition": "Mean across all five raters of the sum of squared probability errors over three one-hot classes",
+  "probabilitiesClippedForEvaluationOnly": true,
+  "outputDirectory": "outputs/speechocean-r-speaker-word-purged-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "clinicalReliabilityEstablished": false
+}

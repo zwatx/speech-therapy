@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self'; style-src 'self'; img-src 'self'; media-src 'self' blob:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Speech practice</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#practice">Skip to practice</a>
+
+  <header class="site">
+    <div class="wrap site-inner">
+      <p class="site-title"><a href="#practice">Speech practice</a></p>
+      <p class="site-note quiet">Runs on this computer. No account needed.</p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <div class="main-col">
+      <p id="cleanup-notice" class="notice" role="alert" hidden>
+        The microphone or camera may not have turned off properly. Reload the page before recording again.
+        <button type="button" id="cleanup-reload" class="button">Reload page</button>
+      </p>
+
+      <div id="mode-bar" class="mode-bar" role="group" aria-label="Practice mode">
+        <button type="button" id="mode-free" class="mode-option" aria-pressed="true">Practice freely</button>
+        <button type="button" id="mode-guided" class="mode-option" aria-pressed="false">Guided word check</button>
+      </div>
+
+      <div id="guided-bar" class="guided-bar" role="group" aria-label="Guided word check" hidden>
+        <p id="guided-phase" class="guided-phase"></p>
+        <button type="button" id="guided-back" class="button" hidden>Back to summary</button>
+        <button type="button" id="guided-end" class="button" aria-expanded="false" aria-controls="guided-end-confirm">End and clear</button>
+        <div id="guided-end-confirm" class="guided-confirm" role="group" aria-labelledby="guided-end-question" hidden>
+          <p id="guided-end-question">End this guided check? This tab clears its results and recordings. A copy already sent to the computer may remain if service cleanup failed.</p>
+          <button type="button" id="guided-end-yes" class="button">Yes, end and clear</button>
+          <button type="button" id="guided-end-no" class="button primary">Keep going</button>
+        </div>
+      </div>
+
+      <section id="guided-start" class="guided-view" aria-labelledby="guided-start-heading" hidden>
+        <h1 id="guided-start-heading" class="view-title" tabindex="-1">Guided word check</h1>
+        <p id="guided-start-notice" class="notice" hidden></p>
+        <p class="measure">Say 13 words, one at a time. Record each word, listen back if you like, then choose Check. You can skip any word. Afterwards you can practice any word, then recheck all 13.</p>
+        <p class="quiet measure">Some practice words have more than one sound to work on. This check recognizes words, not individual sounds.</p>
+        <div class="settings-body guided-setup">
+          <div class="field">
+            <label for="guided-age">Who is practicing?</label>
+            <select id="guided-age" aria-describedby="guided-age-note">
+              <option value="">Choose…</option>
+              <option value="adult">Adult (18+)</option>
+              <option value="child-6">Child, age 6</option>
+              <option value="child-7">Child, age 7</option>
+              <option value="child-8">Child, age 8</option>
+              <option value="child-9">Child, age 9</option>
+              <option value="child-10">Child, age 10</option>
+              <option value="child-11">Child, age 11</option>
+              <option value="child-12">Child, age 12</option>
+            </select>
+            <p id="guided-age-note" class="quiet small">An adult, or a child aged 6 to 12. Your choice is not verified. Whole-word recognition is experimental; how well it works has not been established for adults or children.</p>
+          </div>
+          <div class="check">
+            <input type="checkbox" id="guided-optin" aria-describedby="guided-optin-note">
+            <label for="guided-optin">Check my tries on this computer</label>
+            <p id="guided-optin-note" class="quiet small"></p>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" id="guided-begin" class="button primary" aria-describedby="guided-start-status" disabled>Start first round</button>
+        </div>
+        <p id="guided-start-status" class="quiet small status-line"></p>
+        <ul class="quiet small guided-terms">
+          <li>No score, grade or diagnosis. Each result says what the recording check or speech recognition model reported.</li>
+          <li>This session keeps brief results until you end or leave. Recordings are cleared when you move to another word.</li>
+          <li>The microphone and camera turn on only when you choose Record or Turn on camera.</li>
+        </ul>
+      </section>
+
+      <section id="practice" class="practice" aria-labelledby="word-heading" tabindex="-1">
+        <div id="practice-empty" class="practice-empty">
+          <p id="practice-message" class="quiet">Loading…</p>
+        </div>
+
+        <div id="practice-body" hidden>
+          <div class="word-head">
+            <figure class="picture">
+              <img id="picture" alt="" width="240" height="200">
+              <p id="picture-missing" class="quiet small" hidden>Picture unavailable.</p>
+            </figure>
+            <div class="word-head-body">
+              <h1 id="word-heading" class="word"></h1>
+              <p id="word-position" class="quiet word-position"></p>
+              <div class="actions example-actions">
+                <button type="button" id="example-play" class="button" disabled>Play example</button>
+                <a class="text-link small" href="#reference">About this example</a>
+                <a class="text-link small change-word" href="#words">Change word</a>
+              </div>
+              <p id="example-status" class="quiet small status-line" role="status"></p>
+            </div>
+          </div>
+
+          <div class="studio">
+            <div class="loop">
+              <section id="record-panel" class="panel" aria-labelledby="record-heading" tabindex="-1">
+                <h2 id="record-heading" class="panel-title">Say it</h2>
+                <p class="quiet">Tap Record, say <span id="record-word"></span> once, then tap Stop. It stops by itself after 4 seconds.</p>
+                <p id="br-cue" class="quiet small" hidden></p>
+
+                <div id="who-field" class="field who-field">
+                  <label for="age">Who is practicing?</label>
+                  <select id="age" aria-describedby="age-note">
+                    <option value="">Choose…</option>
+                    <option value="adult">Adult (18+)</option>
+                    <option value="child-6">Child, age 6</option>
+                    <option value="child-7">Child, age 7</option>
+                    <option value="child-8">Child, age 8</option>
+                    <option value="child-9">Child, age 9</option>
+                    <option value="child-10">Child, age 10</option>
+                    <option value="child-11">Child, age 11</option>
+                    <option value="child-12">Child, age 12</option>
+                  </select>
+                  <p id="age-note" class="quiet small">An adult, or a child aged 6 to 12. Your choice is not verified. Choose it, and any checks below, before you record; changing it clears your tries. Whole-word recognition is experimental for adults and children. The sound comparison is for adults only.</p>
+                </div>
+
+                <div class="meters" aria-hidden="true">
+                  <div class="meter-row">
+                    <span class="meter-label">Time</span>
+                    <span class="meter"><span id="time-fill" class="meter-fill"></span></span>
+                    <span id="time-text" class="meter-value">0.0 s of 4 s</span>
+                  </div>
+                  <div class="meter-row">
+                    <span class="meter-label">Sound</span>
+                    <span class="meter"><span id="level-fill" class="meter-fill"></span></span>
+                    <span class="meter-value"></span>
+                  </div>
+                </div>
+
+                <div class="actions">
+                  <button type="button" id="record" class="button primary record-button" disabled>Record</button>
+                  <button type="button" id="record-cancel" class="button" hidden>Cancel</button>
+                </div>
+
+                <p id="record-status" class="status-line" role="status"></p>
+                <p class="quiet small">Up to two tries stay in this tab. Choosing Check sends one temporary copy to this computer.</p>
+                <p id="session-note" class="quiet small" hidden><span id="session-count"></span> This counts practice, not progress. It is not saved and resets when you leave or reload this page.</p>
+              </section>
+
+              <section id="feedback" class="panel feedback" aria-labelledby="feedback-heading">
+                <h2 id="feedback-heading" class="panel-title">Word check</h2>
+                <div id="fb-result" class="result" role="group" aria-labelledby="fb-title" tabindex="-1">
+                  <p id="fb-title" class="result-title"></p>
+                  <p id="fb-text" class="measure"></p>
+                  <p id="fb-facts" class="result-facts small"></p>
+                  <ul id="fb-next" class="next-steps"></ul>
+                </div>
+                <div class="actions">
+                  <button type="button" id="fb-check" class="button" hidden>Check this try</button>
+                  <button type="button" id="fb-cancel" class="button" hidden>Stop waiting</button>
+                  <button type="button" id="fb-setup-retry" class="button" hidden>Try again</button>
+                  <button type="button" id="guided-next" class="button" hidden>Next word</button>
+                  <button type="button" id="guided-skip" class="button" hidden>Skip this word</button>
+                </div>
+                <div id="br-actions" class="actions" role="group" aria-label="Listen and try bread again" hidden>
+                  <button type="button" id="br-example" class="button">Play example</button>
+                  <button type="button" id="br-take" class="button">Play this try</button>
+                  <button type="button" id="br-record" class="button">Record again</button>
+                </div>
+                <p id="guided-retention" class="quiet small" hidden>This session keeps brief results until you end or leave. Recordings are cleared when you move to another word.</p>
+                <p class="quiet small">Word check recognizes whole words only. No pronunciation score or diagnosis.</p>
+                <p class="quiet small">Each check uses a temporary copy on this computer. If cleanup fails, it may remain and checking pauses.</p>
+
+                <details id="fb-settings" class="settings" open hidden>
+                  <summary id="fb-settings-summary">Word check settings</summary>
+                  <div class="settings-body word-setup">
+                    <div class="check">
+                      <input type="checkbox" id="proc-optin" aria-describedby="proc-optin-note">
+                      <label for="proc-optin">Check my tries on this computer</label>
+                      <p id="proc-optin-note" class="quiet small"></p>
+                    </div>
+                    <p class="quiet small settings-note">Changing this clears your tries and turns the sound comparison off.</p>
+                  </div>
+                </details>
+              </section>
+
+              <section id="compare" class="panel compare" aria-labelledby="compare-heading" hidden>
+                <h2 id="compare-heading" class="panel-title">Listen and compare</h2>
+                <p id="compare-hint" class="quiet"></p>
+                <ul class="try-list">
+                  <li id="try-a" class="try-row" hidden>
+                    <span class="try-name"><span id="try-a-label"></span> <span id="try-a-length" class="quiet"></span></span>
+                    <span id="try-a-result" class="try-result"></span>
+                    <button type="button" id="try-a-play" class="button">Play</button>
+                  </li>
+                  <li id="try-b" class="try-row" hidden>
+                    <span class="try-name"><span id="try-b-label"></span> <span id="try-b-length" class="quiet"></span></span>
+                    <span id="try-b-result" class="try-result"></span>
+                    <button type="button" id="try-b-play" class="button">Play</button>
+                  </li>
+                </ul>
+                <div class="actions">
+                  <button type="button" id="compare-example" class="button" disabled>Play example</button>
+                  <button type="button" id="takes-clear" class="button">Clear tries</button>
+                </div>
+                <p class="quiet small">For your own listening. The app does not judge which try is better or measure progress. <span id="compare-note">When you record again, the earlier try is removed once the new one is kept.</span></p>
+              </section>
+<section id="sound-preview" class="panel sound-preview" aria-labelledby="sp-heading" hidden>
+  <h2 id="sp-heading" class="panel-title">Sound comparison</h2>
+  <p id="sp-kicker" class="quiet small">Experimental preview for adults testing this app · “bread” only</p>
+  <p id="sp-intro" class="quiet">An experimental sound model compares your recording with four tested versions of “bread”: BR, BW, BL, and B followed directly by the rest of the word. It shows which whole-word version the model fit best. It is separate from word check.</p>
+
+  <div id="sp-ineligible" hidden>
+    <p class="quiet">Available for “bread” only.</p>
+    <div class="actions"><button type="button" id="sp-go-bread" class="button">Practice bread</button></div>
+  </div>
+
+  <div id="sp-body">
+    <div id="sp-result" class="result" role="group" aria-labelledby="sp-title" tabindex="-1">
+      <p id="sp-title" class="result-title"></p>
+      <p id="sp-text" class="measure"></p>
+      <p id="sp-limit" class="measure sp-limit" hidden>This does not establish which sound you said or whether ‘bread’ was said correctly. We haven't checked it against real recordings independently confirmed to use W in place of R.</p>
+      <ul id="sp-next" class="next-steps"></ul>
+    </div>
+    <div class="actions">
+      <button type="button" id="sp-check" class="button" hidden>Check sound</button>
+      <button type="button" id="sp-cancel" class="button" hidden>Stop waiting</button>
+      <button type="button" id="sp-setup-retry" class="button" hidden>Try again</button>
+    </div>
+
+    <p class="quiet small">Set this up before you record: choose Adult (18+) for Who is practicing? above Record, turn on word check first if you want it, then tick both boxes. Changing who is practicing or word check turns these boxes off. Changing any of them clears held recordings.</p>
+    <div id="sp-setup" class="settings-body sp-setup">
+      <div class="check">
+        <input type="checkbox" id="sp-adult" aria-describedby="sp-adult-note" disabled>
+        <label for="sp-adult">I'm an adult trying out this app</label>
+        <p id="sp-adult-note" class="quiet small">This preview is for adults testing the app, not for checking a child's speech. The app does not check age.</p>
+      </div>
+      <div class="check">
+        <input type="checkbox" id="sp-optin" aria-describedby="sp-optin-note" disabled>
+        <label for="sp-optin">Compare sounds on this computer</label>
+        <p id="sp-optin-note" class="quiet small">Tick the box above first.</p>
+      </div>
+    </div>
+    <p class="quiet small">Not a score, test or diagnosis, and not part of guided word check. This tab clears its preview results when you record again, change word or settings, or leave the page.</p>
+  </div>
+
+  <details id="sp-about" class="engineering-note">
+    <summary>About the sound comparison</summary>
+    <p>When you choose Check sound, the current try is sent once to a speech-sound model running on this computer, not over the internet. The model compares four fixed versions of “bread” (B‑R‑E‑D, B‑W‑E‑D, B‑L‑E‑D and B‑E‑D). The page shows only which one the model fit best, or that none fit clearly.</p>
+    <p>In engineering tests it picked BR for a licensed example recording of ‘bread’ and gave the same result when that recording was repeated. It gave no clear pick for ‘door’, silence and generated test signals. These are engineering checks, not independent labels of the sounds spoken. We haven't checked it against independently labelled real examples of W, L or no R in this word, or established validity for children's speech.</p>
+    <p>It is offered only when Adult (18+) is chosen for Who is practicing? and both boxes are ticked. That choice is your own and is not verified. With a child age or no choice, nothing is sent for sound comparison.</p>
+    <p>It gives no scores, grades, diagnoses or practice advice. Word check and the sound comparison are separate: each sends its own temporary copy, and only when you choose it. The comparison processes a separate temporary copy locally after the explicit Check sound action. Audio is deleted after confirmed cleanup; private processing diagnostics can remain. An uncertain cleanup retains the private stage for investigation and pauses both kinds of processing.</p>
+  </details>
+</section>
+            </div>
+
+            <section id="mirror-panel" class="panel mirror-panel" aria-labelledby="mirror-heading">
+              <h2 id="mirror-heading" class="panel-title">Mirror</h2>
+              <p class="quiet">Watch yourself while you say the word.</p>
+              <div class="mirror-frame">
+                <video id="mirror" class="mirror-video" muted playsinline aria-label="Camera mirror" hidden></video>
+                <svg id="mouth-outline" class="mouth-outline" aria-hidden="true" hidden></svg>
+                <p id="mirror-placeholder" class="mirror-placeholder quiet">Camera is off</p>
+              </div>
+              <div class="actions">
+                <button type="button" id="camera-toggle" class="button">Turn on camera</button>
+              </div>
+              <p id="camera-status" class="status-line" role="status"></p>
+              <div class="check visual-choice">
+                <input type="checkbox" id="visual-optin" aria-describedby="visual-note" disabled>
+                <label for="visual-optin">Show a mouth outline</label>
+                <p id="visual-note" class="quiet small">Turn on the camera first. The optional face model runs here in this browser.</p>
+              </div>
+              <p id="visual-status" class="status-line" role="status">Face analysis is off.</p>
+              <p class="limits small">Camera pictures stay in this browser and are not saved. The outline estimates visible mouth position; it does not judge speech or diagnose a condition.</p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="guided-summary" class="guided-view" aria-labelledby="guided-summary-heading" hidden>
+        <h1 id="guided-summary-heading" class="view-title" tabindex="-1">First round</h1>
+        <p id="guided-summary-context" class="quiet"></p>
+        <p class="measure">Each row shows what the recording check or speech recognition model reported for that word. It is not a judgment of how the word was said. Practice tries are not part of these rows.</p>
+        <dl id="guided-counts" class="facts guided-counts"></dl>
+        <details class="engineering-note">
+          <summary>How this round was checked</summary>
+          <p id="guided-check-counts" class="quiet small"></p>
+        </details>
+        <ol id="guided-rows" class="g-rows"></ol>
+        <div class="actions">
+          <button type="button" id="guided-recheck" class="button" aria-describedby="guided-recheck-note">Recheck all 13 words</button>
+        </div>
+        <p id="guided-recheck-note" class="quiet small">Starts one new round of the same 13 words. Each word needs a new recording and its own Check.</p>
+      </section>
+
+      <section id="guided-pairs" class="guided-view" aria-labelledby="guided-pairs-heading" hidden>
+        <h1 id="guided-pairs-heading" class="view-title" tabindex="-1">First round and recheck</h1>
+        <p id="guided-pairs-context" class="quiet"></p>
+        <p class="measure">What was reported in each round, side by side. Differences can come from the recording, the room or the model. This does not measure improvement, decline or ability.</p>
+        <p id="guided-pair-count" class="quiet small"></p>
+        <ol id="guided-pair-rows" class="g-rows"></ol>
+        <div class="actions"><button type="button" id="guided-pairs-end" class="button">End and clear</button></div>
+      </section>
+    </div>
+
+    <section id="words" class="words" aria-labelledby="words-heading" tabindex="-1">
+      <h2 id="words-heading" class="words-title">Words</h2>
+      <p id="word-status" class="quiet" role="status">Loading words…</p>
+      <button type="button" id="catalog-retry" class="button" hidden>Try again</button>
+      <ul id="word-list" class="word-list" hidden></ul>
+    </section>
+
+    <section id="guided-roster" class="words" aria-labelledby="guided-roster-heading" tabindex="-1" hidden>
+      <h2 id="guided-roster-heading" class="words-title">13 words</h2>
+      <ol id="guided-roster-list" class="word-list"></ol>
+      <button type="button" id="guided-finish" class="button" aria-describedby="guided-finish-note" hidden>Finish round</button>
+      <p id="guided-finish-note" class="quiet small" hidden>Words you haven't reached are listed as not reached. You can't return to this round.</p>
+    </section>
+
+    <div class="after-col">
+      <section id="reference" class="reference" aria-labelledby="reference-heading" tabindex="-1" hidden>
+        <h2 id="reference-heading" class="minor">About the example recording</h2>
+        <dl id="reference-details" class="facts"></dl>
+      </section>
+
+      <footer class="site-foot">
+        <details class="engineering-note">
+          <summary>About this build</summary>
+          <p>This is an engineering prototype for local development. It is not for clinical or production use.</p>
+          <p>Word check is optional. When it is on and you choose Check this try, that one recording is sent to a speech recognition model running on this computer, not over the internet. It reports whether the model detected speech and whether its recognition of the whole word matched the word shown. Recognition can miss words that were said clearly and can match words that were not, so neither result is a judgment of pronunciation. Word check does not check individual sounds, give scores or diagnoses, or measure progress. Whole-word recognition is experimental, and how well it works for adults' or children's speech has not been established. Who is practicing is your own choice; the page does not verify age.</p>
+          <p>A check also describes the recording itself: its length, its average level and how many samples reached the maximum level. These describe the recording, not the speaker. Once a try has a result it cannot be checked again, unless the check did not finish; record a fresh try instead.</p>
+          <p>Up to two tries for the current word are held in this browser tab's memory only, so you can play them back and compare them. The page does not store them on disk. Both tries and their results are cleared when you choose another word, change who is practicing, word check or sound comparison settings, choose Clear tries, switch away from the page or close it. The session count is kept in memory only and resets when you leave or reload the page.</p>
+          <p>The computer is built to delete each checked recording when the check finishes, but deletion cannot be guaranteed, for example if the computer stops part way; if cleanup cannot be confirmed, word check pauses. If you stop waiting or leave the page, the computer may still finish a check in the background; no result is shown.</p>
+          <p>The mirror shows the camera picture on this screen only. Show a mouth outline is a separate optional local face model. It estimates visible mouth position, can lose track or be wrong, and gives no speech, tongue, depth, identity or diagnostic finding. Camera frames and landmarks are not saved or uploaded. The local worker blocks external network requests, including attempts by the model library to send telemetry. Camera and face analysis start only after you choose them; analysis turns off when you change words or settings, clear tries, turn off the camera or leave the page.</p>
+          <p>Example recordings are existing public recordings shared under their own licenses; details are listed with each one. Speaker ages are not known. The words and wording have had engineering review only.</p>
+        </details>
+      </footer>
+    </div>
+  </main>
+
+  <p id="announcer" class="visually-hidden" aria-live="polite"></p>
+</body>
+</html>

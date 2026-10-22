@@ -1,0 +1,72 @@
+{
+  "active": false,
+  "clinical": false,
+  "external_source_metadata": [
+    {
+      "bytes": 19046,
+      "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/coreml-whisper-v1/native-phonetic-converter-draft-v2/convert_host_v1.py",
+      "sha256": "0551cfac16d8307bd295834fead064d6d8d7afe68ada92c3d4af07521e98eb13"
+    },
+    {
+      "bytes": 7392,
+      "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/coreml-whisper-v1/native-phonetic-converter-draft-v2/policy_v1.py",
+      "sha256": "949a0b180af036e439cec3fdd116db801b3fd1843f039282a2f2d0809c7c63dd"
+    },
+    {
+      "bytes": 13451053,
+      "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/coreml-whisper-v1/native-phonetic-converter-draft-v2/RUNTIME-PINS-v1.json",
+      "sha256": "58f6ecfb239f1f237e784b2625aea0fe000fdfcecae73294bf5a10f7070a5339"
+    }
+  ],
+  "files": [
+    {
+      "bytes": 4672,
+      "path": "contract.py",
+      "sha256": "e1c23c48611bd7ed2a8a0127a1541e5f347a8280a6048340d0af1c62e63892af"
+    },
+    {
+      "bytes": 6980,
+      "path": "worker.py",
+      "sha256": "6bfb2c62f1322b79b6fe171aebb2155ad60e940af5813d1f73e08827e134017c"
+    },
+    {
+      "bytes": 5494,
+      "path": "owner.py",
+      "sha256": "c99862aa96e48ffe5d1c1facf1c8ea04581d228a5da84db4eac4503ed255fd4b"
+    },
+    {
+      "bytes": 3720,
+      "path": "test_reference_preview.py",
+      "sha256": "8290834906ac9d775dd80d0957d8739bc539e1db4b154bd78f43b9141489e72a"
+    },
+    {
+      "bytes": 2388,
+      "path": "README.md",
+      "sha256": "80b089bb12d72904c0158c1111a2e1e60b6fabce8d8c27e18ed7c0939f1cfc89"
+    },
+    {
+      "bytes": 697,
+      "path": "work/WORKLOG.md",
+      "sha256": "043bd3e7d5aff1efad782215fc03359076515388cb878fc316d2e4890ea4441d"
+    }
+  ],
+  "learnerFeedback": false,
+  "model": {
+    "id": "facebook/wav2vec2-lv-60-espeak-cv-ft",
+    "revision": "ae45363bf3413b374fecd9dc8bc1df0e24c3b7f4",
+    "weights": {
+      "bytes": 1263535127,
+      "identity_origin": "inherited; not rehashed here",
+      "sha256": "3173bde9e9ce490fa0f989e413c42f25bc1820c020adc1e6b9b87025b3cfcc5e"
+    }
+  },
+  "originalNativeParityAccepted": false,
+  "producedPhoneTruth": false,
+  "runtime": {
+    "numpy": "2.2.6",
+    "python": "3.13.14",
+    "torch": "2.7.0",
+    "transformers": "4.57.6"
+  },
+  "schema": "PhoneticReferencePreviewSourceV1"
+}

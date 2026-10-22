@@ -1,0 +1,56 @@
+{
+  "files": [
+    {
+      "bytes": 5266,
+      "path": "research/audio-head/local_wav_prototype/README.md",
+      "sha256": "9509e6476a420240f372f772992cf779a22727570bf71438536277c6c7431351"
+    },
+    {
+      "bytes": 79,
+      "path": "research/audio-head/local_wav_prototype/__init__.py",
+      "sha256": "c9832a82d5b884becfe9cf14f766e2d28aa1373548ff08775b305e0860eb4264"
+    },
+    {
+      "bytes": 2146,
+      "path": "research/audio-head/local_wav_prototype/bindings.py",
+      "sha256": "d76d2b3d378c8b1fa88f3be20b1195a3c5028046bd0a3d5d1b934bdb300e2b6b"
+    },
+    {
+      "bytes": 15864,
+      "path": "research/audio-head/local_wav_prototype/cli.py",
+      "sha256": "b4f3b2d7976b3ef9778c1c289e54ac29614b1608324a99e4756450a591586322"
+    },
+    {
+      "bytes": 11052,
+      "path": "research/audio-head/local_wav_prototype/common.py",
+      "sha256": "1fce59dd5660bb321f6e72046013d192eb411823e8c661fcd029985ef3920c2b"
+    },
+    {
+      "bytes": 5674,
+      "path": "research/audio-head/local_wav_prototype/pins.json",
+      "sha256": "65c492d2974fb28e40ea79e390a6c1c140a02460b28ced491634693efaeba086"
+    },
+    {
+      "bytes": 15726,
+      "path": "research/audio-head/local_wav_prototype/test_prototype.py",
+      "sha256": "45031e3a56157f36e679cac3e5ab13c8758bfec974b044ccf7492249e93ef273"
+    },
+    {
+      "bytes": 6812,
+      "path": "research/audio-head/local_wav_prototype/worker.py",
+      "sha256": "529623873bee6cf337aa3e5ab81bc7c494e617d79c5e1d7c7b88e7f98c5d647c"
+    },
+    {
+      "bytes": 6963,
+      "path": "work/r-inference-checkpoint-20261011/PROTOTYPE-PLAN.md",
+      "sha256": "534ec521e06ef278489cce6b3c28f1eca4deaec82b90bfe2613d08f8b2f1dd00"
+    }
+  ],
+  "generatedTests": {
+    "passed": 17,
+    "tests": 17
+  },
+  "modelExecutionPerformed": false,
+  "purpose": "Isolated local WAV prototype draft; no model execution by implementation agent",
+  "schemaVersion": 1
+}

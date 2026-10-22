@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Provisional /R/ reviewer</title>
+<style>
+  :root { color-scheme: light; font: 16px/1.45 system-ui, sans-serif; }
+  body { max-width: 760px; margin: 0 auto; padding: 1.5rem; color: #17212d; background: #f6f8fa; }
+  main { background: white; padding: 1.5rem; border: 1px solid #d7dee6; border-radius: 12px; }
+  h1 { margin-top: 0; font-size: 1.5rem; }
+  .notice { padding: .75rem 1rem; border-left: 4px solid #9b5b00; background: #fff2dc; }
+  .muted { color: #526174; }
+  .row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; }
+  fieldset { border: 1px solid #c4ced8; border-radius: 8px; margin: 1.25rem 0; padding: 1rem; }
+  label { display: block; margin: .5rem 0; }
+  select, input { display: block; font: inherit; padding: .45rem; width: 100%; box-sizing: border-box; }
+  .time { flex: 1 1 150px; }
+  audio { width: 100%; margin: .75rem 0; }
+  button { font: inherit; padding: .55rem .9rem; cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  .error { color: #a12020; min-height: 1.5rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  :focus-visible { outline: 3px solid #006fbe; outline-offset: 2px; }
+</style>
+<main>
+  <h1>Provisional /R/ reviewer</h1>
+  <p class="notice">Research draft. A qualified SLP and study owner must approve the task and playback rules before real annotation. Answers stay in this browser tab until you export; closing or refreshing loses them.</p>
+  <p id="progress" aria-live="polite"></p>
+  <h2 id="clip-heading"></h2>
+  <p id="prompt"></p>
+  <p id="target" class="muted"></p>
+  <audio id="audio" controls preload="none" aria-label="Current blinded clip"></audio>
+  <form id="response" autocomplete="off">
+    <fieldset>
+      <legend>Target judgment</legend>
+      <label for="presence">Target presence</label>
+      <select id="presence" required>
+        <option value="">Choose one</option>
+        <option value="expected">expected</option>
+        <option value="altered">altered</option>
+        <option value="omitted">omitted</option>
+        <option value="indeterminate">indeterminate</option>
+      </select>
+    </fieldset>
+    <fieldset>
+      <legend>Target word interval in seconds (leave both blank for null)</legend>
+      <div class="row">
+        <label class="time" for="word-start">Start <input id="word-start" type="number" min="0" step="any" inputmode="decimal"></label>
+        <label class="time" for="word-end">End <input id="word-end" type="number" min="0" step="any" inputmode="decimal"></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>/R/ interval in seconds (leave both blank for null)</legend>
+      <div class="row">
+        <label class="time" for="r-start">Start <input id="r-start" type="number" min="0" step="any" inputmode="decimal"></label>
+        <label class="time" for="r-end">End <input id="r-end" type="number" min="0" step="any" inputmode="decimal"></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Quality reason</legend>
+      <label for="reason">Choose one closed reason</label>
+      <select id="reason" required>
+        <option value="">Choose one</option>
+        <option value="none">none</option>
+        <option value="targetWordOmitted">targetWordOmitted</option>
+        <option value="targetSoundOmitted">targetSoundOmitted</option>
+        <option value="captureNoise">captureNoise</option>
+        <option value="overlap">overlap</option>
+        <option value="timingIndeterminate">timingIndeterminate</option>
+      </select>
+    </fieldset>
+  </form>
+  <p id="error" class="error" role="status" aria-live="polite"></p>
+  <div class="actions">
+    <button id="previous" type="button">Previous</button>
+    <button id="next" type="button">Next</button>
+    <button id="export" type="button" disabled>Export ordered JSON</button>
+  </div>
+  <p class="muted">The JSON contains only the six fields in the provisional single-reviewer contract. Run the separate local validator before any later intake.</p>
+</main>
+<script>
+"use strict";
+const config = __REVIEW_CONFIG__;
+const fields = ["presence", "word-start", "word-end", "r-start", "r-end", "reason"];
+const values = config.items.map(() => Object.fromEntries(fields.map(key => [key, ""])));
+const $ = id => document.getElementById(id);
+let index = 0;
+
+function interval(row, prefix, duration) {
+  const start = row[prefix + "-start"];
+  const end = row[prefix + "-end"];
+  if (start === "" && end === "") return null;
+  if (start === "" || end === "") throw Error("Enter both endpoints or leave both blank.");
+  const a = Number(start), b = Number(end);
+  if (!Number.isFinite(a) || !Number.isFinite(b) || a < 0 || a >= b || b > duration)
+    throw Error("Intervals must satisfy 0 ≤ start < end ≤ clip duration (" + duration + " seconds).");
+  return {startSeconds: a, endSeconds: b};
+}
+
+function record(at) {
+  const item = config.items[at], row = values[at];
+  if (!row.presence || !row.reason) throw Error("Choose a presence and quality reason.");
+  const word = interval(row, "word", item.durationSeconds);
+  const target = interval(row, "r", item.durationSeconds);
+  if (["omitted", "indeterminate"].includes(row.presence) && target)
+    throw Error("Omitted or indeterminate targets cannot have an /R/ interval.");
+  if ((!word || !target) && row.reason === "none")
+    throw Error("A missing interval needs a quality reason.");
+  if (word && target && row.reason !== "none")
+    throw Error("When both intervals are present, use quality reason none.");
+  const omittedReason = ["targetWordOmitted", "targetSoundOmitted"].includes(row.reason);
+  if ((row.presence === "omitted") !== omittedReason)
+    throw Error("Omitted presence must match an omission reason.");
+  if (row.reason === "targetWordOmitted" && word)
+    throw Error("An omitted word cannot have a word interval.");
+  if (word && target && (target.startSeconds < word.startSeconds || target.endSeconds > word.endSeconds))
+    throw Error("The /R/ interval must lie within the word interval.");
+  return {clipId: item.reviewerId, reviewer: config.reviewer,
+          targetPresence: row.presence, wordInterval: word, rInterval: target,
+          qualityReason: row.reason};
+}
+
+function valid(at) {
+  try { record(at); return true; } catch (_) { return false; }
+}
+
+function render() {
+  const item = config.items[index];
+  $("clip-heading").textContent = "Clip " + (index + 1) + " of " + config.items.length;
+  $("prompt").textContent = item.targetPrompt;
+  $("target").textContent = "Target word: " + item.targetWord +
+    " · word index: " + item.wordIndexZeroBased +
+    " · phone index within word: " + item.phoneIndexWithinWordZeroBased +
+    " (zero-based)";
+  $("audio").src = "/media/" + item.reviewerId + ".wav";
+  fields.forEach(key => { $(key).value = values[index][key]; });
+  $("previous").disabled = index === 0;
+  $("next").disabled = index === config.items.length - 1;
+  update();
+}
+
+function update() {
+  fields.forEach(key => { values[index][key] = $(key).value; });
+  const complete = values.filter((_, at) => valid(at)).length;
+  $("progress").textContent = complete + " of " + config.items.length + " valid records · " + config.reviewer;
+  $("export").disabled = complete !== config.items.length;
+  try { record(index); $("error").textContent = ""; }
+  catch (error) { $("error").textContent = error.message; }
+}
+
+$("response").addEventListener("submit", event => event.preventDefault());
+fields.forEach(key => $(key).addEventListener("input", update));
+$("previous").addEventListener("click", () => { index -= 1; render(); });
+$("next").addEventListener("click", () => { index += 1; render(); });
+$("export").addEventListener("click", () => {
+  let records;
+  try { records = config.items.map((_, at) => record(at)); }
+  catch (error) { $("error").textContent = error.message; return; }
+  const blob = new Blob([JSON.stringify({schemaVersion: 1, records}, null, 2) + "\n"],
+                        {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = config.reviewer + "-provisional-export.json";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+render();
+</script>
+</html>

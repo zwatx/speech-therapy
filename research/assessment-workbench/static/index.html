@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'none'; media-src 'none'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Assessment validation workbench</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" id="skip-link">Skip to content</a>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="titleblock">
+        <p class="eyebrow">Local research operator tooling</p>
+        <h1 class="title">Assessment validation workbench</h1>
+        <p class="project-line" id="project-line"></p>
+      </div>
+      <nav class="roles" aria-label="Local demo view">
+        <span class="roles-label" id="roles-label">View as</span>
+        <ul aria-labelledby="roles-label">
+          <li><a href="#role=coordinator" data-role="coordinator">Coordinator</a></li>
+          <li><a href="#role=reviewer-a" data-role="reviewer-a">Reviewer A</a></li>
+          <li><a href="#role=reviewer-b" data-role="reviewer-b">Reviewer B</a></li>
+          <li><a href="#role=adjudicator" data-role="adjudicator">Adjudicator</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="notice" role="note">
+      <p>
+        <strong>Synthetic demo.</strong>
+        Every participant, prompt, attempt and prediction here is an invented fixture. No audio exists and nothing can be played.
+        The view switcher separates local demo roles; it is not sign-in or access control.
+        Answers recorded here do not establish clinical approval or independent qualified review, and nothing is eligible for learner, clinical or production use.
+      </p>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1" aria-busy="true">
+    <p class="state-panel">Loading…</p>
+  </main>
+
+  <div class="flash" id="flash">
+    <p class="flash-text" id="flash-text" role="status" aria-live="polite"></p>
+    <button type="button" class="flash-dismiss" id="flash-dismiss">Dismiss</button>
+  </div>
+
+  <dialog class="confirm" id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-body">
+    <h2 class="confirm-title" id="confirm-title"></h2>
+    <div class="confirm-body" id="confirm-body"></div>
+    <div class="confirm-actions">
+      <button type="button" class="btn" id="confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="confirm-ok">Confirm</button>
+    </div>
+  </dialog>
+
+  <noscript>
+    <p class="state-panel">This workbench needs JavaScript enabled to load local records.</p>
+  </noscript>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

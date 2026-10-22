@@ -1,0 +1,56 @@
+{
+  "authorTestInferencePerformed": false,
+  "cohortSha256": "33967da3dfb3e41a5c7b14dbd0355ceb36574ecbdcb042c8e99137f6344ec805",
+  "experiment": "multiphone-control-outer-refits-v1",
+  "foldJobs": [
+    {
+      "fold": 0,
+      "input": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls/fold-0-inner",
+      "output": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls-outer/fold-0-refit",
+      "selectionSha256": "ae0e6ef013347cdbb86a872bae59ddcc00c3bb80b5880d3a02a5560e09029d68",
+      "state": "pending"
+    },
+    {
+      "fold": 1,
+      "input": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls/fold-1-inner",
+      "output": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls-outer/fold-1-refit",
+      "selectionSha256": "849fe459c2f77a22695a4c026e0d5601dbf4edca0c0e85ccad587d7b59019d1e",
+      "state": "pending"
+    },
+    {
+      "fold": 2,
+      "input": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls/fold-2-inner",
+      "output": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls-outer/fold-2-refit",
+      "selectionSha256": "b4ce6dbbd59837c5b0e298da9d34dd7f3dbac2722f12caf792717ca289359f92",
+      "state": "pending"
+    },
+    {
+      "fold": 3,
+      "input": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls/fold-3-inner",
+      "output": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls-outer/fold-3-refit",
+      "selectionSha256": "40853e00c2618cfb3f79f46dbfe35b3b00f73a8647621e96ac456f99e8c4ae1c",
+      "state": "pending"
+    },
+    {
+      "fold": 4,
+      "input": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls/fold-4-inner",
+      "output": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/controls-outer/fold-4-refit",
+      "selectionSha256": "9f92f1b70c6711e096d279963dc31c50329ab579ca5db37c5abfba477cb18372",
+      "state": "pending"
+    }
+  ],
+  "holdoutPredictionsComputed": false,
+  "plannedFits": 15,
+  "selection": "same-fold inner-only; preserve declared400iterationbudget",
+  "sourceSha256": {
+    "encoders.py": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+    "multiphone_cache.py": "15712352cc03bf03ff94dbd6f39f1e3891be10f91e5c138a01ee11a3ee177e4c",
+    "multiphone_control_outer.py": "640f5674f7af1c26c615d532a0204b1945d0e6f5efea903bec670e6bf79fa211",
+    "multiphone_controls.py": "34a722ee2001db77e85cecdf91f78865d07f445c8e4e4bb37d5d2bc78b14a95a",
+    "multiphone_data.py": "454c7bc9faaf65b1afac2706aea53acd277bd59393b9e704c4d24e7f0a28617e",
+    "multiphone_models.py": "0e254f967b4c8dc5c5fe0a3bd2cbae05c62c480b6360cdb1912403271568987a",
+    "multiphone_train.py": "9d026a37216e6ae7e535b94f7b6fc52744e81a3b29ef94a564364b388ff18970",
+    "speechocean_r_rater_cv.py": "89d37ce3879ddfea13ab0a5393faf12793a0430c8e3a22a6e97bf53d69bdcd33"
+  },
+  "splitsSha256": "b480fa2550f240547565bfa9b0ca1e516ffc4b73e7770932dd94f006df702fcf"
+}

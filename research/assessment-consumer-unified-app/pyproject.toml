@@ -1,0 +1,6 @@
+[project]
+name = "assessment-consumer-unified-app"
+version = "0.1.0"
+description = "Local word-context practice and adult engineering sound-model preview"
+requires-python = ">=3.13"
+dependencies = []

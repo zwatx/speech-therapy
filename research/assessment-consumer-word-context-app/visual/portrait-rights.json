@@ -1,0 +1,21 @@
+{
+  "sourceFilePage": "https://commons.wikimedia.org/w/index.php?title=File:President_Barack_Obama.jpg&oldid=1241943590",
+  "sourceRevision": 1241943590,
+  "sourceTimestamp": "2026-07-01T05:15:35Z",
+  "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg",
+  "originalSourceSha1Verified": "580af39382a677c20eccfacc6e43309eea039805",
+  "sha256": "744dd848fbb0584229169e01c4944664957c62495fb9e8af514a088ebca43e19",
+  "bytes": 1276121,
+  "width": 2687,
+  "height": 3356,
+  "author": "Official White House Photo by Pete Souza",
+  "license": "Public domain (US federal government work), as recorded on pinned Commons revision",
+  "licenseTemplate": "PD-USGov",
+  "licenseSourceSha256": "7a594225e447c882424aebeebd5d10e5c3840868d7989204f9ae5ed3fe371110",
+  "rightsPageSha256": "a7923fd75ce80730f6ef551b54d612ce9abe742550d802b0e44c27d23fb0f1de",
+  "use": "Local engineering face-estimate fixture only; no identity recognition or correctness labels",
+  "captureAgeKnown": false,
+  "transformations": [],
+  "participantValidation": false,
+  "modelExecuted": false
+}

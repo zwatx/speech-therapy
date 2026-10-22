@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 4,
+  "purpose": "Separate exact-phrase research mode alongside unchanged default word interface; no clinical feedback eligibility",
+  "files": [
+    {
+      "path": "research/audio-head/local_wav_prototype/README.md",
+      "sha256": "ec624eaacfed3860e259f4a313c26c120a0e37fc7b023e409d4d9353a98a20d4",
+      "bytes": 11542
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/__init__.py",
+      "sha256": "c9832a82d5b884becfe9cf14f766e2d28aa1373548ff08775b305e0860eb4264",
+      "bytes": 79
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/common.py",
+      "sha256": "cac95c38fe9c1fe9b8ca459507b6797c0ada06c6477c84b88dcdc8385c0a93b9",
+      "bytes": 12310
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/bindings.py",
+      "sha256": "5b1a8bfe802d25f98310ec64753f0b2e016867dc7c77658bf744403d75c5dd7b",
+      "bytes": 2203
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/cli.py",
+      "sha256": "3e678ffe4e54ec6723e4f13297dc6d3564293a39dfc7519b9c7696ae00c6b58d",
+      "bytes": 20067
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/worker.py",
+      "sha256": "92b4287063f7fecf3aa73010acc5ef87558fe83230468939afbad633417351c4",
+      "bytes": 9380
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/pins.json",
+      "sha256": "65c492d2974fb28e40ea79e390a6c1c140a02460b28ced491634693efaeba086",
+      "bytes": 5674
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/test_prototype.py",
+      "sha256": "f92be94c45d3a73be3b5e6080e8493785d95daac6080c00d67845c485c593665",
+      "bytes": 21083
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/phrase_cli.py",
+      "sha256": "91a0c36b6012afead3d62d2b2fff7bb54ab705031c62677e1d1b66298131ebe6",
+      "bytes": 2480
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/phrase_admission.py",
+      "sha256": "4e22d358fa6524e9b70605ea28fe68789677ecbe23366e150d18ec10121892f6",
+      "bytes": 9832
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/test_phrase_admission.py",
+      "sha256": "3c776d316b090699a1f32ef2d3fb1400873f737339d64d08ab0b3bae5603eb7b",
+      "bytes": 26972
+    },
+    {
+      "path": "research/audio-head/local_wav_prototype/test_phrase_runtime.py",
+      "sha256": "986d5f7901ead7c8bdb6f767a87934ef2a65342bffa1ba2e721cffff6cd660f4",
+      "bytes": 20573
+    }
+  ],
+  "previousSourceV3Archive": "work/r-inference-checkpoint-20261011/prototype-source-v3",
+  "wordPolicyAndNumericalModelPinsUnchanged": true,
+  "generatedTests": {
+    "phraseContract": {
+      "passed": 17,
+      "seconds": 0.012
+    },
+    "phraseRuntime": {
+      "passed": 19,
+      "seconds": 0.059
+    },
+    "wordRegression": {
+      "passed": 24,
+      "seconds": 0.408
+    },
+    "acousticModelsExecuted": false
+  },
+  "implementationModel": "claude-opus-5-5",
+  "runtimeTestsModel": "gpt-6.1-sol",
+  "prospectiveCasesPlanSHA256": "41b6addd8fc75a478f67736e0632d609419cbc3e0054c416281c68a40cc6b4ef",
+  "actualPhraseModelCasesExecuted": 0,
+  "independentAccuracyEstablished": false,
+  "learnerFeedbackEligible": false
+}

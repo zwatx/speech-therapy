@@ -1,0 +1,93 @@
+{
+  "active": false,
+  "externalSourcePins": [
+    {
+      "bytes": 1639,
+      "path": "research/phonetic-reference-preview/SOURCE-v2.json",
+      "sha256": "0bc85a5b185ad2a151ff57548d77c6bb94836ee8d4d2a82d48ccf1444c8eae3f"
+    },
+    {
+      "bytes": 11166,
+      "path": "research/phonetic-reference-preview/contract.py",
+      "sha256": "59ce9a54509dda6010b8e56a0629360cef644353cd283a7a40b5894e82b23318"
+    },
+    {
+      "bytes": 8989,
+      "path": "research/phonetic-reference-preview/worker.py",
+      "sha256": "7e36f2f2a416b9f577ef725c889560eb0bfb864ad327bb82d74aafd517dc1f99"
+    },
+    {
+      "bytes": 25633,
+      "path": "research/phonetic-reference-preview/owner.py",
+      "sha256": "6a29dcd3a8a6b92db50189efc1357506e63958370c2e976bb8a258bbffb4708b"
+    },
+    {
+      "bytes": 8210,
+      "path": "research/phonetic-reference-preview/test_reference_preview.py",
+      "sha256": "eac1c2789ef389056532bef9d602a0d6b1563ae23e08a0ef7d6efd9c86e9d370"
+    },
+    {
+      "bytes": 4699,
+      "path": "research/phonetic-reference-preview/README.md",
+      "sha256": "776d09422678ccc3a6d1b935c57736f31a0b7ec6297a476a7b111fc28f5db7cd"
+    },
+    {
+      "bytes": 3742,
+      "path": "research/phonetic-reference-preview/BINDINGS-v2.json",
+      "sha256": "74928fa9855265b891d7ccc4c00a85078b4b45e10a2d652ad576ef5a61170704"
+    },
+    {
+      "bytes": 1278,
+      "path": "research/phonetic-reference-preview/work/WORKLOG.md",
+      "sha256": "c510963cf08aae97c3a5d63516860004f5a313b66a89a78eac5aa61f77252bf5"
+    },
+    {
+      "bytes": 2359,
+      "path": "research/phonetic-reference-preview/frozen-v1/SOURCE-v1.json",
+      "sha256": "9386f7aa60a990ab4fd868409da04019ccc7cc43e15f41278133b391ddedc09e"
+    },
+    {
+      "bytes": 4672,
+      "path": "research/phonetic-reference-preview/frozen-v1/contract.py",
+      "sha256": "e1c23c48611bd7ed2a8a0127a1541e5f347a8280a6048340d0af1c62e63892af"
+    },
+    {
+      "bytes": 6980,
+      "path": "research/phonetic-reference-preview/frozen-v1/worker.py",
+      "sha256": "6bfb2c62f1322b79b6fe171aebb2155ad60e940af5813d1f73e08827e134017c"
+    },
+    {
+      "bytes": 5494,
+      "path": "research/phonetic-reference-preview/frozen-v1/owner.py",
+      "sha256": "c99862aa96e48ffe5d1c1facf1c8ea04581d228a5da84db4eac4503ed255fd4b"
+    },
+    {
+      "bytes": 3720,
+      "path": "research/phonetic-reference-preview/frozen-v1/test_reference_preview.py",
+      "sha256": "8290834906ac9d775dd80d0957d8739bc539e1db4b154bd78f43b9141489e72a"
+    },
+    {
+      "bytes": 2388,
+      "path": "research/phonetic-reference-preview/frozen-v1/README.md",
+      "sha256": "80b089bb12d72904c0158c1111a2e1e60b6fabce8d8c27e18ed7c0939f1cfc89"
+    },
+    {
+      "bytes": 697,
+      "path": "research/phonetic-reference-preview/frozen-v1/work/WORKLOG.md",
+      "sha256": "043bd3e7d5aff1efad782215fc03359076515388cb878fc316d2e4890ea4441d"
+    },
+    {
+      "bytes": 15530,
+      "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/ASTRA-PHONETIC-DESKTOP-REFERENCE-ADAPTER-SOURCE-v2.md",
+      "sha256": "a9fc392d27a0182ec19f299600ce554c10162b945ee4a290d2b7e668288cabab"
+    },
+    {
+      "bytes": 19850,
+      "path": "work/r-inference-checkpoint-20261012/restart-native-ai-v1/NATIVE-AUTHENTIC-PHONETIC-DESKTOP-REFERENCE-PLAN-v1.md",
+      "sha256": "1de51ee08e59d08da897a9aa703c40c4db0484960e09855bac5695aea86d68c3"
+    }
+  ],
+  "inheritedRuntimeAndAssetBindings": "BINDINGS-v3.json; no runtime rows/model bytes rehashed in source verification",
+  "schema": "PhoneticReferenceOriginsV3",
+  "sourceOnly": true
+}

@@ -1,0 +1,69 @@
+{
+  "authorPartition": "train",
+  "authorTestInferencePerformed": false,
+  "backboneLearningRates": [
+    1e-06,
+    3e-06
+  ],
+  "baselines": [
+    {
+      "checkpointPath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/inner-wav2vec-mean-f0-s7-lr0003/best.pt",
+      "checkpointSha256": "1bdf9b4536e055f93c684a68c3930bb41ac0ce6f052f4af41430069262265b4d",
+      "configSha256": "16e267ab7adf712b8a06899cc5446ea732d228015c9763ba95f39f359bc642e8",
+      "encoder": "wav2vec2-base",
+      "innerMacroTargetLogLoss": 0.2856444652811567,
+      "reportSha256": "7fc21a261ca9c7874dbf212a35027f29a108ca1f92bd6e0121761144f9633c1a",
+      "selectedEpoch": 3
+    },
+    {
+      "checkpointPath": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/inner-wavlm-mean-f0-s7-lr0003/best.pt",
+      "checkpointSha256": "57c306d3618ddd63c52535b21899d95c7f5fd8fd233e80c3623cad74384c81a7",
+      "configSha256": "4b3227b56bd1abe2f2e71aecc1c9181e3f06340e781c84b0947ec6ad8c22fc3c",
+      "encoder": "wavlm-base-plus",
+      "innerMacroTargetLogLoss": 0.29001883470472917,
+      "reportSha256": "4f6fa05533a5a7e67ed331a600890de33bf67b4ec81998b17c7c51e41fb35956",
+      "selectedEpoch": 8
+    }
+  ],
+  "checkpointEveryUpdates": 25,
+  "clinicalUseEligible": false,
+  "cohortSha256": "33967da3dfb3e41a5c7b14dbd0355ceb36574ecbdcb042c8e99137f6344ec805",
+  "declaredAtUTC": "2026-09-26T09:23:42.537047+00:00",
+  "execution": "serial local MPS; begin only after existing pilot releases adaptation-mps.lock",
+  "experiment": "multiphone-warm-mean-adaptation-20260926-v1",
+  "folds": [
+    0
+  ],
+  "gradientAccumulationClips": 4,
+  "head": "mean",
+  "headDropout": 0.1,
+  "headLearningRate": 3e-05,
+  "hiddenWidth": 128,
+  "initializationSeeds": [
+    7
+  ],
+  "learnerFeedbackEligible": false,
+  "limitations": [
+    "Mean head weights continue updating with fresh AdamW moments and four-clip accumulation. Without matched head-only continuation, any gain is joint-training benefit, not solely encoder benefit.",
+    "Inner choices are exploratory and require separate evaluation; no ages2\u20135 or childSSD evidence.",
+    "The existing trainer cannot select epoch zero internally; the external comparison must retain the baseline candidate."
+  ],
+  "maximumEpochs": 6,
+  "maximumGradientNorm": 5.0,
+  "outerOutcomesUsed": false,
+  "patienceEpochs": 2,
+  "phase": "inner",
+  "plannedTrials": 4,
+  "rationale": "Cold attention adaptation did not improve the first encoder; mean frozen heads usually outperform attention. Test smaller joint updates from verified mean heads, retaining the unmodified baseline as a candidate.",
+  "selection": "Each run uses inner all-age macro-target NLL. Comparison includes immutable no-adaptation frozen baseline; exact ties prefer unchanged baseline, then lower backbone LR. No child or outer metrics select settings.",
+  "sourceSha256": {
+    "encoders.py": "9282b37dcb8ee9b1191caab6ed888ec6d6890aa134767f59a0d9ed1bad245a31",
+    "multiphone_adapt.py": "deb12e4755ff45fef4cf73f2bd1c0603c4c58a318e4ab25d72a3844cd9670af4",
+    "multiphone_cache.py": "15712352cc03bf03ff94dbd6f39f1e3891be10f91e5c138a01ee11a3ee177e4c",
+    "multiphone_models.py": "0e254f967b4c8dc5c5fe0a3bd2cbae05c62c480b6360cdb1912403271568987a",
+    "multiphone_train.py": "9d026a37216e6ae7e535b94f7b6fc52744e81a3b29ef94a564364b388ff18970"
+  },
+  "splitsSha256": "b480fa2550f240547565bfa9b0ca1e516ffc4b73e7770932dd94f006df702fcf",
+  "upperEncoderLayers": 1,
+  "weightDecay": 0.01
+}

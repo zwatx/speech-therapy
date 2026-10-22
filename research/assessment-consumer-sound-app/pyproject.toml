@@ -1,0 +1,6 @@
+[project]
+name = "assessment-consumer-sound-app"
+version = "0.1.0"
+description = "Explicit local adult engineering sound-model preview"
+requires-python = ">=3.13"
+dependencies = []

@@ -1,0 +1,6 @@
+[project]
+name = "assessment-consumer-phrase-app"
+version = "0.1.0"
+description = "Explicit local phrase upload and research check interface"
+requires-python = ">=3.13"
+dependencies = []

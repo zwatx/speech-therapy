@@ -1,0 +1,7 @@
+# Isolated native word-guess API successor
+
+API-only sibling with a fresh exact word-wrapper dependency and preserved sound worker/service wire semantics. No HTML, JavaScript, visual model/assets or legacy assessment route is served. Delivered8782/8788/8789/8791/8793 source/static/runtime remains untouched. Candidate8795 was locally bind-checked free before staging; launch must confirm availability at that time.
+
+Use `scripts/consumer-native-guess-app.py` with the exact generated feature SHA and immutable sound artifact directory/source/receipt pins. `--check` verifies source metadata without Runtime, Catalog/media, observer/listener/model construction. A launch additionally requires explicit separate `--runtime-root` and reviewed `--cache-dir`; none is created by metadata checking. There is no automatic predecessor endpoint/runtime fallback. Requests remain explicit, guarded by exact Host/Origin/CSRF, bounded bytes and shared executor cleanup/pause ownership. Public licensed references retain original hashes/credits; they are not independent human phone gold.
+
+Word feedback uses schema2 envelope/declaration/new policy; request schema2 context stays adult or child6–12. Sound remains adult-only exact free bread with two opt-ins/schema1, now bound to this complete source closure. Generated projector/protocol checks establish consistency, not capture/audibility, recognition accuracy, produced phones, individualized correction, clinical diagnosis or Release eligibility. Historical vectors/actual model replies remain unmodified.

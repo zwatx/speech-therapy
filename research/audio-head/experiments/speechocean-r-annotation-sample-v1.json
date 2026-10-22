@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-annotation-sample-v1",
+  "purpose": "Internal feasibility sample for independent human review of public author-train /R/ clips",
+  "authorPartition": "train",
+  "selectedTrainIdsSha256": "57e5a8ee6c74027d2e4c42d3e8a8892013fd2c6a4fca9cf3cbfcf111864e47e3",
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "sourceMetadataSha256": {
+    "train/utt2spk": "e83546f91fa7444547b8c690ef004ad514eee1f7066d38ec87f7a6c847c84737",
+    "train/spk2age": "783be59032da6a140c143fde9c850da1148d48a3aadd27745f2e1b412f981a02",
+    "resource/scores.json": "31c847b8ee29d61d8fe338bcbb1d4c4721425f05481d2144ad57cd19ea1159f8",
+    "resource/scores-detail.json": "8a90ff40558fe8032d9bfa919429dcae267c0ec3fbdedf1dca30c0515ea989e1"
+  },
+  "candidateRule": "Exactly one canonical R in a pinned author-train utterance; aggregate equals the five-rater mean",
+  "ageBands": {
+    "child": "speaker age <= 15",
+    "adult": "speaker age >= 19"
+  },
+  "scoreBands": {
+    "ceiling": "aggregate R score == 2",
+    "belowCeiling": "aggregate R score < 2"
+  },
+  "strataOrder": [
+    "child.ceiling",
+    "child.belowCeiling",
+    "adult.ceiling",
+    "adult.belowCeiling"
+  ],
+  "clipsPerStratum": 10,
+  "distinctSpeakersAcrossSample": true,
+  "selectionSeed": "speechocean-r-annotation-feasibility-2026-09-23-v1",
+  "selectionOrder": "Within each stratum, sort by SHA-256 of seed:stratum:utterance-ID, then take the first ten whose speaker was not selected earlier",
+  "reviewerIdRule": "First 16 hex characters of HMAC-SHA-256 with a locally generated 256-bit blinding key and message reviewer:utterance-ID; key remains only in ignored internal manifest",
+  "reviewerQueueOrder": "Sort all 40 reviewer entries by HMAC-SHA-256 with the same private key and message queue:utterance-ID, independent of stratum order",
+  "reviewerQueueFields": ["reviewerId", "targetPrompt", "targetWord", "wordIndexZeroBased", "phoneIndexWithinWordZeroBased"],
+  "outputDirectory": "outputs/speechocean-r-annotation-sample-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "annotationComplete": false
+}

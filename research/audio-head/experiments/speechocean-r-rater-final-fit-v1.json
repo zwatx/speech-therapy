@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "experiment": "speechocean-r-rater-final-fit-v1",
+  "purpose": "Research-only final fit of two fixed three-class rater-distribution heads on all selected author-training clips",
+  "authorPartition": "train",
+  "expectedTrainClips": 766,
+  "expectedTrainSpeakers": 124,
+  "selectedTrainIdsSha256": "57e5a8ee6c74027d2e4c42d3e8a8892013fd2c6a4fca9cf3cbfcf111864e47e3",
+  "sourceArchiveSha256": "876c34b828c2ebcc35ba2ff1ba5947d50e6b0162fc4a4af91db0942422b3bdd5",
+  "sourceMetadataSha256": {
+    "train/utt2spk": "e83546f91fa7444547b8c690ef004ad514eee1f7066d38ec87f7a6c847c84737",
+    "resource/scores.json": "31c847b8ee29d61d8fe338bcbb1d4c4721425f05481d2144ad57cd19ea1159f8",
+    "resource/scores-detail.json": "8a90ff40558fe8032d9bfa919429dcae267c0ec3fbdedf1dca30c0515ea989e1"
+  },
+  "inputs": {
+    "wav2vec2-base": {
+      "directory": "outputs/speechocean-r-probe-v2",
+      "recipeVersion": "one-r-full-clip-frozen-wav2vec2-meanpool-ridge-v2",
+      "featureIndexSha256": "19085b3f39b7a63b9126f6f5fcd67712bf13f95bff04b5f7e484f0667bff59e2",
+      "featureProgressSha256": "119743b4122bb37aa153fb2b656d816d73cb6869235c40342c69755e510aef92",
+      "featureArraySha256": "480480fe916cfd4f3016fee04999bfa07bcc53ea838f4cec265b0d1e790e7432"
+    },
+    "wavlm-base-plus": {
+      "directory": "outputs/speechocean-r-probe-wavlm-v1",
+      "recipeVersion": "one-r-full-clip-frozen-wavlm-meanpool-ridge-v1",
+      "featureIndexSha256": "7e8b109927e6bdffa47c118ead5ed2139d788677e075ba8109bb67dae65f466c",
+      "featureProgressSha256": "4ac963f142c56165ceb8317bd001551e31336240d81766ddffad793931c8038c",
+      "featureArraySha256": "f43ff7abe9dfa3c34e04cc5894d0b0099e2dc625135c8af5f357377e7785c8a6"
+    }
+  },
+  "selectionEvidence": {
+    "experiment": "speechocean-r-rater-cv-convergence-v2",
+    "reportPath": "outputs/speechocean-r-rater-cv-convergence-v2/report.json",
+    "reportSha256": "6464b90cda8f10c9b75324edbf1b4bc459f781e71ea61bad2c2e0766d1bdecaa",
+    "recipeSha256": "f17a024acb7837679a0818d7fbd5f617c0b1ba0ec3cb56c127531adabe22c5f5",
+    "requiredOuterFolds": 5,
+    "expectedSelectedAlphaEachFold": 0.1
+  },
+  "knownAuthorTest": true,
+  "authorTestUsedForSettings": false,
+  "authorTestInferencePerformed": false,
+  "classes": [0, 1, 2],
+  "label": "Five author-training rater scores per clip, aggregated to three-class empirical proportions",
+  "head": "Linear softmax on train-standardized frozen full-clip mean-pooled features with L2 weight penalty and unpenalized intercept",
+  "fixedSoftmaxL2": {
+    "wav2vec2-base": 0.1,
+    "wavlm-base-plus": 0.1
+  },
+  "selectionSearchPerformed": false,
+  "optimizer": "Torch CPU float64 LBFGS strong_wolfe, zero initialization, max 400 iterations, history 10",
+  "maxOptimizerIterations": 400,
+  "maxCpuMathThreads": 4,
+  "randomSeed": 20260923,
+  "outputDirectory": "outputs/speechocean-r-rater-final-fit-v1",
+  "productionEligible": false,
+  "calibrationEligible": false,
+  "learnerFeedbackEligible": false,
+  "clinicalUseEligible": false,
+  "clinicalReliabilityEstablished": false
+}

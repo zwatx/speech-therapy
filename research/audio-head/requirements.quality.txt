@@ -1,0 +1,4 @@
+# Additional pinned dependency for the separately declared quality study.
+# Keep the historical requirements and lock file unchanged.
+-r requirements.txt
+scipy==1.17.1

@@ -1,0 +1,36 @@
+{
+  "clinicalUseEligible": false,
+  "coverage": "Every eligible cohort row exactly once, finite; no exclusion by rating or model support",
+  "cpuThreads": 2,
+  "experiment": "multiphone-inner-local-scalar-softmax-v1",
+  "family": "phone-conditioned-estimated-ctc-scalars",
+  "l2Candidates": [
+    0.0001,
+    0.001,
+    0.01,
+    0.1
+  ],
+  "learnerFeedbackEligible": false,
+  "maxOptimizerIterations": 200,
+  "objective": "Mean five-rater distribution NLL + alpha times squared coefficient sum; intercept unpenalized",
+  "optimizer": "CPU float64 LBFGS strong_wolfe, zero initialization, history10",
+  "outerOutcomesUsed": false,
+  "phase": "inner",
+  "scalarFeatureNames": [
+    "targetMeanLogPosterior",
+    "targetMeanPosterior",
+    "targetMaxPosterior",
+    "meanLogMarginVsBestOtherPhone",
+    "meanLogFractionOfNonblankMass",
+    "targetArgmaxFraction",
+    "meanBlankPosterior",
+    "meanSpecialPosterior",
+    "meanFullVocabularyEntropy",
+    "ctcTargetOccupancySeconds",
+    "occupiedFrames",
+    "utteranceViterbiLogProbabilityPerFrame",
+    "greedyCanonicalTokenErrorRate"
+  ],
+  "scaling": "Each full design column uses inner-fit mean/SD; SD below1e-6 becomes1",
+  "selection": "Lowest inner-validation macro-phone NLL; exact ties prefer stronger L2"
+}

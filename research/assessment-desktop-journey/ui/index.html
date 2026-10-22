@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Speech practice</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#practice">Skip to practice</a>
+
+  <header class="site">
+    <div class="wrap site-inner">
+      <p class="site-title"><a href="#practice">Speech practice</a></p>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#practice">Practice</a>
+        <button type="button" id="open-private" class="link-button" aria-controls="private" aria-expanded="false">Open private checks</button>
+      </nav>
+      <div id="account" class="account" hidden>
+        <span id="account-name"></span>
+        <button type="button" id="logout" class="link-button">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <section class="words" aria-labelledby="words-heading">
+      <h2 id="words-heading" class="words-title">Words</h2>
+      <p id="word-status" class="quiet" role="status">Loading words…</p>
+      <button type="button" id="catalog-retry" class="button small" hidden>Try again</button>
+      <ul id="word-list" class="word-list" hidden></ul>
+    </section>
+
+    <div class="main-col">
+      <section id="practice" class="practice" aria-labelledby="word-heading" tabindex="-1">
+        <div id="practice-empty" class="practice-empty">
+          <p id="practice-message" class="quiet">Loading…</p>
+        </div>
+
+        <div id="practice-body" hidden>
+          <div class="word-head">
+            <h1 id="word-heading" class="word"></h1>
+            <p id="word-position" class="quiet word-position"></p>
+          </div>
+
+          <div class="practice-grid">
+            <figure class="picture">
+              <img id="picture" alt="" width="240" height="200">
+              <figcaption id="picture-missing" class="quiet" hidden>Picture unavailable.</figcaption>
+            </figure>
+
+            <div class="practice-steps">
+              <p class="lead">Look at the picture and listen to the example.</p>
+              <p>Say the word, then listen to the example again if you want.</p>
+              <div class="actions">
+                <button type="button" id="play" class="button primary" disabled>Play example</button>
+                <button type="button" id="practised" class="button">I practiced this word</button>
+              </div>
+              <p id="play-status" class="quiet status-line" role="status"></p>
+              <p id="practice-status" class="status-line"></p>
+              <p id="practice-count" class="quiet small"></p>
+              <p class="quiet small">No audio is recorded. A grown-up can read the word aloud and use the buttons.</p>
+            </div>
+          </div>
+
+          <section class="reference" aria-labelledby="reference-heading">
+            <h2 id="reference-heading" class="minor">About the example recording</h2>
+            <dl id="reference-details" class="facts"></dl>
+          </section>
+        </div>
+      </section>
+
+      <section id="private" class="private" aria-labelledby="private-heading" hidden>
+        <h2 id="private-heading" class="section-title" tabindex="-1">Private checks</h2>
+        <p id="private-notice" class="notice" hidden></p>
+
+        <div id="signin" hidden>
+          <p class="quiet">For engineering accounts only. There is no public sign-up, and practice works without signing in.</p>
+          <p id="session-error" class="notice" hidden>
+            Private checks are not available right now. Practice still works.
+            <button type="button" id="session-retry" class="link-button">Try again</button>
+          </p>
+          <form id="signin-form" class="signin" method="post" novalidate>
+            <div class="field">
+              <label for="account-id">Account</label>
+              <input id="account-id" name="accountId" autocomplete="username" autocapitalize="off" spellcheck="false" required>
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required>
+            </div>
+            <button type="submit" id="signin-submit" class="button primary" disabled>Sign in</button>
+          </form>
+          <p id="signin-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div id="private-body" hidden>
+          <p class="quiet">Engineering checks on existing example recordings. Nothing here records or assesses anyone's speech.</p>
+          <div id="private-status"></div>
+          <div id="check-panel"></div>
+          <div id="current-check"></div>
+          <div id="participation"></div>
+          <div id="history"></div>
+        </div>
+      </section>
+
+      <footer class="site-foot">
+        <details class="engineering-note">
+          <summary>About this build</summary>
+          <p>This is an engineering prototype for development. It gives no scores, diagnoses, correctness feedback or progress measures, and it is not for clinical or production use.</p>
+          <p>Example recordings are existing public recordings shared under their own licenses. The author, license, source and any changes for each one are listed beside the player. Playback uses copies held by this build's server. Speaker ages are not known. Pictures are original artwork made for this project.</p>
+          <p>Private checks run the research model on existing example recordings only. They never use a microphone or capture anyone's speech. A completed check means the research processing finished; it is not a finding about a word or a speaker. Replay checks reuse the same recording to test that processing is repeatable.</p>
+          <p>The words and wording have had engineering review only. Professional review is deferred until the finished product.</p>
+        </details>
+      </footer>
+    </div>
+  </main>
+
+  <p id="announcer" class="visually-hidden" aria-live="polite"></p>
+</body>
+</html>

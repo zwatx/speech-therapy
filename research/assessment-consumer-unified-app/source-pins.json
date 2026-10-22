@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 2,
+  "owned": [
+    {
+      "path": "consumer_sound_app/__init__.py",
+      "bytes": 88,
+      "sha256": "4a359095d098f9d528ae6482e756fe6681ff5dc275da13e26d201a78b23bad2c"
+    },
+    {
+      "path": "consumer_sound_app/contract.py",
+      "bytes": 10996,
+      "sha256": "fadd76ccdf8025b1a062908b0288f620ac25e1df37f47955f62591e919f46e1a"
+    },
+    {
+      "path": "consumer_sound_app/dependencies.py",
+      "bytes": 2796,
+      "sha256": "e8d9ca530d2d4640d661842a072889b4cde9e7bfdd50b73735812e2cb56e8ad8"
+    },
+    {
+      "path": "consumer_sound_app/launcher.py",
+      "bytes": 2980,
+      "sha256": "95fb09c5849f8f60ac7584addeb9e06d550054e1935665187c2e663ff839e93c"
+    },
+    {
+      "path": "consumer_sound_app/server.py",
+      "bytes": 3275,
+      "sha256": "a4292ca2859013ca22d31af7c20cd9dd227ee4f782a81597b58939616db63e23"
+    },
+    {
+      "path": "consumer_sound_app/service.py",
+      "bytes": 11225,
+      "sha256": "d715ce4a39fd7318c514e37323c84a4a19cebc08dfafd19b76d6c4dbd06090e6"
+    },
+    {
+      "path": "consumer_sound_app/sources.py",
+      "bytes": 2833,
+      "sha256": "57f4d485e9e0da74c90f497748f978913e4cc510671d2e564726cebf71802f8c"
+    },
+    {
+      "path": "consumer_sound_app/worker_artifact.py",
+      "bytes": 5284,
+      "sha256": "f6b144a7717bbf571ba2794a94baf9769362ddc9a8efb9252ad2a3a2366c564e"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 200,
+      "sha256": "f7fe47ec6426485feaf77698f53847a61b9df914c2a9d38dc816147ffcb1514d"
+    },
+    {
+      "path": "ui/app.js",
+      "bytes": 170881,
+      "sha256": "20c5d4eb1479aadff513740770981ee1cbf303a5f4450c152b7fd1babfb5bf90"
+    },
+    {
+      "path": "ui/audio-capture.js",
+      "bytes": 2394,
+      "sha256": "40f6f9620687fafc78b8a3f362781240a7300408aa4148014dba0856a505879d"
+    },
+    {
+      "path": "ui/index.html",
+      "bytes": 25404,
+      "sha256": "6ed3e8c8f664a0c18fb1d2fe866973e704f80fac32fa8d325bebc283f299fc02"
+    },
+    {
+      "path": "ui/styles.css",
+      "bytes": 17501,
+      "sha256": "ffa4b37536bb9ac144dbf952ba8ddef564a0491b5da9ca7021a44d226b0dc7ac"
+    },
+    {
+      "path": "ui/visual-runtime.js",
+      "bytes": 9120,
+      "sha256": "a5d188b378476e091f388525c196f4addd224d87d5d5b1eafbe2afe2c2e79788"
+    },
+    {
+      "path": "ui/visual-worker.js",
+      "bytes": 9206,
+      "sha256": "0acf749d8dfcd4e542ceda5a9a37e1d6cc15bea31eba172c7f7b3b1eb92d1165"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "research/assessment-admission/admission/__init__.py",
+      "bytes": 500,
+      "sha256": "8338b3080a40aacc7e43a0b0cf4b982b55f18987554b006a74f3069938d7545f"
+    },
+    {
+      "path": "research/assessment-admission/admission/adapter.py",
+      "bytes": 7158,
+      "sha256": "9a69445d76e3a487c0b5edb703ab978f88e3f404c06d14f170916d727ec1499e"
+    },
+    {
+      "path": "research/assessment-admission/admission/models.py",
+      "bytes": 2545,
+      "sha256": "530dd0e1e3e266faaf7f8c9bec12224e2bdc3ebbfc2f1ca96aa18de3a20e14f8"
+    },
+    {
+      "path": "research/assessment-admission/admission/policy.py",
+      "bytes": 8570,
+      "sha256": "3f7a1e67d717e188468a9f6951115307af1103e8b76adc04c3aa0e37067cb01e"
+    },
+    {
+      "path": "research/assessment-admission/admission/process.py",
+      "bytes": 1987,
+      "sha256": "c3bd20c8d8bc0be31332722135bbb2ef638f256a4d334ca38a9e1dc994d71160"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/__init__.py",
+      "bytes": 77,
+      "sha256": "ae291e5bf403a55fcc5f02945ff26849d5741a16c7798917dc5abe14caa98b3c"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/__main__.py",
+      "bytes": 33,
+      "sha256": "ddd60a1df996b2b744c45953165711e5afe2711f5f0249f4e98875e1342411df"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/catalog.py",
+      "bytes": 944,
+      "sha256": "3b0faff7fa5d23359c725742687514d2c331211af409bb09984e883ed3b35962"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/feedback.py",
+      "bytes": 23661,
+      "sha256": "56955d25ae239dfc567852f3485028b48952d56ff5d6c259566b6f57ab869cab"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/feedback_contract.py",
+      "bytes": 1999,
+      "sha256": "236491dafda9ef824a4bf32d4988379bb697af01331a17d8d9b8ff40e8a353d4"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/feedback_worker.py",
+      "bytes": 1012,
+      "sha256": "a82e5ddc96d6336cdd6d330b26f810c5c9b99162dd6546451a742ce3f9feb45c"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/server.py",
+      "bytes": 12325,
+      "sha256": "2288048b8924336a36d5b95765e13e63cb59f10132ed2dde3a5ac3db961aef61"
+    },
+    {
+      "path": "research/assessment-consumer-word-context-app/consumer_app/visual_assets.py",
+      "bytes": 2754,
+      "sha256": "5bd1fd55e176d2ae2a66a3f6ae7d2dee01aa4fcf93b3d185e7264d460492a796"
+    },
+    {
+      "path": "research/assessment-desktop-journey/journey/__init__.py",
+      "bytes": 75,
+      "sha256": "01587c4840538d97c9d0381f268aba67423f013f8489b8fbc9c61d5b180f80f4"
+    },
+    {
+      "path": "research/assessment-desktop-journey/journey/catalog.py",
+      "bytes": 5469,
+      "sha256": "066220ff9678380012271a02af0756c219eafd1de917eeffa89ca457a4789431"
+    },
+    {
+      "path": "research/assessment-desktop-journey/journey/models.py",
+      "bytes": 8387,
+      "sha256": "518afda6c4f7264d6c0a70e7f9377912626e10a65481c991f941e864c946886e"
+    },
+    {
+      "path": "research/assessment-mobile-admission/mobile_admission/__init__.py",
+      "bytes": 65,
+      "sha256": "83b745374c25bc7bb6f831d11491363aa590844215447c75344bcf400385faf4"
+    },
+    {
+      "path": "research/assessment-mobile-admission/mobile_admission/contract.py",
+      "bytes": 9807,
+      "sha256": "636b1d4fe791b83937e33d9cb815f291cc018af9f0159eb3eaf7e0681119052e"
+    },
+    {
+      "path": "research/assessment-mobile-admission/mobile_admission/process.py",
+      "bytes": 9719,
+      "sha256": "03f0f1ca5b7f7ef2cead5b683f644a25293c9fc2e260d3db00827b5e25e03bda"
+    },
+    {
+      "path": "research/assessment-mobile-admission/mobile_admission/service.py",
+      "bytes": 11873,
+      "sha256": "2e93f9e62b7cc5a0e530467b02888f64a2f487190581ac6fe37ab8fdc82d6bda"
+    },
+    {
+      "path": "research/assessment-recording-access/recording_access/__init__.py",
+      "bytes": 249,
+      "sha256": "ce67451dc7e5e657166cc6a6c24dd69423d98c1e384ffbd737babcf14c1de850"
+    },
+    {
+      "path": "research/assessment-recording-access/recording_access/files.py",
+      "bytes": 5038,
+      "sha256": "308e01247b08e08228f9964e1f4db0dc3ccf91b2854dba2c20dfe11c8ec7f0a3"
+    },
+    {
+      "path": "research/assessment-recording-access/recording_access/journal.py",
+      "bytes": 11791,
+      "sha256": "d9231bd87589f62402d46b931e29d624dac1de5e42b3b4a1ba37f37d79def058"
+    },
+    {
+      "path": "research/assessment-recording-access/recording_access/models.py",
+      "bytes": 8720,
+      "sha256": "3a3d89874b8160fccb0ebb4ba6160e780d6c41ad640a2b28bd88aa7883e189cc"
+    },
+    {
+      "path": "research/assessment-recording-access/recording_access/vault.py",
+      "bytes": 20878,
+      "sha256": "639291774956441f7e1e3006451b2487f90009c1de258c40534cf77a5aed2726"
+    },
+    {
+      "path": "research/assessment-reference-assets/reference_assets.py",
+      "bytes": 27509,
+      "sha256": "b198dcac81010f1ef1c5bc8d9e17e3243fcbef09c26962662c48780466c0f707"
+    },
+    {
+      "path": "research/assessment-review-service/review_service/__init__.py",
+      "bytes": 86,
+      "sha256": "78fabacd165a516eb9d4d13c61095b2e929c5dc58c8dfeea266af32e538bbcb8"
+    },
+    {
+      "path": "research/assessment-review-service/review_service/auth.py",
+      "bytes": 23742,
+      "sha256": "d701562f46bcef35c16ac0acc08cfd79f7df4e0b86134f8d3da0cae8ac717785"
+    },
+    {
+      "path": "research/assessment-workbench/workbench/__init__.py",
+      "bytes": 59,
+      "sha256": "344ca986853e45f4375fb8895b6f00cee9327b3665145ed43b5f1e743ea4fd0c"
+    },
+    {
+      "path": "research/assessment-workbench/workbench/domain.py",
+      "bytes": 20495,
+      "sha256": "beae759bcbe5e01027532277bbf13bd08a417fdae4bd6c30c2f6e29b9e6e08bb"
+    },
+    {
+      "path": "research/audio-head/consumer_assessment/__init__.py",
+      "bytes": 70,
+      "sha256": "bec915098d574d58979ff6d24a42ddcb5377a5a26ee3120e8698c15c976e7637"
+    },
+    {
+      "path": "research/audio-head/consumer_assessment/bridge.py",
+      "bytes": 11258,
+      "sha256": "dc46b58736e593d1a93739dafede3ce6e4e55cd5a2a8a0f506354a0ec5df4915"
+    }
+  ]
+}

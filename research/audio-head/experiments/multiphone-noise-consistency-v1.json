@@ -1,0 +1,72 @@
+{
+  "authorTestInferencePerformed": false,
+  "batchSizeTargetRows": 64,
+  "cleanFeatureBindingSha256": "360c829d179f9c66b66c900fdcf3db2cb0897fdc5724feb642100802d3da4985",
+  "clinicalUseEligible": false,
+  "coefficients": [
+    0,
+    0.1,
+    1
+  ],
+  "declaredAfterCaptureDiagnostic": true,
+  "device": "cpu",
+  "dropoutEnabled": false,
+  "encoderUpdated": false,
+  "epochZeroEligible": true,
+  "experiment": "multiphone-noise-consistency-v1",
+  "fold": 0,
+  "gradientNormLimit": 5,
+  "labelsTransferred": false,
+  "learnerFeedbackEligible": false,
+  "learningRate": 3e-05,
+  "maximumEpochs": 6,
+  "noiseConditionCount": 1,
+  "noiseSNRdB": 20,
+  "noisyAccuracyMeasured": false,
+  "objective": "Clean five-rater NLL plus coefficient times KL(fixed warm clean teacher || noisy student); same row mean",
+  "outerInferencePerformed": false,
+  "patienceEpochs": 2,
+  "protocolPath": "/Users/zacharywilson/Documents/speech-therapy/docs/model/multiphone-noise-consistency-protocol.md",
+  "protocolSha256": "ff4313a97288722f0534b50d08582a7b772eed38e2b75522ad20b84da40c831e",
+  "regimes": [
+    "all-age",
+    "child-only"
+  ],
+  "schemaVersion": 1,
+  "seed": 7,
+  "selection": "Clean population-specific inner macro-phone NLL only; improve by more than1e-7; earlier epoch ties",
+  "studentGradientsEnabled": true,
+  "teacher": "Fixed original warm head in eval mode, clean fitting rows only; detached model probabilities",
+  "threads": 2,
+  "warmHeads": {
+    "all-age": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-all-age-f0-s7-lr0003",
+      "files": {
+        "best.pt": "9f7ba424f077094cd1678744a3365658cb07d5efd1e425db49d4c5b3cbf42bce",
+        "config.json": "ab5c3eeae3bae95fedbc145e57fd086afe5a3f9e7e8f81ae4986632112d3a340",
+        "history.json": "bc464cf0c3201e4c3804a7e285b2352b3c4abd436408b7f2d4a778102172c7a7",
+        "predictions.json": "18d3812f08fc84b590b6a0e15d6c5d6e22bf1e1a028f9f232868e0866dde5992",
+        "prior.json": "6cd26c831fd748357ab6887722978c98307a2b60e35c8125c946d4d12d93c84e",
+        "replay.json": "2af417be35eca47bda1c632e7befb22c4359b4106fe97cb2e7cbdd52213c39d0",
+        "report.json": "35989efb2dac54182a8cbb7441b3f2b74dddc4133dd32474fefa8f1b581bb4c7"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    },
+    "child-only": {
+      "directory": "/Users/zacharywilson/Documents/speech-therapy/research/audio-head/outputs/multiphone-20260926/phonetic-head-target-scalars-child-only-f0-s7-lr0003",
+      "files": {
+        "best.pt": "67af398f5e861ed2d8d58fdf45b45a236d4f99e9fd0174082553c1eb16e57b50",
+        "config.json": "e2996d39d97ae371e70b52863132eb247536c604d7c7084d949197c06c0b3cf8",
+        "history.json": "a61f21c44dc72c1cf45248eb02b747cb003bd50b289246bf52d5c1b6b7b63d7f",
+        "predictions.json": "6330a179eef55309e8d180e9b6f73c7589e5ffb5b1d38298a1b862bc430d68b9",
+        "prior.json": "1993ffe418f4ba00c6e35522e9f8604323cbfe1eec5801adf20fdb4cd13afa24",
+        "replay.json": "8ac9a1bbe2add1fbb903c9892a83feaf7d00ab571064bfc60bca829f805e0f55",
+        "report.json": "0f4fe362dd66bd3813f1f580a8d7b01b5d1e605b024072278d3437da34be313b"
+      },
+      "learningRate": 0.0003,
+      "selectedEpoch": 5
+    }
+  },
+  "weightDecay": 0.01
+}
