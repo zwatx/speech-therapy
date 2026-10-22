@@ -429,15 +429,16 @@ struct DirectPracticePlayerView: View {
         PracticeRule()
 
         // It never stops playback for the learner; it waits until playback is idle.
-        Button("Record another try") { Task { await session.recordAnotherTry() } }
-          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+        recordControl(caption: "Record another try") { Task { await session.recordAnotherTry() } }
           .accessibilityIdentifier("cadence.record-another")
           .disabled(!session.canRecordAnotherTry)
+          .padding(.top, 6)
         if session.earlierTry != nil {
           Text("Replaces the earlier try.")
             .font(.footnote)
             .foregroundStyle(DirectPracticeStyle.muted)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
+            .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("cadence.replace-note")
         }
@@ -470,7 +471,7 @@ struct DirectPracticePlayerView: View {
               session.earlierTry == nil
                 ? "Delete recording and start over" : "Delete both tries and start over"
             ) { Task { await session.retry() } }
-            .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+            .buttonStyle(PracticeTextButtonStyle())
             .accessibilityIdentifier("cadence.retry")
             .disabled(session.actionsDisabled)
           }
@@ -480,14 +481,16 @@ struct DirectPracticePlayerView: View {
         if session.latestTry != nil, !session.cleanupBlocked, !session.hasPlaybackCleanupIssue,
           !session.isRetryingPlaybackCleanup, !isStopping(session.playbackState)
         {
-          Text(
-            DirectPracticeListeningFocus.text(
-              sound: session.sound, word: session.currentPrompt.word,
-              twoTries: session.earlierTry != nil)
-          )
-          .font(.body)
-          .fixedSize(horizontal: false, vertical: true)
-          .accessibilityIdentifier("cadence.listening-focus")
+          let focus = DirectPracticeListeningFocus.text(
+            sound: session.sound, word: session.currentPrompt.word,
+            twoTries: session.earlierTry != nil)
+          // Word joiners keep "/b/" on one line; VoiceOver reads the unmodified text.
+          let symbol = session.sound.symbol
+          Text(focus.replacingOccurrences(of: "/\(symbol)/", with: "/\u{2060}\(symbol)\u{2060}/"))
+            .font(.body)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityLabel(focus)
+            .accessibilityIdentifier("cadence.listening-focus")
         }
         // Advice describes the latest successful take only; no comparison is made.
         if case .retry(let coaching) = assessment,
@@ -763,14 +766,14 @@ struct DirectPracticePlayerView: View {
     label: String, duration: Double, active: Bool, identifier: String,
     action: @escaping () -> Void
   ) -> some View {
-    let icon = active && session.playbackState != .idle ? "stop.fill" : "play.fill"
+    let icon = active && session.playbackState != .idle ? "stop.circle.fill" : "play.circle.fill"
     let seconds = String(format: "%.1f s", duration)
     return Button(action: action) {
       Group {
         if dynamicTypeSize.isAccessibilitySize {
           // Largest sizes: the duration moves below so the label never breaks mid-word.
           HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Image(systemName: icon).font(.subheadline)
+            Image(systemName: icon).font(.title2).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
               Text(label).font(.body.weight(.medium))
               Text(seconds)
@@ -782,7 +785,7 @@ struct DirectPracticePlayerView: View {
           .fixedSize(horizontal: false, vertical: true)
         } else {
           HStack(spacing: 12) {
-            Image(systemName: icon).font(.subheadline)
+            Image(systemName: icon).font(.title2).accessibilityHidden(true)
             Text(label).font(.body.weight(.medium))
             Spacer(minLength: 8)
             Text(seconds)
@@ -880,6 +883,12 @@ struct DirectPracticePlayerView: View {
       } else if case .stopFailed = session.mirror.state {
         completionMirrorRecovery
       }
+      Image(systemName: "checkmark")
+        .font(.title2.weight(.semibold))
+        .foregroundStyle(DirectPracticeStyle.onAccent)
+        .frame(width: 56, height: 56)
+        .background(DirectPracticeStyle.accent, in: Circle())
+        .accessibilityHidden(true)
       Text("Practice complete.")
         .font(.system(.largeTitle, design: .serif))
         .fixedSize(horizontal: false, vertical: true)
@@ -911,9 +920,9 @@ struct DirectPracticePlayerView: View {
           .accessibilityIdentifier("cadence.history-saved")
       }
       Text(session.sound.prompts.map(\.word).joined(separator: " · "))
-        .font(.title3)
+        .font(.system(.title2, design: .serif))
         .fixedSize(horizontal: false, vertical: true)
-      Spacer(minLength: 24)
+      PracticeRule()
       if let next = session.nextPracticeSound {
         Text("Next: \(next.prompts.map(\.word).joined(separator: " · "))")
           .font(.body)
@@ -934,12 +943,12 @@ struct DirectPracticePlayerView: View {
             .accessibilityIdentifier("cadence.more")
             .disabled(session.actionsDisabled)
         }
+        Button("Practice these again") { Task { await session.restart() } }
+          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
         Button("Explore more sounds") {
           Task { if await session.end() { dismiss() } }
         }
-        .buttonStyle(DirectPracticeButtonStyle(secondary: true))
-        Button("Practice these again") { Task { await session.restart() } }
-          .buttonStyle(DirectPracticeButtonStyle(secondary: true))
+        .buttonStyle(PracticeTextButtonStyle())
           .disabled(session.actionsDisabled)
       }
     }

@@ -90,6 +90,22 @@ struct PracticeRecordControlStyle: ButtonStyle {
   }
 }
 
+/// A low-emphasis action: plain text with a full-width 48-point hit area.
+struct PracticeTextButtonStyle: ButtonStyle {
+  @Environment(\.isEnabled) private var isEnabled
+
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .font(.body)
+      .underline(configuration.isPressed)
+      .multilineTextAlignment(.center)
+      .foregroundStyle(DirectPracticeStyle.ink)
+      .frame(maxWidth: .infinity, minHeight: 48)
+      .contentShape(Rectangle())
+      .opacity(isEnabled ? (configuration.isPressed ? 0.65 : 1) : 0.45)
+  }
+}
+
 struct PracticeRule: View {
   var body: some View {
     Rectangle()
