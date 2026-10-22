@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "deletion-lineage-snapshot-v1",
+  "version": "deletion-lineage-v1",
+  "sha256": "29bec30ce05bc13a738283c9a5267ef4bc4c4b1a51de2fc1d0f2104bb116d50f",
+  "asOf": "2026-07-10T18:10:00.000Z",
+  "revokedSubjectHashes": []
+}

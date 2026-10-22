@@ -1,0 +1,76 @@
+export {
+  benchmarkScoringProfile,
+  type BenchmarkScoringProfile,
+} from "./benchmark-profiles.ts";
+export {
+  ctcSequenceLogProbability,
+  scoreConstrainedPronunciation,
+} from "./ctc.ts";
+export {
+  buildEvaluationReport,
+  evaluationManifestSha256,
+  validateLockedEvaluationManifest,
+  type VerifiedEvaluationManifest,
+} from "./evaluation.ts";
+export {
+  audioBakeoffCandidateManifestSha256,
+  audioAdaptationAuthorizationPayload,
+  audioAdaptationAuthorizationSha256,
+  audioAdaptationDatasetManifestSha256,
+  audioBakeoffCandidateResultSha256,
+  audioBakeoffCharterSha256,
+  audioBakeoffRunAttestationPayload,
+  audioBakeoffSelectionReportSha256,
+  bakeoffDimensions,
+  buildAudioBakeoffCandidateResult,
+  evaluationReportSha256,
+  evaluationReferenceSha256,
+  evaluationSamplesSha256,
+  evaluationThresholdsSha256,
+  lockedEvaluationManifestEnvelopeSha256,
+  ownedAudioAdaptationManifestSha256,
+  selectAudioBakeoffCandidates,
+  scorecardAttestationPayload,
+  verifyOwnedAudioAdaptation,
+} from "./bakeoff.ts";
+export {
+  audioModelCandidates,
+  audioModelRegistryVersion,
+  type AudioModelCandidate,
+} from "./model-registry.ts";
+export type {
+  AudioBakeoffCandidateManifest,
+  AudioBakeoffCandidateResult,
+  AudioBakeoffCharter,
+  AudioBakeoffMeasurements,
+  AudioBakeoffRunAttestation,
+  AudioBakeoffRunEvidence,
+  AudioBakeoffScorecard,
+  AudioBakeoffSelectionReport,
+  AudioAdaptationAuthorization,
+  AudioAdaptationDatasetManifest,
+  AudioAdaptationDatasetManifestItem,
+  BakeoffDimension,
+  OwnedAudioAdaptationManifest,
+  RightsDisposition,
+  VerifiedOwnedAudioAdaptation,
+} from "./bakeoff.ts";
+export type {
+  AudioScoringPolicy,
+  CalibrationArtifact,
+  ClinicalLexiconEntry,
+  ConstrainedAudioScore,
+  DatasetSplit,
+  EvaluationLabel,
+  EvaluationArtifactVersions,
+  EvaluationManifestItem,
+  EvaluationMetrics,
+  EvaluationReport,
+  EvaluationSample,
+  EvaluationThresholds,
+  FramePosterior,
+  HypothesisScore,
+  LockedEvaluationManifest,
+  PronunciationHypothesis,
+  PronunciationHypothesisKind,
+} from "./types.ts";

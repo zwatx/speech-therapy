@@ -1,0 +1,21 @@
+{
+  "attemptId": "attempt-fixture-001",
+  "protocolId": "bilabial-closure-v1",
+  "quality": {
+    "audioScore": 0.96,
+    "videoScore": 0.93,
+    "reasonCodes": []
+  },
+  "audio": {
+    "pCorrect": 0.93,
+    "pError": 0.04,
+    "calibrated": true,
+    "ambiguous": false
+  },
+  "consent": {
+    "audioProcessing": true,
+    "videoProcessing": true,
+    "clinicianReview": true,
+    "researchUse": false
+  }
+}

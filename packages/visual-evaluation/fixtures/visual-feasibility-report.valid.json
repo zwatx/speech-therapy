@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "visual-feasibility-report-v1",
+  "sessionID": "00000000-0000-4000-8000-000000000001",
+  "runtimeVersion": "apple-vision-landmarks-feasibility-v1",
+  "startedAt": "1970-01-01T00:00:00.000Z",
+  "endedAt": "1970-01-01T00:00:10.000Z",
+  "configuration": {
+    "protocolID": "bilabial-closure-v1",
+    "scenario": "protocol-compliant",
+    "debugOnly": true,
+    "rawFramesRetained": false,
+    "rawLandmarksRetained": false,
+    "uploaded": false
+  },
+  "device": {
+    "hardwareIdentifier": "iPhone15,2",
+    "systemName": "iOS",
+    "systemVersion": "test",
+    "appVersion": "0.1.0",
+    "buildVersion": "1"
+  },
+  "frames": {
+    "totalFrames": 4,
+    "usableFrames": 2,
+    "framesWithAnyIssue": 1,
+    "challengeHitFrames": 0,
+    "extractionFailures": 1,
+    "usableFrameRate": 0.5,
+    "meanQualityScore": 0.61,
+    "issueCounts": {
+      "noFace": 1
+    }
+  },
+  "latency": {
+    "measuredFrames": 3,
+    "meanMilliseconds": 86.66666666666667,
+    "maximumMilliseconds": 150,
+    "p95Bucket": "le-200",
+    "bucketCounts": {
+      "le-25": 1,
+      "le-100": 1,
+      "le-200": 1
+    }
+  },
+  "runtime": {
+    "maximumThermalState": "serious",
+    "lowPowerModeObserved": true
+  }
+}

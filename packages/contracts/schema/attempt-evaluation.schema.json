@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cadence.example/contracts/attempt-evaluation/v1.schema.json",
+  "title": "Cadence attempt evaluation contract v1",
+  "description": "Language-neutral request and response contract for constrained pronunciation routing.",
+  "oneOf": [
+    { "$ref": "#/$defs/AttemptEvaluationRequest" },
+    { "$ref": "#/$defs/AttemptEvaluationResponse" },
+    { "$ref": "#/$defs/LearnerAttemptReceipt" }
+  ],
+  "$defs": {
+    "TargetProtocolId": {
+      "type": "string",
+      "enum": [
+        "bilabial-closure-v1",
+        "labiodental-contact-v1",
+        "interdental-visibility-v1",
+        "l-tip-lift-research-v1",
+        "audio-only-v1"
+      ]
+    },
+    "CaptureReasonCode": {
+      "type": "string",
+      "enum": [
+        "audio-clipping",
+        "audio-too-quiet",
+        "utterance-too-short",
+        "utterance-too-long",
+        "background-noise",
+        "multiple-speakers",
+        "face-out-of-frame",
+        "mouth-occluded",
+        "video-unavailable"
+      ]
+    },
+    "LikelyError": {
+      "type": "string",
+      "enum": ["substitution", "omission", "distortion", "timing"]
+    },
+    "RoutingDecisionKind": {
+      "type": "string",
+      "enum": [
+        "blocked-consent",
+        "retry-capture",
+        "correct",
+        "retry-or-abstain",
+        "audio-cue-or-review",
+        "needs-deep-analysis"
+      ]
+    },
+    "RoutingDecisionReason": {
+      "type": "string",
+      "enum": [
+        "audio-processing-not-consented",
+        "capture-quality-below-floor",
+        "confident-correct",
+        "audio-evidence-uncertain",
+        "visual-protocol-not-eligible",
+        "video-processing-not-consented",
+        "video-quality-below-floor",
+        "confident-mismatch-on-supported-target"
+      ]
+    },
+    "LearnerAttemptStatus": {
+      "type": "string",
+      "enum": ["accepted-silent", "retry-capture"]
+    },
+    "CaptureQuality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audioScore", "reasonCodes"],
+      "properties": {
+        "audioScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "videoScore": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reasonCodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/CaptureReasonCode" }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "reasonCodes": { "contains": { "const": "video-unavailable" } }
+            },
+            "required": ["reasonCodes"]
+          },
+          "then": { "not": { "required": ["videoScore"] } }
+        }
+      ]
+    },
+    "AudioEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pCorrect", "pError", "calibrated", "ambiguous"],
+      "properties": {
+        "pCorrect": { "type": "number", "minimum": 0, "maximum": 1 },
+        "pError": { "type": "number", "minimum": 0, "maximum": 1 },
+        "calibrated": { "type": "boolean" },
+        "ambiguous": { "type": "boolean" },
+        "likelyError": { "$ref": "#/$defs/LikelyError" }
+      },
+      "x-cadence-invariants": ["pCorrect + pError must be less than or equal to 1"]
+    },
+    "ConsentSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audioProcessing",
+        "videoProcessing",
+        "clinicianReview",
+        "researchUse"
+      ],
+      "properties": {
+        "audioProcessing": { "type": "boolean" },
+        "videoProcessing": { "type": "boolean" },
+        "clinicianReview": { "type": "boolean" },
+        "researchUse": { "type": "boolean" }
+      }
+    },
+    "AttemptEvaluationRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attemptId", "protocolId", "quality", "audio", "consent"],
+      "properties": {
+        "attemptId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{3,63}$"
+        },
+        "protocolId": { "$ref": "#/$defs/TargetProtocolId" },
+        "quality": { "$ref": "#/$defs/CaptureQuality" },
+        "audio": { "$ref": "#/$defs/AudioEvidence" },
+        "consent": { "$ref": "#/$defs/ConsentSnapshot" }
+      }
+    },
+    "RoutingDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "runDeepVision",
+        "reason",
+        "protocolId",
+        "protocolRegistryVersion",
+        "thresholdVersion",
+        "clinicianReviewPermitted",
+        "researchUsePermitted"
+      ],
+      "properties": {
+        "kind": { "$ref": "#/$defs/RoutingDecisionKind" },
+        "runDeepVision": { "type": "boolean" },
+        "reason": { "$ref": "#/$defs/RoutingDecisionReason" },
+        "protocolId": { "$ref": "#/$defs/TargetProtocolId" },
+        "protocolRegistryVersion": { "type": "string", "minLength": 1 },
+        "thresholdVersion": { "type": "string", "minLength": 1 },
+        "clinicianReviewPermitted": { "type": "boolean" },
+        "researchUsePermitted": { "type": "boolean" }
+      }
+    },
+    "AttemptEvaluationResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attemptId", "decision"],
+      "properties": {
+        "attemptId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{3,63}$"
+        },
+        "decision": { "$ref": "#/$defs/RoutingDecision" }
+      }
+    },
+    "LearnerAttemptReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attemptId",
+        "status",
+        "feedbackAvailable",
+        "mediaRetained",
+        "reasonCodes"
+      ],
+      "properties": {
+        "attemptId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{3,63}$"
+        },
+        "status": { "$ref": "#/$defs/LearnerAttemptStatus" },
+        "feedbackAvailable": { "type": "boolean" },
+        "mediaRetained": { "type": "boolean" },
+        "reasonCodes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/CaptureReasonCode" }
+        }
+      }
+    }
+  }
+}

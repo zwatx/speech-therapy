@@ -1,0 +1,134 @@
+[
+  {
+    "schemaVersion": "visual-cue-adjudication-v1",
+    "itemID": "item-visual-0001",
+    "labelPolicyVersion": "bilabial-closure-observation-v1",
+    "ratings": [
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000001",
+        "itemID": "item-visual-0001",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-001",
+        "annotatedAt": "2026-07-10T18:04:00.000Z",
+        "label": "closure-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      },
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000002",
+        "itemID": "item-visual-0001",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-002",
+        "annotatedAt": "2026-07-10T18:04:00.000Z",
+        "label": "closure-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      }
+    ]
+  },
+  {
+    "schemaVersion": "visual-cue-adjudication-v1",
+    "itemID": "item-visual-0002",
+    "labelPolicyVersion": "bilabial-closure-observation-v1",
+    "ratings": [
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000003",
+        "itemID": "item-visual-0002",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-001",
+        "annotatedAt": "2026-07-10T18:05:00.000Z",
+        "label": "closure-not-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      },
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000004",
+        "itemID": "item-visual-0002",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-002",
+        "annotatedAt": "2026-07-10T18:05:00.000Z",
+        "label": "closure-not-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      }
+    ]
+  },
+  {
+    "schemaVersion": "visual-cue-adjudication-v1",
+    "itemID": "item-visual-0003",
+    "labelPolicyVersion": "bilabial-closure-observation-v1",
+    "ratings": [
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000005",
+        "itemID": "item-visual-0003",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-001",
+        "annotatedAt": "2026-07-10T18:06:00.000Z",
+        "label": "closure-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      },
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000006",
+        "itemID": "item-visual-0003",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-002",
+        "annotatedAt": "2026-07-10T18:06:00.000Z",
+        "label": "closure-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      }
+    ]
+  },
+  {
+    "schemaVersion": "visual-cue-adjudication-v1",
+    "itemID": "item-visual-0004",
+    "labelPolicyVersion": "bilabial-closure-observation-v1",
+    "ratings": [
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000007",
+        "itemID": "item-visual-0004",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-001",
+        "annotatedAt": "2026-07-10T18:07:00.000Z",
+        "label": "closure-not-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      },
+      {
+        "schemaVersion": "visual-cue-annotation-v1",
+        "annotationID": "00000000-0000-4000-8000-000000000008",
+        "itemID": "item-visual-0004",
+        "cueFamily": "bilabial-closure",
+        "labelPolicyVersion": "bilabial-closure-observation-v1",
+        "reviewerID": "reviewer-slp-002",
+        "annotatedAt": "2026-07-10T18:07:00.000Z",
+        "label": "closure-not-observed",
+        "confidence": "high",
+        "qualityReasons": [],
+        "blinding": { "modelOutputHidden": true, "peerRatingsHidden": true }
+      }
+    ]
+  }
+]

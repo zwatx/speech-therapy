@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "consent-eligibility-snapshot-v1",
+  "version": "consent-eligibility-v1",
+  "sha256": "f56c991d0144b5b49d8d368d4cce686cd47db808b6decb9961b71d1bec51fb6b",
+  "asOf": "2026-07-10T18:10:00.000Z",
+  "entries": [
+    {
+      "consentSnapshotHash": "59b0eede851c1968121f0e4933dc9572d8dde700e0a7352e9f90313756214d25",
+      "deletionSubjectHash": "b732fcc001c510b7a22dc9db921c1e3d73a18d833d67553d211ca736f7667112",
+      "consentNoticeVersion": "research-consent-v1",
+      "assentStatus": "affirmed",
+      "videoProcessing": true,
+      "clinicianReview": true,
+      "researchUse": true,
+      "capturedAt": "2026-07-10T17:00:00.000Z"
+    },
+    {
+      "consentSnapshotHash": "721977251f932ad2013ecf9dab390505ada2bab0b2362b496fe553221234b9e6",
+      "deletionSubjectHash": "b802ca709c6b8cf6a9442862e2379b3b41d64069c4a47668b138938d1888262c",
+      "consentNoticeVersion": "research-consent-v1",
+      "assentStatus": "affirmed",
+      "videoProcessing": true,
+      "clinicianReview": true,
+      "researchUse": true,
+      "capturedAt": "2026-07-10T17:00:00.000Z"
+    },
+    {
+      "consentSnapshotHash": "3eea4f0f1252bcaa67d6c52aafad538f445429c00ee717275e907b7da1f13b0c",
+      "deletionSubjectHash": "249223b85d6c4dc289549f3f42bd047d86c12f01c0aecd3395f5825e7f6a097b",
+      "consentNoticeVersion": "research-consent-v1",
+      "assentStatus": "affirmed",
+      "videoProcessing": true,
+      "clinicianReview": true,
+      "researchUse": true,
+      "capturedAt": "2026-07-10T17:00:00.000Z"
+    },
+    {
+      "consentSnapshotHash": "222ef087ebded293f76416dee3fe0f005fb0d89ce5b881a9833f199caaed0a76",
+      "deletionSubjectHash": "c1a659b7abc0271fa5031c1a3cf6f2f64e9e2e40a2c74322c2ddb4f5a2db09b3",
+      "consentNoticeVersion": "research-consent-v1",
+      "assentStatus": "affirmed",
+      "videoProcessing": true,
+      "clinicianReview": true,
+      "researchUse": true,
+      "capturedAt": "2026-07-10T17:00:00.000Z"
+    }
+  ]
+}

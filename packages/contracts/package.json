@@ -1,0 +1,22 @@
+{
+  "name": "@speech-therapy/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./attempt-evaluation.schema.json": "./schema/attempt-evaluation.schema.json"
+  },
+  "scripts": {
+    "build": "pnpm generate:check && tsc --noEmit",
+    "generate": "node scripts/generate-contracts.mjs",
+    "generate:check": "node scripts/generate-contracts.mjs --check",
+    "lint": "tsc --noEmit",
+    "test": "pnpm generate:check && node --test src/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3"
+  }
+}

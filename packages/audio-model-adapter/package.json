@@ -1,0 +1,24 @@
+{
+  "name": "@speech-therapy/audio-model-adapter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "node --test src/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "test:offline": "node scripts/offline-smoke.ts"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "4.2.0",
+    "@speech-therapy/audio-scoring": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^5.9.3"
+  }
+}
