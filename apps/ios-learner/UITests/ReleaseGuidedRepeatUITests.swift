@@ -87,11 +87,30 @@ import XCTest
       button.tap()
     }
 
-    // Same observed blank-gutter gesture family as ReleaseGuidedNavigationUITests.
-    // Re-read geometry after every drag; never drag over selectable word buttons.
+    // The native picker List scrolls through its full-width cells. Other stages use
+    // observed blank gutters so short positioning drags cannot activate word buttons.
     private func reveal(_ target: XCUIElement, _ app: XCUIApplication) {
       if target.identifier == "cadence.guided.close" {
         XCTAssertTrue(target.isHittable)
+        return
+      }
+      // The picker is a native List (AX CollectionView) above the setup scroll.
+      // Its full-width cells have no blank gutter; use its native scrolling gesture.
+      let picker = app.collectionViews["cadence.guided.picker.scroll"]
+      if picker.exists {
+        for _ in 0..<12 {
+          let viewport = picker.frame.intersection(app.windows.firstMatch.frame)
+          let frame = target.frame
+          if frame.minY >= viewport.minY + 8, frame.maxY <= viewport.maxY - 40,
+            target.isHittable { return }
+          if frame.minY < viewport.minY + 8 {
+            picker.swipeDown(velocity: .slow)
+          } else {
+            picker.swipeUp(velocity: .slow)
+          }
+        }
+        capturePracticeFailure(app)
+        XCTFail("Picker choice did not enter viewport: \(target.identifier)")
         return
       }
       let scroll = app.scrollViews.firstMatch
@@ -133,6 +152,7 @@ import XCTest
         } else if right - trailing >= 16 {
           x = (right + trailing) / 2
         } else {
+          capturePracticeFailure(app)
           XCTFail("No blank scroll gutter")
           return
         }

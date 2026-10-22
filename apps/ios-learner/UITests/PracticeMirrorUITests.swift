@@ -84,7 +84,9 @@ final class PracticeMirrorUITests: XCTestCase {
     scrollTo(button, app)
     XCTAssertTrue(button.isHittable, id)
     XCTAssertTrue(button.isEnabled, id)
-    XCTAssertGreaterThanOrEqual(button.frame.height, 44, id)
+    // Preserve the 44 pt minimum while removing AX floating-point subtraction noise.
+    let height = (button.frame.height * 1_000_000).rounded() / 1_000_000
+    XCTAssertGreaterThanOrEqual(height, 44, id)
     button.tap()
   }
 

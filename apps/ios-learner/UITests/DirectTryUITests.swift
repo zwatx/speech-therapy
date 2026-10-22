@@ -84,7 +84,10 @@ final class DirectTryUITests: XCTestCase {
     scrollTo(button, app)
     XCTAssertTrue(button.isHittable, id)
     XCTAssertTrue(button.isEnabled, id)
-    XCTAssertGreaterThanOrEqual(button.frame.height, 44, id)
+    // AX subtraction can report a 44 pt row as 43.99999999999997. Normalize only
+    // floating-point noise; the required 44 pt hit area remains unchanged.
+    let height = (button.frame.height * 1_000_000).rounded() / 1_000_000
+    XCTAssertGreaterThanOrEqual(height, 44, id)
     button.tap()
   }
 
@@ -250,6 +253,15 @@ final class DirectTryUITests: XCTestCase {
   private func comparisonAndCloseJourney(_ testCase: String) {
     let app = launch(testCase)
     let (earlier, latest) = recordTwoTries(app)
+    if ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+      for id in ["cadence.replay-earlier", "cadence.replay", "cadence.record-another"] {
+        let target = app.buttons[id]
+        scrollTo(target, app)
+        XCTAssertTrue(target.isHittable, id)
+        capturePracticeTour("ordinary-review-" + size + "-" + id, app)
+      }
+    }
     activate("cadence.replay-earlier", app)
     expectPlayback(1, app)
     waitLabel(earlier, "Stop earlier try")
@@ -311,6 +323,20 @@ final class DirectTryUITests: XCTestCase {
     XCTAssertFalse(app.buttons["cadence.record"].exists)
     XCTAssertFalse(app.buttons["cadence.stop"].exists)
     XCTAssertFalse(app.staticTexts["cadence.history-error"].exists)
+    if ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+      let heading = app.staticTexts["Practice complete."]
+      scrollTo(heading, app)
+      XCTAssertTrue(heading.isHittable)
+      capturePracticeTour("ordinary-completion-heading-" + size, app)
+      let completion = app.staticTexts["cadence.complete"]
+      scrollTo(completion, app)
+      XCTAssertTrue(completion.isHittable)
+      capturePracticeTour("ordinary-completion-" + size, app)
+      scrollTo(app.buttons["cadence.more"], app)
+      XCTAssertTrue(app.buttons["cadence.more"].isHittable)
+      capturePracticeTour("ordinary-completion-actions-" + size, app)
+    }
     close(app)
   }
 
@@ -571,6 +597,7 @@ extension DirectTryUITests {
     scrollTo(result, app)
     XCTAssertTrue(result.isHittable)
     expectWordCheck(requests: 1, file: 2, latest: true, cancellations: 0, pending: false, app)
+    captureReview(testCase, app)
     activate("cadence.replay", app)
     expectPlayback(2, app)
     activate("cadence.replay", app)
@@ -582,6 +609,32 @@ extension DirectTryUITests {
     expectWordCheck(requests: 1, file: 2, latest: false, cancellations: 0, pending: false, app)
     expectFiles(made: 3, kept: 2, requests: 3, starts: 1, app)
     close(app, closedFiles: (made: 3, kept: 0, requests: 3, starts: 1))
+  }
+
+  private func captureReview(_ testCase: String, _ app: XCUIApplication) {
+    guard let directory = ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] else { return }
+    let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+    for id in [
+      "cadence.replay-earlier", "cadence.replay", "cadence.word-check-result",
+      "cadence.record-another",
+    ] {
+      let target = app.descendants(matching: .any).matching(identifier: id).firstMatch
+      scrollTo(target, app)
+      XCTAssertTrue(target.isHittable, id)
+      let name = "review-" + size + "-" + id.replacingOccurrences(of: "cadence.", with: "")
+      let shot = app.screenshot()
+      let attachment = XCTAttachment(screenshot: shot)
+      attachment.name = name
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      do {
+        let folder = URL(fileURLWithPath: directory, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try shot.pngRepresentation.write(to: folder.appendingPathComponent(name + ".png"))
+      } catch {
+        XCTFail("Could not save review screenshot: \(error)")
+      }
+    }
   }
 
   @objc func testCompactWordGuessIsFallibleReplayableAndClearsOnRetake() {

@@ -10,6 +10,7 @@ import XCTest
       let app = XCUIApplication()
       defer { app.terminate() }
       launch(app, largest: false)
+      app.selectPracticeTab("Sounds")
       activate("cadence.search.open", app)
       XCTAssertTrue(app.navigationBars["Search words"].waitForExistence(timeout: 5))
       let field = searchField(app)
@@ -23,7 +24,10 @@ import XCTest
       activate("cadence.close", app)
       assertSearchReturned("shoe", app)
       nativeBack("Search words", app)
+      assertSoundsRoot(app)
+      app.selectPracticeTab("Today")
       assertHome(app)
+      app.selectPracticeTab("Sounds")
       activate("cadence.sound.sh", app)
       XCTAssertTrue(app.navigationBars["Words to practice"].waitForExistence(timeout: 5))
       activate("cadence.library.sh-beginning-shoe", app)
@@ -34,6 +38,8 @@ import XCTest
       XCTAssertFalse(app.buttons["cadence.close"].exists)
       XCTAssertTrue(app.buttons["cadence.library.sh-beginning-shoe"].exists)
       nativeBack("Words to practice", app)
+      assertSoundsRoot(app)
+      app.selectPracticeTab("Today")
       assertHome(app)
       screenshot("compact-nested-routes-home", app)
     }
@@ -51,6 +57,7 @@ import XCTest
         app.terminate()
       }
       launch(app, largest: true)
+      app.selectPracticeTab("Sounds")
       activate("cadence.search.open", app)
       XCTAssertTrue(app.navigationBars["Search words"].waitForExistence(timeout: 5))
       let field = searchField(app)
@@ -98,6 +105,8 @@ import XCTest
         && (searchField(app).value as? String) == "television"
       XCTAssertTrue(result.searchReturned)
       nativeBack("Search words", app)
+      assertSoundsRoot(app)
+      app.selectPracticeTab("Today")
       assertHome(app)
       result.homeReturned =
         app.buttons["cadence.local-guided.open"].exists
@@ -136,7 +145,14 @@ import XCTest
     private func searchField(_ app: XCUIApplication) -> XCUIElement {
       app.descendants(matching: .any).matching(identifier: "cadence.search.field").firstMatch
     }
+    private func assertSoundsRoot(_ app: XCUIApplication) {
+      XCTAssertTrue(app.tabBars.buttons["Sounds"].isSelected)
+      XCTAssertTrue(app.buttons["cadence.search.open"].waitForExistence(timeout: 5))
+      XCTAssertFalse(app.navigationBars["Search words"].exists)
+      XCTAssertFalse(app.navigationBars["Words to practice"].exists)
+    }
     private func assertHome(_ app: XCUIApplication) {
+      XCTAssertTrue(app.tabBars.buttons["Today"].isSelected)
       XCTAssertTrue(app.buttons["cadence.local-guided.open"].waitForExistence(timeout: 5))
       XCTAssertTrue(app.buttons["cadence.start"].exists)
       XCTAssertFalse(app.buttons["cadence.close"].exists)

@@ -142,7 +142,9 @@ final class ResearchSoundUITests: XCTestCase {
     }
     let optIn = element("sound-optin", app)
     optIn.tap()
-    XCTAssertEqual(optIn.value as? String, "On")
+    let optedIn = optIn.value as? String
+    if optedIn != "On" { capturePracticeFailure(app) }
+    XCTAssertEqual(optedIn, "On")
     XCTAssertFalse(app.buttons["sound-check"].exists)
     XCTAssertFalse(app.progressIndicators["sound-checking-progress"].exists)
     XCTAssertFalse(app.staticTexts["sound-limit"].exists)
@@ -167,7 +169,9 @@ final class ResearchSoundUITests: XCTestCase {
       scrollTo(limit, app)
       XCTAssertTrue(limit.isHittable)
       XCTAssertTrue(limit.label.contains("isn't validated for children"))
-      XCTAssertFalse(app.buttons["sound-check"].exists)
+      let checkExists = app.buttons["sound-check"].exists
+      if checkExists { capturePracticeFailure(app) }
+      XCTAssertFalse(checkExists)
       attach(app, "sound-generated-accessibility-xxxl-" + fixture + "-limit")
       let retake = app.buttons["sound-retake"]
       scrollTo(retake, app)
@@ -220,7 +224,9 @@ final class ResearchSoundUITests: XCTestCase {
           XCTAssertFalse(app.staticTexts["sound-limit"].exists)
         } else {
           XCTAssertTrue(app.staticTexts["sound-state-paused"].waitForExistence(timeout: 5))
-          XCTAssertFalse(app.buttons["sound-check"].exists)
+          let checkExists = app.buttons["sound-check"].exists
+          if checkExists { capturePracticeFailure(app) }
+          XCTAssertFalse(checkExists)
           let replay = app.buttons["sound-replay"]
           scrollTo(replay, app)
           XCTAssertTrue(replay.isHittable)

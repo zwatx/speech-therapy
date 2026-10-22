@@ -102,7 +102,9 @@ final class ResearchFeedbackUITests: XCTestCase {
     attach(app, "feedback-after-next-visible-word")
     let changedWord = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "label == %@", "bread"), object: word)
-    XCTAssertEqual(XCTWaiter.wait(for: [changedWord], timeout: 5), .completed)
+    let nextWordResult = XCTWaiter.wait(for: [changedWord], timeout: 5)
+    if nextWordResult != .completed { capturePracticeFailure(app) }
+    XCTAssertEqual(nextWordResult, .completed)
     XCTAssertEqual(word.label, "bread")
     XCTAssertTrue(app.staticTexts["feedback-state-ready"].exists)
     assertNoRecordingOrProcessing(app)

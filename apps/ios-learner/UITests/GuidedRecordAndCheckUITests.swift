@@ -13,12 +13,19 @@ final class GuidedRecordAndCheckUITests: XCTestCase {
     let category =
       largest
       ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"
+    app.launchEnvironment.removeValue(forKey: "CADENCE_CONTROLLED_UNIT_HOST")
+    app.launchEnvironment.removeValue(forKey: "TEST_RUNNER_CADENCE_CONTROLLED_UNIT_HOST")
+    app.launchEnvironment.removeValue(forKey: "TEST_RUNNER_CADENCE_CONTROLLED_UI_HOST")
+    app.launchEnvironment["CADENCE_CONTROLLED_UI_HOST"] = "1"
     app.launchArguments = [
-      "--record-check-private", UUID().uuidString, "--text-size", largest ? "largest" : "compact",
+      "-CadenceLocalGuidedMode", "-CadenceLocalGuidedUITestCase",
+      largest ? "heldFinishAX" : "heldFinish",
+      "-CadenceControlledUIRunID", UUID().uuidString.lowercased(),
       "-UIPreferredContentSizeCategoryName", category,
     ]
     app.launch()
-    label(app.staticTexts["record-check.fixture.text-size"], category)
+    XCTAssertTrue(app.staticTexts["cadence.generated-guided.banner"].waitForExistence(timeout: 5))
+    label(app.staticTexts["cadence.generated-guided.seed"], "Generated stage: unseeded setup")
     activate("cadence.guided.start", app)
     label(app.staticTexts["cadence.word"], "ball")
     label(app.buttons["cadence.record-and-check"], "Record and check")
@@ -69,7 +76,11 @@ final class GuidedRecordAndCheckUITests: XCTestCase {
       "Generated files: made 4, kept 0 · permission requests 4 · playback starts 0")
     label(app.staticTexts["cadence.generated-guided.history"], "Generated history: 1 rows [b:1]")
     activate("cadence.guided.close", app)
-    label(app.staticTexts["record-check.fixture.closed"], "Generated files kept: 0")
+    XCTAssertTrue(app.staticTexts["cadence.generated-guided.closed"].waitForExistence(timeout: 5))
+    label(
+      app.staticTexts["cadence.generated-guided.closed-files"],
+      "Generated files: made 4, kept 0 · permission requests 4 · playback starts 0")
+    label(app.staticTexts["cadence.generated-guided.closed-history"], "Generated history: 1 rows [b:1]")
     app.terminate()
   }
 
@@ -101,10 +112,11 @@ final class GuidedRecordAndCheckUITests: XCTestCase {
 
   private func label(_ element: XCUIElement, _ expected: String) {
     let predicate = NSPredicate { _, _ in element.exists && element.label == expected }
-    XCTAssertEqual(
-      XCTWaiter.wait(
-        for: [XCTNSPredicateExpectation(predicate: predicate, object: nil)], timeout: 5),
-      .completed, expected)
+    let result = XCTWaiter.wait(
+      for: [XCTNSPredicateExpectation(predicate: predicate, object: nil)], timeout: 5)
+    if result != .completed { capturePracticeFailure(XCUIApplication()) }
+    XCTAssertEqual(result, .completed,
+      "\(element.exists ? element.label : "missing") != \(expected)")
   }
 
   private func activate(_ id: String, _ app: XCUIApplication) {

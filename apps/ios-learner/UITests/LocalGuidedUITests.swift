@@ -16,20 +16,11 @@ final class LocalGuidedUITests: XCTestCase {
     trace.reset(caseTag: largest ? "continuation-largest" : "continuation-compact")
     continueAfterFailure = false
     executionTimeAllowance = 300
-    let app = XCUIApplication()
-    app.launchEnvironment.removeValue(forKey: "CADENCE_CONTROLLED_UNIT_HOST")
-    app.launchEnvironment.removeValue(forKey: "TEST_RUNNER_CADENCE_CONTROLLED_UNIT_HOST")
-    app.launchEnvironment.removeValue(forKey: "TEST_RUNNER_CADENCE_CONTROLLED_UI_HOST")
-    let category =
-      largest
-      ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"
-    app.launchArguments = [
-      "--guided-continuation-private", UUID().uuidString, "--text-size",
-      largest ? "largest" : "compact", "-UIPreferredContentSizeCategoryName", category,
-    ]
-    app.launch()
-    waitLabel(
-      app.staticTexts["continuation.fixture.text-size"], "Generated content size: \(category)")
+    // Use the app's admitted generated host; the old private probe flag has no
+    // handler in the shipping project. The AX case selects accessibility5 in the host.
+    let app = launch(largest ? "setupAX" : "setup")
+    trace.reset(caseTag: largest ? "continuation-largest" : "continuation-compact")
+    executionTimeAllowance = 300
     files(made: 0, kept: 0, app)
     checks(count: 0, app)
     history([], app)
@@ -46,6 +37,18 @@ final class LocalGuidedUITests: XCTestCase {
     continuation("Choose practice words", capture: "last-first-review", app)
     XCTAssertTrue(app.buttons["cadence.guided.practice.start"].waitForExistence(timeout: 5))
     XCTAssertFalse(app.buttons["cadence.guided.practice.start"].isEnabled)
+    let size = largest ? "largest" : "normal"
+    capturePracticeTour("guided-first-review-" + size, app)
+    if ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let heading = app.staticTexts["Choose words to practice"]
+      scrollTo(heading, app, targetTag: "first-review-heading-capture")
+      XCTAssertTrue(heading.isHittable)
+      capturePracticeTour("guided-first-review-heading-" + size, app)
+      let choice = app.buttons["cadence.guided.select." + entryIDs[4]]
+      scrollTo(choice, app, targetTag: "first-review-row-capture")
+      XCTAssertTrue(choice.isHittable)
+      capturePracticeTour("guided-first-review-row-" + size, app)
+    }
     activate("cadence.guided.select." + entryIDs[4], app)
     activate("cadence.guided.practice.start", app)
     waitLabel(app.staticTexts["cadence.word"], "dog")
@@ -54,6 +57,7 @@ final class LocalGuidedUITests: XCTestCase {
     continuation("Finish practice", capture: "last-practice", app)
     XCTAssertTrue(app.buttons["cadence.guided.recheck.start"].waitForExistence(timeout: 5))
     history(["d:1"], app)
+    capturePracticeTour("guided-practice-review-" + size, app)
     activate("cadence.guided.recheck.start", app)
     for word in words.prefix(4) {
       waitLabel(app.staticTexts["cadence.word"], word)
@@ -70,6 +74,15 @@ final class LocalGuidedUITests: XCTestCase {
     XCTAssertTrue(paired.waitForExistence(timeout: 5))
     XCTAssertTrue(paired.label.contains("First review: Word matched"))
     XCTAssertTrue(paired.label.contains("Recheck: Word matched"))
+    if ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let heading = app.staticTexts["Your word observations"]
+      scrollTo(heading, app, targetTag: "summary-heading-capture")
+      XCTAssertTrue(heading.isHittable)
+      capturePracticeTour("guided-summary-heading-" + size, app)
+      scrollTo(paired, app, targetTag: "summary-capture")
+      XCTAssertTrue(paired.isHittable)
+      capturePracticeTour("guided-summary-" + size, app)
+    }
     files(made: 3, kept: 0, app)
     history(["d:1"], app)
     close(made: 3, rows: ["d:1"], app, button: "cadence.guided.done")
@@ -225,6 +238,17 @@ final class LocalGuidedUITests: XCTestCase {
 
   private func practiceJourney(_ testCase: String, manualChecks: Bool = false) {
     let app = launch(testCase)
+    if !manualChecks, ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let heading = app.staticTexts["Choose words to practice"]
+      scrollTo(heading, app, targetTag: "seeded-review-heading")
+      XCTAssertTrue(heading.isHittable)
+      let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+      capturePracticeTour("guided-seeded-first-review-heading-" + size, app)
+      let row = app.buttons["cadence.guided.select." + entryIDs[4]]
+      scrollTo(row, app, targetTag: "seeded-review-row")
+      XCTAssertTrue(row.isHittable)
+      capturePracticeTour("guided-seeded-first-review-row-" + size, app)
+    }
     files(made: 5, kept: 0, app)
     history([], app)
     checks(count: 5, app)
@@ -257,6 +281,13 @@ final class LocalGuidedUITests: XCTestCase {
     history(["d:1", "p:1"], app)
     waitLabel(
       app.staticTexts["cadence.generated-guided.receipts"], "Generated practice receipts: 2 exact")
+    if !manualChecks, ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let heading = app.staticTexts["Revisit the same five"]
+      scrollTo(heading, app, targetTag: "seeded-practice-review-heading")
+      XCTAssertTrue(heading.isHittable)
+      let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+      capturePracticeTour("guided-seeded-practice-review-" + size, app)
+    }
     close(made: 7, rows: ["d:1", "p:1"], app)
   }
 
@@ -287,6 +318,14 @@ final class LocalGuidedUITests: XCTestCase {
         row.label.contains(index == 0 ? "Recheck: Word matched" : "Recheck: Not reached"))
       XCTAssertGreaterThan(row.frame.height, 0)
       XCTAssertLessThanOrEqual(row.frame.maxX, app.windows.firstMatch.frame.maxX)
+    }
+    if ProcessInfo.processInfo.environment["CADENCE_TOUR_DIR"] != nil {
+      let size = testCase.hasSuffix("AX") ? "largest" : "normal"
+      capturePracticeTour("guided-seeded-summary-row-" + size, app)
+      let heading = app.staticTexts["Your word observations"]
+      scrollTo(heading, app, targetTag: "seeded-summary-heading")
+      XCTAssertTrue(heading.isHittable)
+      capturePracticeTour("guided-seeded-summary-heading-" + size, app)
     }
     files(made: 7, kept: 0, app)
     history(["p:1"], app)
@@ -414,7 +453,9 @@ final class LocalGuidedUITests: XCTestCase {
   private func record(_ app: XCUIApplication) {
     activate("cadence.record", app)
     activate("cadence.stop", app)
-    XCTAssertTrue(app.buttons["cadence.replay"].waitForExistence(timeout: 5))
+    let replayExists = app.buttons["cadence.replay"].waitForExistence(timeout: 5)
+    if !replayExists { capturePracticeFailure(app) }
+    XCTAssertTrue(replayExists)
   }
   private func files(made: Int, kept: Int, playbackStarts: Int = 0, _ app: XCUIApplication) {
     waitLabel(

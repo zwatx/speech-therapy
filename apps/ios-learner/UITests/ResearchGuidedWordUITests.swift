@@ -180,8 +180,10 @@ final class ResearchGuidedWordUITests: XCTestCase {
     scrollTo(entries.firstMatch, app)
     attach(app, "generated-guided-practice-existing-history")
     activate("cadence.history.clear", app)
-    let clear = app.sheets.buttons["Clear recent practice"].firstMatch
+    let clear = app.buttons["cadence.history.clear-confirmation-confirm"]
     XCTAssertTrue(clear.waitForExistence(timeout: 3))
+    XCTAssertTrue(clear.isHittable)
+    XCTAssertTrue(clear.isEnabled)
     clear.tap()
     XCTAssertEqual(historyEntries(app).count, 0)
   }

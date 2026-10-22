@@ -510,8 +510,10 @@ import XCTest
         XCTFail("No blank history scroll gutter")
         return
       }
-      let top = viewport.minY + 8
-      let bottom = viewport.maxY - 8
+      // Keep real drags inside the content. Starting near the window's bottom edge
+      // can invoke the system Home/app-switcher gesture instead of scrolling history.
+      let top = viewport.minY + viewport.height * 0.15
+      let bottom = viewport.minY + viewport.height * 0.85
       guard x.isFinite, x > viewport.minX, x < viewport.maxX, bottom > top else {
         XCTFail("Invalid history drag coordinates")
         return
