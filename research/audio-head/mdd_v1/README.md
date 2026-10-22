@@ -104,3 +104,39 @@ norms before optimizer updates and retains the original cumulative budget.
 The interrupted attempt had 87.3s last observed progress; its exact exit time
 was unobserved, so 180s is charged conservatively. Budget evidence is in
 `stage-c/budget-ledger.json`; this timing uncertainty is disclosed in the report.
+
+## Stage D: supervised full-vector phone error detection
+
+See `../../../work/mdd-v1/stage-d-protocol.md` for the pre-fit declaration and
+`stage-d-result.md` for results/limits. All 2,500 official SpeechOcean train
+utterances supply exact-score phone labels (0/1 error, 2 correct; fractional
+averages excluded exactly as Stage C). Frozen C posteriors feed 168 features:
+full CTC substitution/deletion vector, forced emission-span statistics, canonical
+identity/neighbours/positions and prompt-blind disagreement. Features never use
+expert scores or reference-produced identities/timings. Independent canonical
+word grouping is absent in saved L2 records and explicitly marked missing.
+
+Additional dependencies are pinned in `mdd_v1/requirements-stage-d.txt`. Run from
+`research/audio-head`, offline for all corpus/model operations:
+
+```sh
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m unittest mdd_v1.test_stage_d
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m mdd_v1.stage_d prepare
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m mdd_v1.stage_d fit
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m mdd_v1.stage_d evaluate
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m mdd_v1.stage_d_verify
+HF_HUB_OFFLINE=1 .venv/bin/python -B -W error -m mdd_v1.stage_d_report
+```
+
+These describe the declared run, not authorization to repeat evaluation. Completed
+preparation/selection/reporting refuse overwrite; use saved predictions for
+reanalysis. Fit receipts preserve each model and its budget charge before
+calibration scoring; unaccounted interrupted/failed fits refuse automatic retry.
+Three fixed candidates (logistic, HistGradientBoosting, 20-epoch small MLP) fit
+only train. The same Stage C calibration speakers select by AP, then fit positive
+Platt scaling and the F1 threshold. Only the selected model scores the same
+reporting children and four exposed adult L2 pilot speakers, once. No L2 tuning.
+The combined 30-minute candidate fit cap excludes feature extraction and final
+reporting. Reports export full PR/coverage curves, ECE, target-phone metrics and
+2,000 speaker-cluster bootstrap intervals. This remains score-proxy development
+evidence, with previously exposed reporting cohorts, not clinical qualification.

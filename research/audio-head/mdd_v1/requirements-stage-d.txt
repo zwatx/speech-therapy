@@ -1,0 +1,6 @@
+# Additional supervised-detector dependencies, Python 3.13 / macOS arm64.
+# Base numpy/scipy/torch/transformers come from the existing audio-head venv.
+scikit-learn==1.8.0
+joblib==1.6.0
+cloudpickle==3.1.2
+threadpoolctl==3.7.0
